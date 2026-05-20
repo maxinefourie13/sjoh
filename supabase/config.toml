@@ -1,6 +1,9 @@
 project_id = "omhjcalrfhswjmanriqv"
 
-[functions.paystack-webhook]
+[functions.payfast-checkout]
+verify_jwt = true
+
+[functions.payfast-webhook]
 verify_jwt = false
 
 [functions.sitemap-xml]
@@ -26,9 +29,3 @@ verify_jwt = false
 
 [functions.invoice-download]
 verify_jwt = false
-
-[functions.payfast-itn]
-verify_jwt = false
-
-[functions.payfast-create-subscription]
-verify_jwt = true

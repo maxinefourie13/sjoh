@@ -22,14 +22,15 @@ Only use visible-entry mode when no one else can see your screen.
 
 Add these first because they block launch testing:
 
-- `PAYSTACK_SECRET_KEY` from Paystack live mode.
-- `PAYSTACK_PLAN_VERIFIED_PRO_MONTHLY` from the live R250/month Paystack plan.
+- `PAYFAST_MERCHANT_ID` from PayFast live mode.
+- `PAYFAST_MERCHANT_KEY` from PayFast live mode.
+- `PAYFAST_PASSPHRASE` from the PayFast integration settings.
 - `OPENAI_API_KEY` for the automated Sjoh ID Check.
 
 Optional but useful before a bigger launch:
 
-- `PAYSTACK_WEBHOOK_SECRET` if you choose a separate webhook secret. If not, the function falls back to the Paystack secret key.
-- `PAYSTACK_PLAN_VERIFIED_PRO_ANNUAL` if annual billing stays enabled.
+- `PAYFAST_SANDBOX=1` only while testing in PayFast sandbox.
+- `PUBLIC_SITE_URL=https://sjoh.co.za`.
 - `GOOGLE_PLACES_API_KEY` for Places imports/linking.
 - `LOVABLE_API_KEY` and `LOVABLE_SEND_URL` for transactional email sending.
 - `ONESIGNAL_APP_ID` and `ONESIGNAL_REST_API_KEY` for push notifications.
@@ -44,11 +45,10 @@ Optional but useful before a bigger launch:
 - Edge Functions have been deployed, excluding the old third-party ID verification functions.
 - Confirm the app-specific Supabase secrets are present:
   - `OPENAI_API_KEY`
-  - `PAYSTACK_SECRET_KEY`
-  - `PAYSTACK_WEBHOOK_SECRET` if different from the secret key
-  - `PAYSTACK_PLAN_VERIFIED_PRO_MONTHLY`
-  - `PAYSTACK_PLAN_VERIFIED_PRO_ANNUAL` if annual billing stays enabled
-  - `PAYSTACK_PLAN_BASIC_MONTHLY` / `PAYSTACK_PLAN_BASIC_ANNUAL` if basic listings stay enabled
+  - `PAYFAST_MERCHANT_ID`
+  - `PAYFAST_MERCHANT_KEY`
+  - `PAYFAST_PASSPHRASE`
+  - `PAYFAST_SANDBOX` only for sandbox testing
   - `GOOGLE_PLACES_API_KEY`
   - `ONESIGNAL_APP_ID`
   - `ONESIGNAL_REST_API_KEY`
@@ -57,21 +57,19 @@ Optional but useful before a bigger launch:
   - `LOVABLE_API_KEY`
   - `PUBLIC_SITE_URL`
 
-## Paystack
+## PayFast
 
-- Wait for Paystack account verification.
+- Wait for PayFast account verification if the account is still under review.
 - Launch trial mechanic: `SORTED3` unlocks a one-time 3-day Verified Pro trial without a card. New accounts no longer receive an automatic 30-day Basic trial. After the code trial, the business chooses the R250/month subscription to continue.
 - Paid checkout should be positioned as a normal R250/month subscription, not as a card-required free trial.
 - Confirm live keys are saved as Supabase secrets:
-  - `PAYSTACK_SECRET_KEY`
-  - `PAYSTACK_WEBHOOK_SECRET` if different from the secret key
-  - `PAYSTACK_PLAN_VERIFIED_PRO_MONTHLY`
-  - `PAYSTACK_PLAN_VERIFIED_PRO_ANNUAL` if annual billing stays enabled
-  - `PAYSTACK_PLAN_BASIC_MONTHLY` / `PAYSTACK_PLAN_BASIC_ANNUAL` if basic listings stay enabled
-- Confirm the Paystack webhook points to:
-  - `https://omhjcalrfhswjmanriqv.supabase.co/functions/v1/paystack-webhook`
-- Test the `SORTED3` trial redemption, first subscription charge, failed charge, cancellation, and webhook state update.
-- Confirm Paystack sends durable `SUB_*` subscription codes to the webhook; Sjoh stores those codes for cancellation and failed-payment matching.
+  - `PAYFAST_MERCHANT_ID`
+  - `PAYFAST_MERCHANT_KEY`
+  - `PAYFAST_PASSPHRASE`
+- Configure the PayFast ITN / notify URL as:
+  - `https://omhjcalrfhswjmanriqv.supabase.co/functions/v1/payfast-webhook`
+- Test the `SORTED3` trial redemption, first R250 subscription charge, duplicate ITN handling, cancellation, and webhook state update.
+- Confirm PayFast sends a recurring token/subscription id to the webhook; Sjoh stores it for cancellation and failed-payment matching.
 
 ## Sjoh ID Check
 

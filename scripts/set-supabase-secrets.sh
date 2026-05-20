@@ -51,12 +51,11 @@ else
 fi
 echo
 
-set_secret "PAYSTACK_SECRET_KEY" "required"
-set_secret "PAYSTACK_WEBHOOK_SECRET" "optional"
-set_secret "PAYSTACK_PLAN_VERIFIED_PRO_MONTHLY" "required"
-set_secret "PAYSTACK_PLAN_VERIFIED_PRO_ANNUAL" "optional"
-set_secret "PAYSTACK_PLAN_BASIC_MONTHLY" "optional"
-set_secret "PAYSTACK_PLAN_BASIC_ANNUAL" "optional"
+set_secret "PAYFAST_MERCHANT_ID" "required"
+set_secret "PAYFAST_MERCHANT_KEY" "required"
+set_secret "PAYFAST_PASSPHRASE" "required"
+set_secret "PAYFAST_SANDBOX" "optional"
+set_secret "PUBLIC_SITE_URL" "optional"
 set_secret "OPENAI_API_KEY" "required"
 set_secret "OPENAI_VISION_MODEL" "optional"
 set_secret "GOOGLE_PLACES_API_KEY" "optional"

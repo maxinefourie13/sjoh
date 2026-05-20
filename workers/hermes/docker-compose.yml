@@ -1,0 +1,8 @@
+services:
+  hermes-worker:
+    build:
+      context: ../..
+      dockerfile: workers/hermes/Dockerfile
+    env_file:
+      - .env
+    restart: unless-stopped

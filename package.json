@@ -12,6 +12,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
+    "hermes:worker": "tsx workers/hermes/index.ts",
+    "hermes:once": "tsx workers/hermes/index.ts --once",
+    "validate:leads": "tsx scripts/validate-hermes-leads.ts",
     "test:watch": "vitest"
   },
   "dependencies": {

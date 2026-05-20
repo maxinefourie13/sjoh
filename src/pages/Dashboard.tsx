@@ -884,10 +884,10 @@ const BillingSection = () => {
         ? "Subscribe to bring your profile back"
         : `Use ${LAUNCH_TRIAL_CODE} for 3 days free, or subscribe for R250/month`;
 
-  const switchToAnnual = async (provider: "paystack" | "payfast" = "paystack") => {
+  const switchToAnnual = async () => {
     if (!liveSub?.tier || (liveSub.tier !== "basic" && liveSub.tier !== "verified_pro")) return;
     setSwitching(true);
-    await payments.startSubscription(liveSub.tier as "basic" | "verified_pro", "annual", provider);
+    await payments.startSubscription(liveSub.tier as "basic" | "verified_pro", "annual");
     setSwitching(false);
   };
 
@@ -910,7 +910,7 @@ const BillingSection = () => {
             <p className="font-display text-base font-extrabold tracking-tight">0% commission. You keep every cent you earn.</p>
             <p className="text-sm text-ink-2 mt-1">
               Your monthly fee covers <strong>unlimited quotes</strong>, your directory listing, and customer alerts.
-              No per-message fees, no per-job cuts, no Paystack surprises — clients pay you directly.
+              No per-message fees, no per-job cuts, no payment-provider surprises — clients pay you directly.
             </p>
           </div>
         </div>
@@ -950,21 +950,16 @@ const BillingSection = () => {
               Pay for the year and save 10%. Sorted.
             </p>
           </div>
-          <div className="shrink-0 flex flex-col sm:flex-row gap-2">
-            <Button onClick={() => switchToAnnual("payfast")} disabled={switching}>
-              {switching ? "Sorting…" : "Switch via PayFast"}
-            </Button>
-            <Button variant="outline" onClick={() => switchToAnnual("paystack")} disabled={switching}>
-              {switching ? "Sorting…" : "Switch via Paystack"}
-            </Button>
-          </div>
+          <Button onClick={switchToAnnual} disabled={switching} className="shrink-0">
+            {switching ? "Sorting…" : "Switch to yearly"}
+          </Button>
         </div>
       )}
 
       <div className="bg-card border border-border rounded-xl p-6">
         <h3 className="font-display text-lg font-semibold mb-4">Payment method</h3>
         <p className="text-sm text-muted-foreground">
-          Your subscription is billed by either Paystack or PayFast, depending on which option you chose at checkout. To update your card, change your plan, or cancel, contact support and we'll sort it.
+          Your subscription is managed securely by PayFast. To change your plan, use the buttons above. To cancel during launch, email us and we’ll confirm once it is stopped.
         </p>
       </div>
     </>

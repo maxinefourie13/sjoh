@@ -932,8 +932,8 @@ export type Database = {
           error_message: string | null
           id: string
           kind: Database["public"]["Enums"]["payment_event_kind"]
-          paystack_event: string
-          paystack_reference: string
+          payfast_payment_status: string
+          payfast_pf_payment_id: string
           processed: boolean
           processed_at: string | null
           provider: string
@@ -948,8 +948,8 @@ export type Database = {
           error_message?: string | null
           id?: string
           kind?: Database["public"]["Enums"]["payment_event_kind"]
-          paystack_event: string
-          paystack_reference: string
+          payfast_payment_status: string
+          payfast_pf_payment_id: string
           processed?: boolean
           processed_at?: string | null
           provider?: string
@@ -964,8 +964,8 @@ export type Database = {
           error_message?: string | null
           id?: string
           kind?: Database["public"]["Enums"]["payment_event_kind"]
-          paystack_event?: string
-          paystack_reference?: string
+          payfast_payment_status?: string
+          payfast_pf_payment_id?: string
           processed?: boolean
           processed_at?: string | null
           provider?: string
@@ -1105,6 +1105,7 @@ export type Database = {
         Row: {
           business_id: string
           created_at: string
+          deal_memo_id: string | null
           id: string
           message: string
           opportunity_id: string
@@ -1116,6 +1117,7 @@ export type Database = {
         Insert: {
           business_id: string
           created_at?: string
+          deal_memo_id?: string | null
           id?: string
           message: string
           opportunity_id: string
@@ -1127,6 +1129,7 @@ export type Database = {
         Update: {
           business_id?: string
           created_at?: string
+          deal_memo_id?: string | null
           id?: string
           message?: string
           opportunity_id?: string
@@ -1183,9 +1186,8 @@ export type Database = {
           is_id_verified: boolean
           next_renewal_at: string | null
           onesignal_player_id: string | null
+          payfast_subscription_token: string | null
           payfast_token: string | null
-          paystack_customer_code: string | null
-          paystack_subscription_code: string | null
           push_alerts_optin: boolean
           referral_code: string | null
           tier: Database["public"]["Enums"]["sjoh_tier"]
@@ -1208,9 +1210,8 @@ export type Database = {
           is_id_verified?: boolean
           next_renewal_at?: string | null
           onesignal_player_id?: string | null
+          payfast_subscription_token?: string | null
           payfast_token?: string | null
-          paystack_customer_code?: string | null
-          paystack_subscription_code?: string | null
           push_alerts_optin?: boolean
           referral_code?: string | null
           tier?: Database["public"]["Enums"]["sjoh_tier"]
@@ -1233,9 +1234,8 @@ export type Database = {
           is_id_verified?: boolean
           next_renewal_at?: string | null
           onesignal_player_id?: string | null
+          payfast_subscription_token?: string | null
           payfast_token?: string | null
-          paystack_customer_code?: string | null
-          paystack_subscription_code?: string | null
           push_alerts_optin?: boolean
           referral_code?: string | null
           tier?: Database["public"]["Enums"]["sjoh_tier"]
@@ -2125,9 +2125,10 @@ export type Database = {
         | "urgent_fee_charge"
         | "other"
         | "urgent_boost"
+        | "subscription_cancelled"
       price_type: "fixed" | "from" | "quote"
       pro_referral_status: "pending" | "redeemed" | "expired"
-      proposal_status: "pending" | "shortlisted" | "won" | "lost" | "withdrawn"
+      proposal_status: "pending" | "shortlisted" | "won" | "lost" | "withdrawn" | "accepted"
       quote_revision_status: "pending" | "accepted" | "rejected" | "cancelled"
       sjoh_tier:
         | "none"
@@ -2310,10 +2311,11 @@ export const Constants = {
         "urgent_fee_charge",
         "other",
         "urgent_boost",
+        "subscription_cancelled",
       ],
       price_type: ["fixed", "from", "quote"],
       pro_referral_status: ["pending", "redeemed", "expired"],
-      proposal_status: ["pending", "shortlisted", "won", "lost", "withdrawn"],
+      proposal_status: ["pending", "shortlisted", "won", "lost", "withdrawn", "accepted"],
       quote_revision_status: ["pending", "accepted", "rejected", "cancelled"],
       sjoh_tier: [
         "none",

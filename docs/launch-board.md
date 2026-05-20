@@ -16,9 +16,9 @@ Status key:
 | `[DONE]` | GitHub repo | Repo renamed to `sjoh`, latest code pushed to `main` | Codex |
 | `[DONE]` | Local app health | Lint, build, and unit tests pass | Codex |
 | `[DONE]` | Supabase project | New project is linked, migrations are applied, functions are deployed | Codex |
-| `[DONE]` | Supabase secrets | Live Paystack, OpenAI, email/notification keys are added to Supabase | Maxine + Codex |
+| `[CHECKING]` | Supabase secrets | Live PayFast, OpenAI, email/notification keys are added to Supabase | Maxine + Codex |
 | `[DONE]` | Security audit | High-severity npm audit findings are resolved without force-upgrading launch tooling | Codex |
-| `[CHECKING]` | Paystack | Paystack live account is verified and live keys/plans/webhook are configured | Maxine + Codex |
+| `[CHECKING]` | PayFast | PayFast live account is verified and live merchant credentials/ITN are configured | Maxine + Codex |
 | `[DONE]` | Trial code | `SORTED3` gives a one-time 3-day Verified Pro trial without a card | Codex |
 | `[BLOCKED]` | Production deploy | `sjoh.co.za` is redeployed with the new Supabase env vars | Maxine + Codex/Lovable |
 | `[CHECKING]` | Customer journey | Customer can search, post a job, and receive quote/invoice emails | Codex |
@@ -29,7 +29,7 @@ Status key:
 ## Current Launch Blockers
 
 1. `sjoh.co.za` is still serving the old Supabase project (`zwgjbffesalpiaaycbac`). The repo is updated, but production needs a fresh deploy with the new env vars.
-2. Paystack webhook/account live-mode setup still needs to be confirmed before paid business signup can be tested.
+2. PayFast live credentials and ITN setup still need to be confirmed before paid business signup can be tested.
 3. No additional code blockers are known right now; keep testing the live customer and business journeys after deployment.
 
 ## Latest Overnight Checks
@@ -39,14 +39,14 @@ Status key:
 - `npm audit --audit-level=high` passes. Remaining audit items require force upgrades to dev tooling and are not launch blockers.
 - Local build points at production Supabase `omhjcalrfhswjmanriqv`.
 - Live `sjoh.co.za` still points at old Supabase `zwgjbffesalpiaaycbac`, so production must be redeployed from the Sjoh Lovable project before live journey testing.
-- Paystack webhook handling now stores durable subscription codes from subscription events when Paystack sends them, which makes later cancellation/failure matching more reliable.
+- PayFast checkout/webhook is now the active payment path; the old Paystack path is being removed from launch-critical setup.
 - Trial behavior has moved to `SORTED3`: no automatic 30-day Basic trial, one 3-day Verified Pro trial per user, then R250/month to continue.
 
 ## Launch Nice-To-Haves
 
 | Status | Area | Decision |
 | --- | --- | --- |
-| `[LATER]` | PayFast | Add after launch if Paystack causes real conversion issues |
+| `[LATER]` | Extra payment providers | Consider PayShap/Payflex/PayPal only after PayFast conversion data shows a real need |
 | `[LATER]` | Full Supabase hardening pass | Do after first launch unless an advisor warning is critical |
 | `[LATER]` | Remotion homepage video | Keep out of launch-critical path until the content is final |
 | `[LATER]` | Extra landing page variants | Use the current business pages first, then iterate from ad data |
@@ -56,9 +56,16 @@ Status key:
 1. Verify the app is technically healthy locally.
 2. Confirm Supabase is pointing at the real production project.
 3. Confirm every required secret/env var exists in the right place.
-4. Confirm Paystack live mode can create subscriptions and receive webhooks.
+4. Confirm PayFast live mode can create subscriptions and receive ITNs.
 5. Redeploy `sjoh.co.za`.
 6. Smoke-test the customer journey on production.
 7. Smoke-test the business journey on production.
 8. Fix only launch-blocking issues.
 9. Start inviting the first businesses.
+
+## Hermes Lead Workflow
+
+- Use the Hermes workflow for lead sourcing, source checking, POPIA-aware contact triage, and concierge lead drafts.
+- Keep Hermes read/research oriented: it returns reviewed rows or handoff JSON, then Codex or Maxine persists approved data.
+- Workflow guide: `docs/hermes-agent.md`.
+- Hosted worker guide: `docs/hermes-hostinger.md`.

@@ -9,15 +9,9 @@ export interface TrialCodeRedemption {
   code: string;
 }
 
-type CheckoutFn =
-  | "paystack-create-subscription"
-  | "paystack-create-urgent"
-  | "payfast-create-subscription";
-
-async function startCheckout(
-  fn: CheckoutFn,
-  body: Record<string, unknown>,
-  loadingMsg: string,
+async function startPayFastCheckout(
+  tier: Tier,
+  billing_cycle: BillingCycle = "monthly",
 ) {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) {
@@ -25,47 +19,34 @@ async function startCheckout(
     return null;
   }
 
-  toast({ title: loadingMsg, description: "Sorting the chankura…" });
+  toast({ title: "Taking you to PayFast", description: "Sorting the payment gateway…" });
 
-  const returnUrl = window.location.origin + "/dashboard?paid=1";
-  const cancelUrl = window.location.origin + "/pricing?cancelled=1";
-
-  const { data, error } = await supabase.functions.invoke(fn, {
-    body: { ...body, callback_url: returnUrl, return_url: returnUrl, cancel_url: cancelUrl },
+  const { data, error } = await supabase.functions.invoke("payfast-checkout", {
+    body: {
+      tier,
+      billing_cycle,
+      callback_url: window.location.origin + "/dashboard?paid=1",
+    },
   });
 
-  if (error || !data?.authorization_url) {
+  if (error || !data?.redirect_url) {
     toast({
       title: "Aikona!",
-      description: "Your card just bounced harder than a pothole on the N1. Check your balance and let's give it another gooi.",
+      description: "Payment setup failed. The system might still be waking up — try again.",
       variant: "destructive",
     });
     return null;
   }
 
-  window.location.href = data.authorization_url as string;
-  return data.reference as string;
+  // PayFast supports both GET redirect and form POST.
+  // The edge function returns a full redirect URL with all signed params.
+  window.location.href = data.redirect_url;
+  return data.m_payment_id as string;
 }
 
-export type PaymentProvider = "paystack" | "payfast";
-
 export const payments = {
-  startSubscription: (
-    tier: Tier,
-    billing_cycle: BillingCycle = "monthly",
-    provider: PaymentProvider = "paystack",
-  ) => {
-    const fn: CheckoutFn = provider === "payfast"
-      ? "payfast-create-subscription"
-      : "paystack-create-subscription";
-    const planName = tier === "basic" ? "Basic Listing" : "Verified Pro";
-    const cycleLabel = billing_cycle === "annual" ? " (yearly)" : "";
-    return startCheckout(
-      fn,
-      { tier, billing_cycle },
-      `Starting ${planName}${cycleLabel} subscription via ${provider === "payfast" ? "PayFast" : "Paystack"}`,
-    );
-  },
+  startSubscription: (tier: Tier, billing_cycle: BillingCycle = "monthly") =>
+    startPayFastCheckout(tier, billing_cycle),
   redeemTrialCode: async (code: string): Promise<TrialCodeRedemption | null> => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {

@@ -468,6 +468,9 @@ const ListBusiness = () => {
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
                 <Button onClick={() => navigate("/dashboard?section=profile")}>Polish my profile</Button>
+                <Button variant="secondary" asChild>
+                  <Link to="/pricing">Subscribe for R250/month</Link>
+                </Button>
                 <Button variant="outline" onClick={() => navigate("/leads")}>Browse Opportunities</Button>
               </div>
             </div>
