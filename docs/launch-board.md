@@ -20,7 +20,7 @@ Status key:
 | `[DONE]` | Security audit | High-severity npm audit findings are resolved without force-upgrading launch tooling | Codex |
 | `[CHECKING]` | PayFast | PayFast live account is verified and live merchant credentials/ITN are configured | Maxine + Codex |
 | `[DONE]` | Trial code | `SORTED3` gives a one-time 3-day Verified Pro trial without a card | Codex |
-| `[BLOCKED]` | Production deploy | `sjoh.co.za` is redeployed with the new Supabase env vars | Maxine + Codex/Lovable |
+| `[DONE]` | Production deploy | `sjoh.co.za` is redeployed with the new Supabase env vars | Maxine + Codex/Lovable |
 | `[CHECKING]` | Customer journey | Customer can search, post a job, and receive quote/invoice emails | Codex |
 | `[CHECKING]` | Business journey | Business can sign up, pay, create profile, verify ID, browse opportunities, quote, and invoice | Codex |
 | `[CHECKING]` | Legal/trust copy | Privacy, terms, cancellation, ID-check language are present and clear | Codex |
@@ -28,9 +28,9 @@ Status key:
 
 ## Current Launch Blockers
 
-1. `sjoh.co.za` is still serving the old Supabase project (`zwgjbffesalpiaaycbac`). The repo is updated, but production needs a fresh deploy with the new env vars.
-2. PayFast live credentials and ITN setup still need to be confirmed before paid business signup can be tested.
-3. No additional code blockers are known right now; keep testing the live customer and business journeys after deployment.
+1. PayFast live account approval still needs to be confirmed before paid business signup can be fully live-tested.
+2. The PayFast ITN URL should be checked in the PayFast dashboard: `https://omhjcalrfhswjmanriqv.supabase.co/functions/v1/payfast-webhook`.
+3. No additional code blockers are known right now; keep testing the live customer and business journeys on production.
 
 ## Latest Overnight Checks
 
@@ -38,7 +38,7 @@ Status key:
 - Local production build, lint, unit tests, route smoke tests, and mobile pricing overflow checks pass.
 - `npm audit --audit-level=high` passes. Remaining audit items require force upgrades to dev tooling and are not launch blockers.
 - Local build points at production Supabase `omhjcalrfhswjmanriqv`.
-- Live `sjoh.co.za` still points at old Supabase `zwgjbffesalpiaaycbac`, so production must be redeployed from the Sjoh Lovable project before live journey testing.
+- Live `sjoh.co.za` now points at production Supabase `omhjcalrfhswjmanriqv`, includes `SORTED3`, and uses `payfast-checkout`.
 - PayFast checkout/webhook is now the active payment path; the old Paystack path is being removed from launch-critical setup.
 - Trial behavior has moved to `SORTED3`: no automatic 30-day Basic trial, one 3-day Verified Pro trial per user, then R250/month to continue.
 
