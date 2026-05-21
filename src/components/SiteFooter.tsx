@@ -16,6 +16,9 @@ const cols = [
     links: [
       { to: "/terms", label: "Terms of Service" },
       { to: "/privacy", label: "Privacy Policy" },
+      { to: "/acceptable-use", label: "Acceptable Use" },
+      { to: "/shipping", label: "Service Delivery" },
+      { to: "/returns", label: "Refunds & Cancellations" },
     ],
   },
 ];

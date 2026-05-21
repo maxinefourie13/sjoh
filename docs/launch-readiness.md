@@ -43,6 +43,7 @@ Optional but useful before a bigger launch:
   - `https://omhjcalrfhswjmanriqv.supabase.co`
 - Database migrations have been pushed to the production Supabase project.
 - Edge Functions have been deployed, excluding the old third-party ID verification functions.
+- PayFast webhook events now write `provider = 'payfast'`, and the production database default has been corrected for new payment events.
 - Confirm the app-specific Supabase secrets are present:
   - `OPENAI_API_KEY`
   - `PAYFAST_MERCHANT_ID`
@@ -60,7 +61,7 @@ Optional but useful before a bigger launch:
 ## PayFast
 
 - Wait for PayFast account verification if the account is still under review.
-- Launch trial mechanic: `SORTED3` unlocks a one-time 3-day Verified Pro trial without a card. New accounts no longer receive an automatic 30-day Basic trial. After the code trial, the business chooses the R250/month subscription to continue.
+- Launch trial mechanic: `SORTED30` unlocks a one-time 30-day Verified Pro trial without a card. New accounts no longer receive an automatic 30-day Basic trial. After the code trial, the business chooses the R250/month subscription to continue.
 - Paid checkout should be positioned as a normal R250/month subscription, not as a card-required free trial.
 - Confirm live keys are saved as Supabase secrets:
   - `PAYFAST_MERCHANT_ID`
@@ -68,8 +69,9 @@ Optional but useful before a bigger launch:
   - `PAYFAST_PASSPHRASE`
 - Configure the PayFast ITN / notify URL as:
   - `https://omhjcalrfhswjmanriqv.supabase.co/functions/v1/payfast-webhook`
-- Test the `SORTED3` trial redemption, first R250 subscription charge, duplicate ITN handling, cancellation, and webhook state update.
+- Test the `SORTED30` trial redemption, first R250 subscription charge, duplicate ITN handling, cancellation, and webhook state update.
 - Confirm PayFast sends a recurring token/subscription id to the webhook; Sjoh stores it for cancellation and failed-payment matching.
+- Confirm `payment_events.provider` is `payfast` after the first live ITN.
 
 ## Sjoh ID Check
 
@@ -130,3 +132,8 @@ Optional but useful before a bigger launch:
 - Privacy policy must continue to mention uploaded ID documents and document processing.
 - Terms should make clear that Sjoh ID Check is a platform trust check, not a government-certified identity verification.
 - ID documents must stay in the private `id-verification-documents` bucket.
+- Policy pages are live-code ready and should be deployed with the next production publish:
+  - `/acceptable-use`
+  - `/shipping`
+  - `/returns`
+- Footer legal links should expose Terms, Privacy, Acceptable Use, Service Delivery, and Refunds & Cancellations.

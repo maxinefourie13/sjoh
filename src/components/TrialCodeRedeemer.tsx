@@ -8,7 +8,7 @@ import { toast } from "@/hooks/use-toast";
 import { payments } from "@/lib/payments";
 import { cn } from "@/lib/utils";
 
-export const LAUNCH_TRIAL_CODE = "SORTED3";
+export const LAUNCH_TRIAL_CODE = "SORTED30";
 
 interface TrialCodeRedeemerProps {
   className?: string;
@@ -38,7 +38,7 @@ export function TrialCodeRedeemer({
     if (!user) {
       toast({
         title: "Create your account first",
-        description: "Then SORTED3 unlocks your 3-day Verified Pro trial.",
+        description: "Then SORTED30 unlocks your 30-day Verified Pro trial.",
       });
       const next = `${window.location.pathname}${window.location.search}`;
       navigate(`/login?next=${encodeURIComponent(next)}`);
@@ -80,7 +80,7 @@ export function TrialCodeRedeemer({
         </span>
         <div className="min-w-0">
           <p className="font-display text-base font-extrabold tracking-tight">
-            Use {LAUNCH_TRIAL_CODE} for 3 days free.
+            Use {LAUNCH_TRIAL_CODE} for 30 days free.
           </p>
           <p className={cn("mt-1 text-sm leading-relaxed", isDark ? "text-white/62" : "text-sa-dark/65")}>
             No card needed for the code. One redemption per user, then choose R250/month to keep Verified Pro.

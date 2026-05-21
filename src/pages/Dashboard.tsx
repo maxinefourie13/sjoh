@@ -882,7 +882,7 @@ const BillingSection = () => {
       ? `${access.trialDaysLeft} day${access.trialDaysLeft === 1 ? "" : "s"} left on trial`
       : access.isLocked
         ? "Subscribe to bring your profile back"
-        : `Use ${LAUNCH_TRIAL_CODE} for 3 days free, or subscribe for R250/month`;
+        : `Use ${LAUNCH_TRIAL_CODE} for 30 days free, or subscribe for R250/month`;
 
   const switchToAnnual = async () => {
     if (!liveSub?.tier || (liveSub.tier !== "basic" && liveSub.tier !== "verified_pro")) return;

@@ -171,6 +171,7 @@ Deno.serve(async (req) => {
       user_id: userId || null,
       payfast_pf_payment_id: pfPaymentId,
       payfast_payment_status: paymentStatus,
+      provider: 'payfast',
       kind,
       amount_cents: Math.round(parseFloat(amount) * 100),
       currency: 'ZAR',

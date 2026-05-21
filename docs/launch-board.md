@@ -16,21 +16,22 @@ Status key:
 | `[DONE]` | GitHub repo | Repo renamed to `sjoh`, latest code pushed to `main` | Codex |
 | `[DONE]` | Local app health | Lint, build, and unit tests pass | Codex |
 | `[DONE]` | Supabase project | New project is linked, migrations are applied, functions are deployed | Codex |
-| `[CHECKING]` | Supabase secrets | Live PayFast, OpenAI, email/notification keys are added to Supabase | Maxine + Codex |
+| `[DONE]` | Supabase secrets | Live PayFast, OpenAI, email/notification keys are added to Supabase | Maxine + Codex |
 | `[DONE]` | Security audit | High-severity npm audit findings are resolved without force-upgrading launch tooling | Codex |
 | `[CHECKING]` | PayFast | PayFast live account is verified and live merchant credentials/ITN are configured | Maxine + Codex |
-| `[DONE]` | Trial code | `SORTED3` gives a one-time 3-day Verified Pro trial without a card | Codex |
+| `[DONE]` | Trial code | `SORTED30` gives a one-time 30-day Verified Pro trial without a card | Codex |
 | `[DONE]` | Production deploy | `sjoh.co.za` is redeployed with the new Supabase env vars | Maxine + Codex/Lovable |
 | `[CHECKING]` | Customer journey | Customer can search, post a job, and receive quote/invoice emails | Codex |
 | `[CHECKING]` | Business journey | Business can sign up, pay, create profile, verify ID, browse opportunities, quote, and invoice | Codex |
-| `[CHECKING]` | Legal/trust copy | Privacy, terms, cancellation, ID-check language are present and clear | Codex |
+| `[DONE]` | Legal/trust copy | Privacy, terms, cancellation, acceptable use, delivery, refund, and ID-check language are present and clear | Codex |
 | `[YOU]` | Support channel | Launch users can reach a real support email or WhatsApp when stuck | Maxine |
 
 ## Current Launch Blockers
 
 1. PayFast live account approval still needs to be confirmed before paid business signup can be fully live-tested.
 2. The PayFast ITN URL should be checked in the PayFast dashboard: `https://omhjcalrfhswjmanriqv.supabase.co/functions/v1/payfast-webhook`.
-3. No additional code blockers are known right now; keep testing the live customer and business journeys on production.
+3. Redeploy `sjoh.co.za` after the latest policy/sitemap/webhook changes are pushed.
+4. No additional code blockers are known right now; keep testing the live customer and business journeys on production.
 
 ## Latest Overnight Checks
 
@@ -38,9 +39,12 @@ Status key:
 - Local production build, lint, unit tests, route smoke tests, and mobile pricing overflow checks pass.
 - `npm audit --audit-level=high` passes. Remaining audit items require force upgrades to dev tooling and are not launch blockers.
 - Local build points at production Supabase `omhjcalrfhswjmanriqv`.
-- Live `sjoh.co.za` now points at production Supabase `omhjcalrfhswjmanriqv`, includes `SORTED3`, and uses `payfast-checkout`.
+- Live `sjoh.co.za` now points at production Supabase `omhjcalrfhswjmanriqv`, includes `SORTED30`, and uses `payfast-checkout`.
 - PayFast checkout/webhook is now the active payment path; the old Paystack path is being removed from launch-critical setup.
-- Trial behavior has moved to `SORTED3`: no automatic 30-day Basic trial, one 3-day Verified Pro trial per user, then R250/month to continue.
+- Trial behavior has moved to `SORTED30`: no automatic 30-day Basic trial, one 30-day Verified Pro trial per user, then R250/month to continue.
+- Policy pages are now present for PayFast/compliance review: `/acceptable-use`, `/shipping`, and `/returns`.
+- `sitemap.xml` includes the policy pages and both business landing aliases (`/for-businesses/creative` and `/for-businesses/creatives`).
+- PayFast webhook events now explicitly record `provider = 'payfast'`, and the production database default has been corrected from the old Paystack default.
 
 ## Launch Nice-To-Haves
 

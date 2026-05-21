@@ -80,7 +80,7 @@ export const payments = {
 
     toast({
       title: `${redemption.code} unlocked`,
-      description: "Your 3-day Verified Pro trial is live. Go build that profile properly.",
+      description: "Your 30-day Verified Pro trial is live. Go build that profile properly.",
     });
 
     return redemption as TrialCodeRedemption;

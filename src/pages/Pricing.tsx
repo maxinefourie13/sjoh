@@ -1,5 +1,19 @@
-import { useNavigate } from "react-router-dom";
-import { Check, CreditCard, Sparkles, Zap } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  ArrowRight,
+  BadgeCheck,
+  BriefcaseBusiness,
+  Check,
+  CreditCard,
+  FileText,
+  HandCoins,
+  Images,
+  MapPin,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  Star,
+} from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { SeoHead } from "@/components/SeoHead";
 import { LAUNCH_TRIAL_CODE, TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
@@ -9,61 +23,83 @@ import { SJOH_TIERS, formatRand } from "@/lib/mockData";
 import { payments } from "@/lib/payments";
 import { useAuth } from "@/hooks/useAuth";
 
-const FAQS = [
+const stack = [
   {
-    q: "How does the launch trial code work?",
-    a: `Use ${LAUNCH_TRIAL_CODE} after signup to unlock a 3-day Verified Pro trial. No card is needed for the code, and it can only be redeemed once per user. After that, choose R250/month to keep your Verified Pro access.`,
+    icon: Search,
+    title: "Verified public profile",
+    value: "Profile setup value",
+    body: "A searchable business page with your services, areas, photos, badges, reviews and contact details in one place.",
+    color: "var(--sa-gold)",
   },
   {
-    q: "Do you take commission on the work I do?",
-    a: "Never. As a Founding Business, your 0% commission lock-in means clients pay you directly and Sjoh does not take a cut of your invoice, quote, or payout.",
+    icon: FileText,
+    title: "Quote and invoice toolkit",
+    value: "Admin toolkit",
+    body: "Send professional quotes and invoices that make you look organised before the customer says yes.",
+    color: "var(--sa-peri)",
   },
   {
-    q: "What does the Coral Checkmark actually mean?",
-    a: "It means Sjoh has checked your uploaded ID document against the name and SA ID number you submitted. Customers know there is a real person behind the profile.",
+    icon: Star,
+    title: "Review and trust engine",
+    value: "Reputation builder",
+    body: "Collect proof of good work so customers can choose you for more than just the cheapest price.",
+    color: "var(--sa-pink)",
   },
   {
-    q: "Why do I need to verify my ID to get the Checkmark?",
-    a: "Because customers are letting strangers into their homes. The Checkmark tells them your ID document was checked by Sjoh, not just self-registered, and it sets you apart from unverified competitors.",
-  },
-  {
-    q: "What is the Eish! Urgent Boost?",
-    a: "Posting a job is always free for customers. If it's a real emergency — burst geyser, locked out, no power — they can boost their job to Eish! Urgent for R50. It pins to the top of the feed for 72 hours, gets a flashing coral border, and pings every Verified Pro within 10km on WhatsApp.",
-  },
-  {
-    q: "What is Sjoh's Law?",
-    a: "Three strikes and you're out. Flake on a job, do dangerous work, or refuse to pay for completed work — that's a strike. Three strikes and your ID is permanently banned from the platform.",
-  },
-  {
-    q: "Can I cancel any time?",
-    a: "Yes. Cancel from your dashboard whenever you want. No contracts, no cancellation fees, no hard feelings. Your listing stays active until the end of your billing period.",
-  },
-  {
-    q: "I already have a good reputation. Why do I need Sjoh?",
-    a: "Because your reputation is probably stuck in your phone, WhatsApp chats, and word of mouth. Sjoh gives it a proper home: a verified profile, photos, reviews, quote tools, invoices, and trust signals customers can see before they call.",
+    icon: HandCoins,
+    title: "Founding 0% commission bonus",
+    value: "Locked in early",
+    body: "Clients pay you directly for the job. Sjoh does not take a cut of your quote, invoice or payout.",
+    color: "var(--sa-green)",
   },
 ];
 
-const OFFER_STACK = [
+const included = [
+  "Public business profile customers can actually find",
+  "Service categories, work areas and portfolio photos",
+  "Sjoh ID Check and trust badge flow",
+  "Customer job requests and opportunity browsing",
+  "Professional quotes and invoices",
+  "Review collection and reputation signals",
+  "PayFast subscription billing",
+  "Founding-business 0% commission bonus",
+];
+
+const proofPoints = [
+  { label: "Monthly plan", value: "R250", color: "var(--sa-gold)" },
+  { label: "Commission on jobs", value: "0%", color: "var(--sa-green)" },
+  { label: "Trial code", value: LAUNCH_TRIAL_CODE, color: "var(--sa-peri)" },
+  { label: "Founding spots", value: "500", color: "var(--sa-pink)" },
+];
+
+const faqs = [
   {
-    name: "The Sjoh Verified Public Profile",
-    value: "Value: R1,500 setup",
-    body: "A proper local profile customers can find, with your services, photos, trust signals, reviews, and work areas in one place.",
+    q: "What am I actually paying for?",
+    a: "You are paying for your Sjoh Verified Pro access: a public profile, customer discovery, opportunity access, quotes, invoices, trust signals and review tools. The job money itself stays between you and the customer.",
   },
   {
-    name: "The Zero Middleman Quote & Invoice System",
-    value: "Value: R350/month",
-    body: "Send professional quotes and invoices without looking like a tiny WhatsApp side-hustle. Less back-and-forth, more confidence before the job starts.",
+    q: "Do I need to understand websites, SEO or ads?",
+    a: "No. That is the point. Sjoh gives your business a proper online presence without asking you to build a website, run Google Ads or become a social media person.",
   },
   {
-    name: "The Local Trust Builder",
-    value: "Value: R750/month",
-    body: "Collect reviews, build proof, and show customers why your work is worth choosing over the cheaper mampara with a louder Facebook page.",
+    q: "How does the launch trial code work?",
+    a: `Use ${LAUNCH_TRIAL_CODE} after signup to unlock a one-time 30-day Verified Pro trial. No card is needed for the code. After that, choose R250/month to keep Verified Pro access.`,
   },
   {
-    name: "Lifetime 0% Commission Lock-In",
-    value: "Value: Priceless",
-    body: "Founding Businesses keep 100% of the job money. Quote the work, do the work, get paid directly.",
+    q: "Do you take commission on the work I do?",
+    a: "No. Customers pay you directly for the work. Sjoh does not receive, hold, split or disburse the money for the underlying service job.",
+  },
+  {
+    q: "Why is this limited to founding businesses?",
+    a: "Sjoh is opening category by category and area by area. We are limiting the first wave so early businesses have room to stand out while customer demand grows.",
+  },
+  {
+    q: "What does the Sjoh ID Check mean?",
+    a: "It means Sjoh has checked the uploaded ID document against the name and SA ID number submitted. It is a platform trust check, not a government-certified identity verification or trade licence.",
+  },
+  {
+    q: "Can I cancel any time?",
+    a: "Yes. It is month-to-month. Cancel from your dashboard or contact support. Your listing remains active until the end of the paid billing period.",
   },
 ];
 
@@ -77,227 +113,328 @@ const Pricing = () => {
       navigate(`/login?next=${encodeURIComponent("/pricing")}`);
       return;
     }
+
     payments.startSubscription("verified_pro", "monthly");
   };
 
   return (
     <SiteLayout>
       <SeoHead
-        title="Sjoh Founding Member Accelerator — R250/month for service pros"
-        description="Claim the Sjoh Founding Member Accelerator: a verified public profile, quote and invoice tools, reviews, local visibility, and 0% commission lock-in for service businesses."
+        title="Sjoh pricing — R250/month for Verified Pro"
+        description="Sjoh Verified Pro is R250/month for South African service businesses: profile, quotes, invoices, reviews, local visibility and 0% commission on jobs."
         canonical="https://sjoh.co.za/pricing"
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "FAQPage",
-          mainEntity: FAQS.map((f) => ({
+          mainEntity: faqs.map((f) => ({
             "@type": "Question",
             name: f.q,
             acceptedAnswer: { "@type": "Answer", text: f.a },
           })),
         }}
       />
+
       <div className="bg-[#050505] text-white">
-      <div className="container py-16 md:py-20">
-
-        <header className="text-center max-w-3xl mx-auto mb-14">
-          <span className="text-xs font-bold uppercase tracking-widest text-sa-gold">Founding business offer</span>
-          <h1 className="font-display text-4xl md:text-6xl font-extrabold tracking-tight mt-3 text-balance">
-            The Sjoh Founding Member Accelerator.
-          </h1>
-          <p className="mt-5 text-lg text-white/68">
-            For proper South African service businesses that want local customers to find them,
-            trust them, and hire them, without building a website or becoming a social media person.
-          </p>
-        </header>
-
-        <div className="max-w-5xl mx-auto grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
-          <div className="relative bg-white text-sa-dark border-2 border-sa-gold rounded-3xl p-8 md:p-10 shadow-pop">
-            <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-sa-gold text-sa-dark text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full animate-soft-bob">
-              First 500 founding businesses
-            </span>
-
-            <div className="mt-2 mb-6">
-              <h2 className="font-display text-3xl font-bold">Local Authority Launchpad</h2>
-              <p className="text-ink-2 mt-2">
-                Get a professional online reputation, quote tools, invoice tools, customer reviews,
-                and founding-business perks in one monthly plan.
-              </p>
-            </div>
-
-            <div className="pb-7 border-b border-border">
-              <div className="flex items-end gap-1">
-                <span className="font-display text-6xl font-medium tracking-tight">
-                  {formatRand(tier.price)}
-                </span>
-                <span className="text-muted-foreground mb-2 text-base">/month</span>
+        <section className="relative overflow-hidden border-b border-white/10">
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:72px_72px]" />
+          <div className="container relative grid min-h-[calc(100vh-9rem)] items-center gap-10 py-14 md:py-20 lg:grid-cols-[1fr_0.92fr]">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-sa-gold/45 bg-sa-gold/10 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-sa-gold">
+                <Sparkles className="size-4" />
+                Founding business pricing
               </div>
-              <p className="mt-2 text-sm text-ink-2">
-                Use {LAUNCH_TRIAL_CODE} for 3 days free, or subscribe for R250/month when you are ready.
+
+              <h1 className="mt-7 max-w-5xl font-display text-5xl font-black leading-[0.92] tracking-normal text-balance md:text-7xl xl:text-8xl">
+                You do the work. We make sure local customers can find you.
+              </h1>
+
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-white/68 md:text-xl">
+                Sjoh gives South African service providers a professional online reputation, quote tools,
+                invoices and trust signals without the website building, Facebook admin or Google Ads confusion.
               </p>
-            </div>
 
-            <ul className="mt-7 space-y-3.5">
-              {[
-                "Verified public profile customers can actually find",
-                "Professional quotes and invoices",
-                "Reviews and trust signals in one place",
-                "Local category and suburb visibility",
-                "Founding-business 0% commission lock-in",
-              ].map((f) => (
-                <li key={f} className="flex items-start gap-3 text-sm">
-                  <Check className="size-4 text-sa-green mt-0.5 shrink-0" strokeWidth={3} />
-                  <span>{f}</span>
-                </li>
-              ))}
-            </ul>
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+                <Button size="xl" onClick={handleStart} className="rounded-full bg-sa-gold text-sa-dark hover:bg-sa-gold/90">
+                  Subscribe for R250/month
+                  <ArrowRight className="size-5" />
+                </Button>
+                <Button
+                  size="xl"
+                  variant="outline"
+                  asChild
+                  className="rounded-full border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+                >
+                  <Link to="/list">Try {LAUNCH_TRIAL_CODE} first</Link>
+                </Button>
+              </div>
 
-            <TrialCodeRedeemer className="mt-7" />
-
-            <div className="mt-8">
-              <Button size="lg" className="w-full text-base font-bold h-14" onClick={handleStart}>
-                Subscribe with PayFast — R250/month
-              </Button>
-            </div>
-            <p className="text-center text-xs text-muted-foreground mt-3">
-              R250/month, cancel anytime. Limited to 500 Founding Businesses. Trial code is optional.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-6 md:p-7">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-sa-pink">What you actually get</span>
-              <h2 className="mt-2 font-display text-3xl font-extrabold tracking-tight">
-                A proper business presence, not just a listing.
-              </h2>
-              <p className="mt-3 text-sm leading-relaxed text-white/62">
-                The point is not to “be in another directory.” The point is to stop being invisible
-                when a customer searches from their phone, and to look like the trusted professional
-                you already are.
-              </p>
-            </div>
-
-            {OFFER_STACK.map((item, index) => (
-              <div key={item.name} className="rounded-2xl border border-white/10 bg-white/[0.055] p-5">
-                <div className="flex items-start gap-4">
-                  <span
-                    className="grid size-10 shrink-0 place-items-center rounded-xl font-display font-black text-sa-dark"
-                    style={{
-                      background:
-                        index % 4 === 0 ? "var(--sa-gold)" :
-                        index % 4 === 1 ? "var(--sa-peri)" :
-                        index % 4 === 2 ? "var(--sa-green)" :
-                        "var(--sa-pink)",
-                    }}
-                  >
-                    {index === 0 ? "✓" : `+${index}`}
-                  </span>
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="font-display text-lg font-extrabold text-white">{item.name}</h3>
-                      <span className="rounded-full border border-white/10 bg-black/25 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white/55">
-                        {item.value}
-                      </span>
-                    </div>
-                    <p className="mt-2 text-sm leading-relaxed text-white/62">{item.body}</p>
+              <div className="mt-10 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-4">
+                {proofPoints.map((point) => (
+                  <div key={point.label} className="rounded-2xl border border-white/10 bg-white/[0.055] p-4">
+                    <p className="font-display text-2xl font-black" style={{ color: point.color }}>
+                      {point.value}
+                    </p>
+                    <p className="mt-1 text-xs font-bold uppercase tracking-[0.14em] text-white/52">
+                      {point.label}
+                    </p>
                   </div>
+                ))}
+              </div>
+            </div>
+
+            <aside className="relative">
+              <div className="rounded-[2rem] border border-white/15 bg-white/[0.06] p-4 shadow-[0_30px_100px_rgba(0,0,0,0.45)] backdrop-blur">
+                <div className="rounded-[1.5rem] bg-[#101010] p-6 md:p-8">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-[0.2em] text-sa-peri">Verified Pro</p>
+                      <h2 className="mt-2 font-display text-3xl font-black">Local Authority Launchpad</h2>
+                    </div>
+                    <span className="rounded-full bg-sa-green px-3 py-1 text-xs font-black text-white">
+                      0% cut
+                    </span>
+                  </div>
+
+                  <div className="mt-7 rounded-3xl bg-white text-sa-dark p-6">
+                    <div className="flex items-end gap-2">
+                      <span className="font-display text-6xl font-black tracking-tight">
+                        {formatRand(tier.price)}
+                      </span>
+                      <span className="mb-2 text-sm font-semibold text-ink-2">/month</span>
+                    </div>
+                    <p className="mt-2 text-sm leading-relaxed text-ink-2">
+                      Month-to-month access. No commission on jobs. Customers pay you directly.
+                    </p>
+                  </div>
+
+                  <ul className="mt-6 space-y-3">
+                    {included.slice(0, 6).map((item) => (
+                      <li key={item} className="flex items-start gap-3 text-sm text-white/78">
+                        <Check className="mt-0.5 size-4 shrink-0 text-sa-gold" strokeWidth={3} />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <TrialCodeRedeemer className="mt-7" compact />
+
+                  <Button size="lg" className="mt-7 h-14 w-full rounded-full text-base font-black" onClick={handleStart}>
+                    Start with PayFast
+                  </Button>
+
+                  <p className="mt-3 text-center text-xs text-white/45">
+                    Use {LAUNCH_TRIAL_CODE} once for 30 days free. No card needed for the code.
+                  </p>
                 </div>
               </div>
-            ))}
+            </aside>
           </div>
-        </div>
+        </section>
 
-        <div className="max-w-5xl mx-auto mt-10 grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border-2 border-sa-green/30 bg-sa-green/15 p-6 md:p-8 flex items-start gap-5 hover:border-sa-green hover:shadow-pop transition-all duration-300">
-            <span className="size-14 rounded-xl bg-sa-green text-white flex items-center justify-center shrink-0 font-display font-extrabold text-xl animate-pulse-ring">
-              0%
-            </span>
-            <div>
-              <p className="font-display font-extrabold tracking-tight text-lg text-white">
-                Lifetime 0% commission lock-in.
-              </p>
-              <p className="text-white/62 mt-2 text-sm md:text-base">
-                Founding Businesses keep every cent of the work they win through Sjoh. Clients pay you directly.
-                We do not take a cut of your invoice, quote, or payout.
-              </p>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border-2 border-sa-gold/35 bg-sa-gold/12 p-6 md:p-8 flex items-start gap-5">
-            <span className="size-14 rounded-xl bg-sa-gold text-sa-dark flex items-center justify-center shrink-0 font-display font-extrabold text-xl">
-              500
-            </span>
-            <div>
-              <p className="font-display font-extrabold tracking-tight text-lg text-white">
-                Honest scarcity: only 500 founding spots.
-              </p>
-              <p className="text-white/62 mt-2 text-sm md:text-base">
-                We are limiting early access so founding businesses have room to stand out while customer demand grows.
-                When a category or suburb fills up, the next business waits.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <section className="mt-10 max-w-5xl mx-auto rounded-3xl p-8 md:p-10 bg-[#101010] border border-white/10 text-white">
-          <div className="flex flex-col gap-5 md:flex-row md:items-start">
-            <span className="size-12 rounded-xl bg-sa-peri text-white flex items-center justify-center shrink-0">
-              <CreditCard className="size-6" strokeWidth={2.5} />
-            </span>
-            <div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-sa-gold">Simple start</span>
-              <h2 className="font-display text-2xl md:text-3xl font-extrabold tracking-tight mt-1">
-                Try Verified Pro for 3 days, then keep going for R250/month.
+        <section className="border-b border-white/10 py-16 md:py-20">
+          <div className="container">
+            <div className="max-w-3xl">
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-sa-pink">The real offer</p>
+              <h2 className="mt-4 font-display text-4xl font-black leading-none md:text-6xl">
+                Not a listing. A working business presence.
               </h2>
-              <p className="mt-3 text-white/68 text-sm md:text-base leading-relaxed">
-                Redeem {LAUNCH_TRIAL_CODE} once per user to build your profile, add proof, test the quote tools,
-                and see how Sjoh works. No card is needed for the trial code.
+              <p className="mt-5 text-lg leading-8 text-white/64">
+                Your skill might already be solid. The problem is that customers need to see proof before they call.
+                Sjoh turns that proof into a profile, a quote trail and a cleaner way to get hired.
               </p>
+            </div>
+
+            <div className="mt-12 grid gap-4 lg:grid-cols-4">
+              {stack.map((item) => {
+                const Icon = item.icon;
+
+                return (
+                  <div key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.045] p-6 transition hover:-translate-y-1 hover:bg-white/[0.07]">
+                    <span
+                      className="flex size-12 items-center justify-center rounded-2xl text-sa-dark"
+                      style={{ backgroundColor: item.color }}
+                    >
+                      <Icon className="size-6" strokeWidth={2.5} />
+                    </span>
+                    <p className="mt-5 text-[10px] font-black uppercase tracking-[0.18em] text-white/42">
+                      {item.value}
+                    </p>
+                    <h3 className="mt-2 font-display text-2xl font-black leading-tight">{item.title}</h3>
+                    <p className="mt-3 text-sm leading-6 text-white/62">{item.body}</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
 
-        <div className="mt-14 max-w-3xl mx-auto grid sm:grid-cols-3 gap-4 text-center">
-          {[
-            { icon: <Zap className="size-5" />, title: "No hidden fees", body: "R250/month is the plan. No listing fee, no per-quote charge, no surprise platform cut." },
-            { icon: <Check className="size-5" />, title: "Cancel anytime", body: "Month-to-month. No contracts. Stop whenever you like — no penalty." },
-            { icon: <Sparkles className="size-5" />, title: "Built for SA", body: "ZAR pricing, SA ID verification, WhatsApp-first comms. Made here, for here." },
-          ].map((s) => (
-            <div key={s.title} className="bg-white/[0.06] border border-white/10 rounded-xl p-5">
-              <span className="size-9 rounded-lg bg-sa-peri/15 text-sa-peri flex items-center justify-center mx-auto mb-3">
-                {s.icon}
-              </span>
-              <p className="font-semibold text-sm text-white">{s.title}</p>
-              <p className="text-xs text-white/62 mt-1.5 leading-relaxed">{s.body}</p>
+        <section className="border-b border-white/10 py-16 md:py-20">
+          <div className="container grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+            <div className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-7 md:p-9">
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-sa-gold">Why founding pricing matters</p>
+              <h2 className="mt-4 font-display text-4xl font-black leading-none md:text-5xl">
+                We are keeping the first wave tight on purpose.
+              </h2>
+              <p className="mt-5 text-base leading-7 text-white/64">
+                The goal is not to flood every category with random listings. Sjoh is opening carefully so early
+                businesses can build visibility, reviews and trust while the marketplace fills up.
+              </p>
+              <div className="mt-7 rounded-3xl border border-sa-gold/40 bg-sa-gold/10 p-5">
+                <p className="font-display text-3xl font-black text-sa-gold">500 founding businesses</p>
+                <p className="mt-2 text-sm leading-6 text-white/68">
+                  Once a category or area is full, new businesses may need to wait while we balance supply and demand.
+                </p>
+              </div>
             </div>
-          ))}
-        </div>
 
-        <div className="mt-24 max-w-2xl mx-auto">
-          <h2 className="font-display text-3xl font-medium tracking-tight text-center mb-10">
-            Frequently asked
-          </h2>
-          <Accordion type="single" collapsible className="bg-white/[0.06] border border-white/10 rounded-2xl overflow-hidden">
-            {FAQS.map((f, i) => (
-              <AccordionItem key={i} value={`f-${i}`} className="border-b border-white/10 last:border-0 px-5">
-                <AccordionTrigger className="text-left font-semibold hover:no-underline py-5 text-white">
-                  {f.q}
-                </AccordionTrigger>
-                <AccordionContent className="text-white/62 pb-5">{f.a}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                { icon: BriefcaseBusiness, title: "For established pros", body: "You already do good work. Sjoh helps people find it and trust it before they call.", color: "var(--sa-green)" },
+                { icon: Images, title: "For visual work", body: "Show before-and-after photos, event galleries, project images and packages in one place.", color: "var(--sa-pink)" },
+                { icon: MapPin, title: "For local demand", body: "Tie your profile to the areas you actually serve, instead of shouting into the whole internet.", color: "var(--sa-peri)" },
+                { icon: ShieldCheck, title: "For trust", body: "Sjoh ID Check, reviews and profile details help serious pros separate from fly-by-night operators.", color: "var(--sa-gold)" },
+              ].map((item) => {
+                const Icon = item.icon;
 
-        <div className="mt-20 text-center">
-          <p className="text-white/60 text-sm mb-4">Ready to stop being a secret?</p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center">
-            <Button size="lg" className="h-14 w-full max-w-sm px-4 text-sm font-bold sm:w-auto sm:px-10 sm:text-base" onClick={handleStart}>
-              Subscribe with PayFast
-            </Button>
+                return (
+                  <div key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.045] p-6">
+                    <span className="flex size-11 items-center justify-center rounded-2xl text-sa-dark" style={{ backgroundColor: item.color }}>
+                      <Icon className="size-5" strokeWidth={2.5} />
+                    </span>
+                    <h3 className="mt-5 font-display text-2xl font-black">{item.title}</h3>
+                    <p className="mt-3 text-sm leading-6 text-white/62">{item.body}</p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        </section>
 
-      </div>
+        <section className="border-b border-white/10 py-16 md:py-20">
+          <div className="container grid gap-8 lg:grid-cols-[1fr_0.9fr] lg:items-center">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-sa-peri">What it looks like in practice</p>
+              <h2 className="mt-4 font-display text-4xl font-black leading-none md:text-6xl">
+                Quote properly. Invoice clearly. Keep the whole job.
+              </h2>
+              <p className="mt-5 max-w-2xl text-lg leading-8 text-white/64">
+                Sjoh does not need to touch the customer’s job payment. The platform helps you look professional,
+                document the work and win trust. The money for the service stays direct between you and the client.
+              </p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Button size="lg" onClick={handleStart} className="rounded-full bg-sa-gold text-sa-dark hover:bg-sa-gold/90">
+                  Get Verified Pro
+                  <ArrowRight className="size-5" />
+                </Button>
+                <Button size="lg" variant="outline" asChild className="rounded-full border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white">
+                  <Link to="/for-businesses">See business landing page</Link>
+                </Button>
+              </div>
+            </div>
+
+            <div className="rounded-[2rem] border border-white/12 bg-white/[0.06] p-4">
+              <div className="rounded-[1.5rem] bg-white p-5 text-sa-dark">
+                <div className="flex items-start justify-between gap-4 border-b border-border pb-5">
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">Quote preview</p>
+                    <h3 className="mt-1 font-display text-2xl font-black">Gate motor repair</h3>
+                    <p className="text-sm text-ink-2">Northcliff customer</p>
+                  </div>
+                  <div className="rounded-2xl bg-sa-gold px-4 py-3 text-right">
+                    <p className="text-[10px] font-black uppercase tracking-wider">Total</p>
+                    <p className="font-display text-2xl font-black">R3 500</p>
+                  </div>
+                </div>
+
+                <div className="space-y-3 py-5">
+                  {[
+                    ["Call-out and inspection", "R650"],
+                    ["Motor repair and parts", "R2 350"],
+                    ["Testing and handover", "R500"],
+                  ].map(([label, price]) => (
+                    <div key={label} className="flex items-center justify-between rounded-2xl bg-[#F7F8FC] px-4 py-3 text-sm">
+                      <span className="font-semibold">{label}</span>
+                      <span className="font-display font-black">{price}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-2xl bg-sa-green/10 p-4">
+                    <p className="text-[10px] font-black uppercase tracking-wider text-sa-green">Sjoh commission</p>
+                    <p className="mt-1 font-display text-3xl font-black">R0</p>
+                  </div>
+                  <div className="rounded-2xl bg-sa-peri/10 p-4">
+                    <p className="text-[10px] font-black uppercase tracking-wider text-sa-peri">Client pays</p>
+                    <p className="mt-1 font-display text-3xl font-black">You</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-16 md:py-20">
+          <div className="container grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-sa-gold">Simple start</p>
+              <h2 className="mt-4 font-display text-4xl font-black leading-none md:text-5xl">
+                Try it for 30 days. Then decide if you want to stay.
+              </h2>
+              <p className="mt-5 text-base leading-7 text-white/64">
+                Use the trial code once per user, build your profile, test the tools and see the flow.
+                The paid plan is R250/month through PayFast when you are ready to keep Verified Pro.
+              </p>
+              <div className="mt-7 rounded-3xl border border-white/10 bg-white/[0.045] p-5">
+                <div className="flex items-start gap-4">
+                  <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-sa-peri text-white">
+                    <CreditCard className="size-6" strokeWidth={2.5} />
+                  </span>
+                  <div>
+                    <p className="font-display text-xl font-black">No card for the trial code.</p>
+                    <p className="mt-1 text-sm leading-6 text-white/62">
+                      {LAUNCH_TRIAL_CODE} is a no-card trial. PayFast is only used when you subscribe to keep Verified Pro.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <Accordion type="single" collapsible className="overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.045]">
+                {faqs.map((f, i) => (
+                  <AccordionItem key={f.q} value={`faq-${i}`} className="border-b border-white/10 px-5 last:border-0">
+                    <AccordionTrigger className="py-5 text-left font-bold text-white hover:no-underline">
+                      {f.q}
+                    </AccordionTrigger>
+                    <AccordionContent className="pb-5 leading-7 text-white/62">{f.a}</AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+          </div>
+
+          <div className="container mt-14">
+            <div className="rounded-[2rem] border border-white/10 bg-white/[0.06] p-6 text-center md:p-10">
+              <BadgeCheck className="mx-auto size-10 text-sa-gold" />
+              <h2 className="mx-auto mt-4 max-w-3xl font-display text-4xl font-black leading-none md:text-6xl">
+                Ready to stop being the best-kept secret in your suburb?
+              </h2>
+              <p className="mx-auto mt-5 max-w-2xl text-white/64">
+                Claim your founding spot, build your profile, and start looking like the pro you already are.
+              </p>
+              <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+                <Button size="xl" onClick={handleStart} className="rounded-full bg-sa-gold text-sa-dark hover:bg-sa-gold/90">
+                  Subscribe for R250/month
+                  <ArrowRight className="size-5" />
+                </Button>
+                <Button size="xl" variant="outline" asChild className="rounded-full border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white">
+                  <Link to="/list">Create profile first</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </SiteLayout>
   );

@@ -43,6 +43,9 @@ import DisputesAdmin from "./pages/admin/Disputes.tsx";
 import AdminPreview from "./pages/admin/Preview.tsx";
 import Terms from "./pages/Terms.tsx";
 import Privacy from "./pages/Privacy.tsx";
+import AcceptableUse from "./pages/AcceptableUse.tsx";
+import Shipping from "./pages/Shipping.tsx";
+import Returns from "./pages/Returns.tsx";
 
 const queryClient = new QueryClient();
 
@@ -101,6 +104,9 @@ const App = () => {
               <Route path="/invoice/:token" element={<PublicInvoice />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
+              <Route path="/acceptable-use" element={<AcceptableUse />} />
+              <Route path="/shipping" element={<Shipping />} />
+              <Route path="/returns" element={<Returns />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -36,6 +36,11 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://sjoh.co.za/for-businesses/creative</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://sjoh.co.za/for-businesses/creatives</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -67,6 +72,21 @@
   </url>
   <url>
     <loc>https://sjoh.co.za/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://sjoh.co.za/acceptable-use</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://sjoh.co.za/shipping</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://sjoh.co.za/returns</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

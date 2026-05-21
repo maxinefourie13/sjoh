@@ -79,6 +79,7 @@ const STATIC: Entry[] = [
   { path: "/for-businesses", changefreq: "weekly", priority: "0.9" },
   { path: "/for-businesses/trades", changefreq: "weekly", priority: "0.9" },
   { path: "/for-businesses/home-care", changefreq: "weekly", priority: "0.9" },
+  { path: "/for-businesses/creative", changefreq: "weekly", priority: "0.9" },
   { path: "/for-businesses/creatives", changefreq: "weekly", priority: "0.9" },
   { path: "/for-businesses/side-hustle", changefreq: "weekly", priority: "0.9" },
   { path: "/for-businesses/customer", changefreq: "weekly", priority: "0.8" },
@@ -86,6 +87,9 @@ const STATIC: Entry[] = [
   { path: "/list", changefreq: "monthly", priority: "0.7" },
   { path: "/terms", changefreq: "yearly", priority: "0.3" },
   { path: "/privacy", changefreq: "yearly", priority: "0.3" },
+  { path: "/acceptable-use", changefreq: "yearly", priority: "0.3" },
+  { path: "/shipping", changefreq: "yearly", priority: "0.3" },
+  { path: "/returns", changefreq: "yearly", priority: "0.3" },
 ];
 entries.push(...STATIC);
 

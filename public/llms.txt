@@ -10,7 +10,7 @@ Sjoh connects South African customers directly with verified local pros. Custome
 - [Directory](/directory): Browse vetted South African service providers by category and province.
 - [Post a job](/requests): Customers post a job and receive direct quotes.
 - [Leads](/leads): Pros browse open jobs and quote directly.
-- [Pricing](/pricing): R250/month Verified Pro, 30-day card-required free trial, 0% commission, FAQ.
+- [Pricing](/pricing): R250/month Verified Pro, SORTED30 no-card 30-day trial code, 0% commission, FAQ.
 - [List your business](/list): How pros sign up and get verified.
 - [Terms](/terms): Terms of service.
 - [Privacy](/privacy): POPIA-compliant privacy policy.

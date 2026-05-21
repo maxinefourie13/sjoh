@@ -408,7 +408,7 @@ const ListBusiness = () => {
               <div>
                 <h2 className="font-display text-2xl font-semibold">Review and confirm</h2>
                 <p className="text-sm text-ink-2 mt-1">
-                  Founding businesses can use {LAUNCH_TRIAL_CODE} once for a 3-day Verified Pro trial. No card needed for the code.
+                  Founding businesses can use {LAUNCH_TRIAL_CODE} once for a 30-day Verified Pro trial. No card needed for the code.
                 </p>
               </div>
               <div className="rounded-xl border border-border p-5 bg-secondary/40 space-y-3">

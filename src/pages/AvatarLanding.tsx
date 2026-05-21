@@ -183,6 +183,47 @@ export const AVATAR_LANDING_PAGES: Record<string, AvatarLandingConfig> = {
     },
     ...businessCommon,
   },
+  creative: {
+    slug: "creative",
+    audience: "Creative & Digital Freelancers",
+    seoTitle: "Sjoh for photographers, designers and event pros — get found locally",
+    seoDescription:
+      "A founding member landing page for South African creatives who want local clients, portfolio visibility, professional quotes and invoices.",
+    eyebrow: "Exclusive launch",
+    headline:
+      "Your work is good. Sjoh helps local clients see it, trust it and book it.",
+    subhead:
+      "Create a local portfolio presence that shows your style, packages, reviews and quote-ready professionalism.",
+    agitationTitle: "A great portfolio is useless if local clients never see it.",
+    agitation:
+      "You can be brilliant and still lose work to someone with better online proof. Sjoh gives South African creatives a clean place to show their work, explain their services and turn interest into a proper quote.",
+    offerTitle: "Your R250/month local portfolio system",
+    offerIntro:
+      "A visual profile, local discovery, quote tools and invoices that help you look polished before the client says yes.",
+    bullets: [
+      { title: "Portfolio-first profile", body: "Put your best visuals, packages and reviews in front of local buyers." },
+      { title: "Professional quoting", body: "Send itemised quotes for shoots, design packages, event work or digital projects." },
+      { title: "Founding bonus", body: "Quote the work, deliver the work and keep the full amount. Sjoh does not take commission." },
+    ],
+    scarcity:
+      "Founding creative categories are opening area by area, so early pros get more room to stand out.",
+    cta: "Claim my creative market",
+    image: heroImage,
+    accent: "var(--sa-pink)",
+    quoteDemo: {
+      businessName: "Langa Studio",
+      clientName: "Cape Bloom Events",
+      quoteTitle: "Event photography package",
+      quoteTotal: "R 7,800",
+      invoiceTotal: "R 7,800",
+      lineItems: [
+        ["4-hour event coverage", "R 4,500"],
+        ["Edited gallery delivery", "R 2,300"],
+        ["Travel and backup archive", "R 1,000"],
+      ],
+    },
+    ...businessCommon,
+  },
   "side-hustle": {
     slug: "side-hustle",
     audience: "Side-Hustlers",

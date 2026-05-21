@@ -116,7 +116,7 @@ const BusinessLanding = () => {
                 Sjoh gives proper service businesses a professional online reputation without the
                 website building, Facebook posting, local SEO homework, or Google Ads confusion.
                 Get listed early for <strong className="text-white">R250/month</strong> and claim
-                visibility while your category is still opening up. Use <strong className="text-white">{LAUNCH_TRIAL_CODE}</strong> for 3 days free.
+                visibility while your category is still opening up. Use <strong className="text-white">{LAUNCH_TRIAL_CODE}</strong> for 30 days free.
               </p>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <Button size="xl" asChild className="rounded-full bg-sa-gold text-sa-dark hover:bg-sa-gold/90">
