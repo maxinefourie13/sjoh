@@ -99,6 +99,10 @@ Optional but useful before a bigger launch:
   - `VITE_SUPABASE_PUBLISHABLE_KEY=<the publishable key from the local .env>`
   - Optional: `VITE_ONESIGNAL_APP_ID=<your OneSignal app id>`
 - Deploy the latest build to `sjoh.co.za`.
+- Verify the live deploy picked up the latest bundle:
+  ```bash
+  npm run check:production
+  ```
 - Confirm:
   - `https://sjoh.co.za/`
   - `https://sjoh.co.za/for-businesses`

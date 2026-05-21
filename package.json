@@ -11,6 +11,7 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
+    "check:production": "tsx scripts/check-production-launch.ts",
     "test": "vitest run",
     "hermes:worker": "tsx workers/hermes/index.ts",
     "hermes:once": "tsx workers/hermes/index.ts --once",
