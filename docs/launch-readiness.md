@@ -98,8 +98,8 @@ Optional but useful before a bigger launch:
   - `VITE_SUPABASE_URL=https://omhjcalrfhswjmanriqv.supabase.co`
   - `VITE_SUPABASE_PUBLISHABLE_KEY=<the publishable key from the local .env>`
   - Optional: `VITE_ONESIGNAL_APP_ID=<your OneSignal app id>`
-- Deploy the latest build to `sjoh.co.za`.
-- Verify the live deploy picked up the latest bundle:
+- The latest GitHub `main` build has been deployed to `sjoh.co.za` through Lovable.
+- Verify the live deploy picked up the latest bundle whenever a new launch change is pushed:
   ```bash
   npm run check:production
   ```
@@ -136,7 +136,7 @@ Optional but useful before a bigger launch:
 - Privacy policy must continue to mention uploaded ID documents and document processing.
 - Terms should make clear that Sjoh ID Check is a platform trust check, not a government-certified identity verification.
 - ID documents must stay in the private `id-verification-documents` bucket.
-- Policy pages are live-code ready and should be deployed with the next production publish:
+- Policy pages are live:
   - `/acceptable-use`
   - `/shipping`
   - `/returns`
