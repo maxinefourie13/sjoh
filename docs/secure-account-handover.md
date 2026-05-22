@@ -22,9 +22,12 @@ Do not store passwords, OTP backup codes, private keys, service-role keys, PayFa
 
 ## Cloudflare
 
-- Cloudflare account email:
+- Cloudflare account email: `sjohforwarding@gmail.com`
 - Cloudflare dashboard: `https://dash.cloudflare.com/`
 - Pages project name: `sjoh`
+- Cloudflare account ID: `7356313895a62a1f442cb17b7e4483bb`
+- Default Pages URL: `https://sjoh.pages.dev/`
+- First deployment preview: `https://103d886f.sjoh.pages.dev/`
 - Production branch: `main`
 - Build command: `npm ci && npm run build`
 - Output directory: `dist`
@@ -128,4 +131,3 @@ Important routes:
 - If Cloudflare hosting fails during launch, restore the previous Lovable DNS records.
 - Do not roll back the Supabase database unless a database migration is confirmed as the cause.
 - Keep a note here of the last known-good production commit:
-

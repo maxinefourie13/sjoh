@@ -31,7 +31,8 @@ Status key:
 
 1. PayFast live account approval still needs to be confirmed before paid business signup can be fully live-tested.
 2. The PayFast ITN URL should be checked in the PayFast dashboard: `https://omhjcalrfhswjmanriqv.supabase.co/functions/v1/payfast-webhook`.
-3. No additional code blockers are known right now; keep testing the live customer and business journeys on production.
+3. Cloudflare Pages is deployed at `https://103d886f.sjoh.pages.dev/`; custom domain/DNS cutover is still pending.
+4. No additional code blockers are known right now; keep testing the live customer and business journeys on production.
 
 ## Latest Overnight Checks
 

@@ -94,6 +94,11 @@ Optional but useful before a bigger launch:
 
 - Push the latest code to GitHub.
 - Current migration plan: move the frontend from Lovable to Cloudflare Pages while keeping Supabase as the backend.
+- Cloudflare Pages project has been created:
+  - Account: `sjohforwarding@gmail.com`
+  - Project: `sjoh`
+  - Default domain: `https://sjoh.pages.dev/`
+  - First deployment preview: `https://103d886f.sjoh.pages.dev/`
 - Cloudflare Pages settings:
   - Project name: `sjoh`
   - Production branch: `main`

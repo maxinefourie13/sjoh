@@ -6,6 +6,11 @@ Goal: move the public Sjoh frontend off Lovable hosting while keeping the existi
 
 - Frontend host: Cloudflare Pages
 - Production domain: `sjoh.co.za`
+- Cloudflare account: `sjohforwarding@gmail.com`
+- Cloudflare account ID: `7356313895a62a1f442cb17b7e4483bb`
+- Pages project: `sjoh`
+- Pages default domain: `https://sjoh.pages.dev/`
+- First deployment preview: `https://103d886f.sjoh.pages.dev/`
 - Backend/auth/storage/functions: Supabase project `omhjcalrfhswjmanriqv`
 - Build command: `npm ci && npm run build`
 - Build output directory: `dist`
@@ -72,6 +77,8 @@ SITE_URL=https://sjoh.co.za npm run check:production
    - `/requests`
    - `/directory`
    - `/sitemap.xml`
+
+Status: the Pages project and first deployment have been created. Custom domain/DNS cutover is still pending.
 
 ## Rollback Plan
 
