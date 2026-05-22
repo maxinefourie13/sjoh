@@ -21,6 +21,7 @@ Status key:
 | `[CHECKING]` | PayFast | PayFast live account is verified and live merchant credentials/ITN are configured | Maxine + Codex |
 | `[DONE]` | Trial code | `SORTED30` gives a one-time 30-day Verified Pro trial without a card | Codex |
 | `[DONE]` | Production deploy | `sjoh.co.za` is redeployed with the latest GitHub `main` build | Maxine + Codex/Lovable |
+| `[CHECKING]` | Hosting migration | Move frontend hosting from Lovable to Cloudflare Pages while keeping Supabase Free | Maxine + Codex |
 | `[CHECKING]` | Customer journey | Customer can search, post a job, and receive quote/invoice emails | Codex |
 | `[CHECKING]` | Business journey | Business can sign up, pay, create profile, verify ID, browse opportunities, quote, and invoice | Codex |
 | `[DONE]` | Legal/trust copy | Privacy, terms, cancellation, acceptable use, delivery, refund, and ID-check language are present and clear | Codex |

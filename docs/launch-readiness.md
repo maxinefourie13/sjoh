@@ -93,12 +93,19 @@ Optional but useful before a bigger launch:
 ## Production Deploy
 
 - Push the latest code to GitHub.
+- Current migration plan: move the frontend from Lovable to Cloudflare Pages while keeping Supabase as the backend.
+- Cloudflare Pages settings:
+  - Project name: `sjoh`
+  - Production branch: `main`
+  - Build command: `npm ci && npm run build`
+  - Output directory: `dist`
 - Set the production frontend env vars in the deploy host:
   - `VITE_SUPABASE_PROJECT_ID=omhjcalrfhswjmanriqv`
   - `VITE_SUPABASE_URL=https://omhjcalrfhswjmanriqv.supabase.co`
   - `VITE_SUPABASE_PUBLISHABLE_KEY=<the publishable key from the local .env>`
   - Optional: `VITE_ONESIGNAL_APP_ID=<your OneSignal app id>`
 - The latest GitHub `main` build has been deployed to `sjoh.co.za` through Lovable.
+- Cloudflare migration guide: `docs/cloudflare-migration.md`.
 - Verify the live deploy picked up the latest bundle whenever a new launch change is pushed:
   ```bash
   npm run check:production

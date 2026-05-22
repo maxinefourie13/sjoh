@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "check:production": "tsx scripts/check-production-launch.ts",
+    "deploy:cloudflare": "npm run build && npx wrangler pages deploy dist --project-name sjoh",
     "test": "vitest run",
     "hermes:worker": "tsx workers/hermes/index.ts",
     "hermes:once": "tsx workers/hermes/index.ts --once",
