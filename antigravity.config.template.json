@@ -1,0 +1,46 @@
+{
+  "projectName": "sjoh",
+  "projectType": "vite-react-supabase-cloudflare-pages",
+  "repository": "https://github.com/maxinefourie13/sjoh.git",
+  "productionDomain": "https://sjoh.co.za",
+  "cloudflare": {
+    "accountEmail": "sjohforwarding@gmail.com",
+    "accountId": "7356313895a62a1f442cb17b7e4483bb",
+    "pagesProject": "sjoh",
+    "defaultPagesDomain": "https://sjoh.pages.dev",
+    "buildCommand": "npm ci && npm run build",
+    "outputDirectory": "dist"
+  },
+  "supabase": {
+    "projectId": "omhjcalrfhswjmanriqv",
+    "url": "https://omhjcalrfhswjmanriqv.supabase.co",
+    "publicEnv": {
+      "VITE_SUPABASE_PROJECT_ID": "omhjcalrfhswjmanriqv",
+      "VITE_SUPABASE_URL": "https://omhjcalrfhswjmanriqv.supabase.co",
+      "VITE_SUPABASE_PUBLISHABLE_KEY": "COPY_FROM_LOCAL_ENV_OR_SUPABASE_API_SETTINGS"
+    },
+    "serverSecretsRequiredInSupabaseOnly": [
+      "SUPABASE_SERVICE_ROLE_KEY",
+      "SUPABASE_DB_URL",
+      "PAYFAST_MERCHANT_ID",
+      "PAYFAST_MERCHANT_KEY",
+      "PAYFAST_PASSPHRASE",
+      "OPENAI_API_KEY",
+      "RESEND_API_KEY"
+    ]
+  },
+  "launchChecks": [
+    "npm run lint",
+    "npm test",
+    "npm run build",
+    "SITE_URL=https://sjoh.co.za npm run check:production"
+  ],
+  "agentEntryPoints": [
+    "AGENTS.md",
+    "docs/ANTIGRAVITY_HANDOFF.md",
+    "docs/launch-board.md",
+    "docs/launch-readiness.md",
+    "docs/cloudflare-migration.md",
+    "docs/agent-prompt-bank.md"
+  ]
+}

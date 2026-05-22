@@ -3,6 +3,7 @@
 ## Project Context
 
 Sjoh is a South African marketplace for local service providers. Launch-critical notes live in `docs/launch-board.md` and `docs/launch-readiness.md`.
+Antigravity handoff instructions live in `docs/ANTIGRAVITY_HANDOFF.md`, and reusable parallel-agent prompts live in `docs/agent-prompt-bank.md`.
 
 Use conservative, repo-native changes. For code work, run the smallest relevant verification first, then broaden checks when shared behavior changes.
 

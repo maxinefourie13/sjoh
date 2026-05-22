@@ -11,6 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
+*.antigravity.local*
+antigravity.config.json
 previews/
 supabase/.temp/
 
