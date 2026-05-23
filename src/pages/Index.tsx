@@ -275,59 +275,75 @@ const HomePage = () => {
             </div>
           </div>
 
-          <div className="mt-12 hidden lg:grid grid-cols-[0.78fr_1.25fr_0.78fr] gap-4 items-end">
-            <div className="space-y-4 pb-10">
-              <div className="animate-sa-card-colors rotate-[-2deg] rounded-[1.5rem] border-2 border-black p-4 shadow-[8px_8px_0_rgba(255,255,255,0.16)]">
-                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest">
-                  <Zap className="size-4" /> Fast match
+          <div className="mt-12 hidden lg:grid grid-cols-[0.8fr_1.2fr_0.8fr] gap-6 items-end">
+            {/* Column 1: Left details */}
+            <div className="space-y-4 pb-6">
+              {/* Symmetrical Frosted Glass "Fast match" card */}
+              <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-5 shadow-card backdrop-blur-md">
+                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-sa-gold">
+                  <Zap className="size-4 fill-sa-gold" /> Fast match
                 </div>
-                <p className="mt-2 text-sm font-bold leading-snug">Find the right pro fast, then compare reviews before you choose.</p>
+                <p className="mt-3 text-sm font-semibold leading-relaxed text-white/90">
+                  Find the right pro fast, then compare reviews before you choose.
+                </p>
               </div>
 
-              <div className="rounded-[1.4rem] border border-white/15 bg-[#111]/90 p-3 shadow-pop backdrop-blur-md">
-                <div className="px-2 pb-2 text-[10px] font-black uppercase tracking-widest text-white/42">Live searches</div>
-                {HERO_SERVICE_CARDS.map((card) => (
-                  <div key={card.title} className="flex items-center justify-between gap-3 border-b border-white/10 py-2.5 last:border-0">
-                    <div>
-                      <p className="text-sm font-extrabold text-white">{card.title}</p>
-                      <p className="text-[11px] text-white/66">{card.meta}</p>
+              {/* Matching Frosted Glass "Live searches" card */}
+              <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-5 shadow-card backdrop-blur-md">
+                <div className="pb-3 text-[10px] font-black uppercase tracking-widest text-white/40">
+                  Live searches
+                </div>
+                <div className="space-y-3">
+                  {HERO_SERVICE_CARDS.map((card) => (
+                    <div key={card.title} className="flex items-center justify-between gap-3 border-b border-white/5 pb-2.5 last:border-0 last:pb-0">
+                      <div>
+                        <p className="text-sm font-bold text-white">{card.title}</p>
+                        <p className="text-[11px] text-white/50">{card.meta}</p>
+                      </div>
+                      <span className="size-2 rounded-full" style={{ background: card.color }} />
                     </div>
-                    <span className="size-3 rounded-full" style={{ background: card.color }} />
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-[2rem] border border-white/12 bg-white/[0.06] p-3 shadow-pop">
-              <img src={heroGroup2} alt="South Africans using Sjoh" className="h-[420px] w-full rounded-[1.45rem] object-cover" />
-              <div className="absolute left-7 top-7 rounded-full border border-white/20 bg-black/35 px-3 py-1.5 text-xs font-bold text-white backdrop-blur-md">
+            {/* Column 2: Center Showcase */}
+            <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-3 shadow-pop">
+              <img src={heroGroup2} alt="South Africans using Sjoh" className="h-[430px] w-full rounded-[1.45rem] object-cover" />
+              <div className="absolute left-5 top-5 rounded-full border border-white/10 bg-black/45 px-3.5 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
                 Real people. Real work. All over SA.
               </div>
-              <div className="absolute bottom-7 left-7 right-7 rounded-[1.4rem] border border-white/20 bg-white/18 p-4 text-white shadow-xl backdrop-blur-xl">
+              <div className="absolute bottom-5 left-5 right-5 rounded-[1.25rem] border border-white/15 bg-black/55 p-4 text-white shadow-xl backdrop-blur-xl">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <div className="text-xs font-bold uppercase tracking-widest text-white/65">Search in progress</div>
-                    <div className="mt-1 font-display text-xl font-extrabold">Compare trusted pros</div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-white/50">Search in progress</div>
+                    <div className="mt-0.5 font-display text-lg font-black">Compare trusted pros</div>
                   </div>
-                  <span className="rounded-full bg-sa-gold px-3 py-1 text-xs font-black text-sa-dark">9 provinces</span>
+                  <span className="rounded-full bg-sa-gold px-3 py-1 text-xs font-black text-sa-dark shadow-sm">9 provinces</span>
                 </div>
-                <div className="mt-3 flex items-center gap-2 text-sm text-white/80">
+                <div className="mt-3 flex items-center gap-2 text-xs text-white/80">
                   <ShieldCheck className="size-4 text-sa-green" />
                   Reviews, verified badges, clear job details
                 </div>
               </div>
             </div>
 
-            <div className="space-y-4 pb-8">
-              <div className="flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white px-4 py-2 text-sm font-black text-sa-dark shadow-xl">
-                <Star className="size-4 fill-sa-gold text-sa-gold" /> 4.9 average rating
+            {/* Column 3: Right details */}
+            <div className="space-y-4 pb-6">
+              {/* Cohesive Frosted Glass Rating capsule */}
+              <div className="flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-xs font-bold text-white shadow-md backdrop-blur-md">
+                <Star className="size-3.5 fill-sa-gold text-sa-gold" /> 4.9 average rating
               </div>
-              <div className="rotate-[2deg] rounded-[1.5rem] border border-white/15 bg-white/10 p-5 text-white shadow-xl backdrop-blur-xl">
-                <div className="mb-3 flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-white/50">Proof before you call</span>
-                  <span className="rounded-full bg-sa-pink px-2.5 py-1 text-[10px] font-black">Reviews</span>
+
+              {/* Symmetrical Frosted Glass "Proof before you call" card */}
+              <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-5 text-white shadow-card backdrop-blur-md">
+                <div className="mb-4 flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Proof before you call</span>
+                  <span className="rounded-full bg-sa-pink/20 border border-sa-pink/30 text-sa-pink px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider">Reviews</span>
                 </div>
-                <p className="text-2xl font-black leading-tight">Profiles that show the work, the area, and the trust signals.</p>
+                <p className="text-xl font-black leading-snug">
+                  Profiles that show the work, the area, and the trust signals.
+                </p>
               </div>
             </div>
           </div>

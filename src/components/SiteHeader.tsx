@@ -69,7 +69,7 @@ export const SiteHeader = () => {
       <div className="container flex h-24 md:h-28 items-center justify-between gap-6">
         <div className="flex items-center gap-10">
           <Link to="/" className="flex items-center" aria-label="Sjoh home">
-            <SjohWordmark className="text-4xl md:text-5xl" />
+            <SjohWordmark className="text-6xl md:text-7xl" />
           </Link>
           <nav className="hidden lg:flex items-center gap-7">
             {NAV.map((n) => (

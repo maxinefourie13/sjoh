@@ -122,7 +122,7 @@ export const ApplyButton = ({
         <Button
           size={size}
           onClick={handleClick}
-          disabled={submitted}
+          disabled={submitted || loading}
           className={cn(
             "font-bold tracking-wide gap-1.5",
             submitted
