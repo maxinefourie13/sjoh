@@ -16,6 +16,8 @@ Do not store passwords, OTP backup codes, private keys, service-role keys, PayFa
 
 - Domain: `sjoh.co.za`
 - Current DNS provider:
+  - Cloudflare
+  - Nameservers: `chase.ns.cloudflare.com`, `selah.ns.cloudflare.com`
 - Registrar account:
 - Password-manager item name:
 - Notes:
@@ -27,7 +29,7 @@ Do not store passwords, OTP backup codes, private keys, service-role keys, PayFa
 - Pages project name: `sjoh`
 - Cloudflare account ID: `7356313895a62a1f442cb17b7e4483bb`
 - Default Pages URL: `https://sjoh.pages.dev/`
-- First deployment preview: `https://103d886f.sjoh.pages.dev/`
+- Current production preview/deployment: `https://68e30a79.sjoh.pages.dev/`
 - Production branch: `main`
 - Build command: `npm ci && npm run build`
 - Output directory: `dist`
@@ -128,6 +130,6 @@ Important routes:
 
 ## Emergency Rollback
 
-- If Cloudflare hosting fails during launch, restore the previous Lovable DNS records.
+- If Cloudflare hosting fails during launch, use Lovable as the rollback fallback until the Cloudflare issue is fixed.
 - Do not roll back the Supabase database unless a database migration is confirmed as the cause.
 - Keep a note here of the last known-good production commit:

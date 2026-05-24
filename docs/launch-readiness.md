@@ -93,12 +93,12 @@ Optional but useful before a bigger launch:
 ## Production Deploy
 
 - Push the latest code to GitHub.
-- Current migration plan: move the frontend from Lovable to Cloudflare Pages while keeping Supabase as the backend.
+- Current hosting: frontend is on Cloudflare Pages while Supabase remains the backend.
 - Cloudflare Pages project has been created:
   - Account: `sjohforwarding@gmail.com`
   - Project: `sjoh`
   - Default domain: `https://sjoh.pages.dev/`
-  - First deployment preview: `https://103d886f.sjoh.pages.dev/`
+- Current production preview/deployment: `https://68e30a79.sjoh.pages.dev/`
 - Cloudflare Pages settings:
   - Project name: `sjoh`
   - Production branch: `main`
@@ -109,7 +109,11 @@ Optional but useful before a bigger launch:
   - `VITE_SUPABASE_URL=https://omhjcalrfhswjmanriqv.supabase.co`
   - `VITE_SUPABASE_PUBLISHABLE_KEY=<the publishable key from the local .env>`
   - Optional: `VITE_ONESIGNAL_APP_ID=<your OneSignal app id>`
-- The latest GitHub `main` build has been deployed to `sjoh.co.za` through Lovable.
+- The latest GitHub `main` build has been deployed to `sjoh.co.za` through Cloudflare Pages.
+- `sjoh.co.za` nameservers are now:
+  - `chase.ns.cloudflare.com`
+  - `selah.ns.cloudflare.com`
+- Keep Lovable available as a rollback fallback until the Cloudflare deploy has been stable for at least 24-48 hours and PayFast live checkout/ITN has been smoke-tested.
 - Cloudflare migration guide: `docs/cloudflare-migration.md`.
 - Verify the live deploy picked up the latest bundle whenever a new launch change is pushed:
   ```bash

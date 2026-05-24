@@ -58,12 +58,12 @@ This repo includes:
 
 ## DNS Cutover
 
-Do this only after a successful Cloudflare preview deploy:
+Completed after the successful Cloudflare preview deploy:
 
-1. Add `sjoh.co.za` as the custom domain in Cloudflare Pages.
-2. Follow Cloudflare's DNS instructions for the current DNS provider.
-3. Keep Lovable published until Cloudflare shows the custom domain as active.
-4. Run:
+1. Added `sjoh.co.za` to Cloudflare.
+2. Switched nameservers from GoDaddy/domaincontrol to Cloudflare.
+3. Confirmed `https://sjoh.co.za` and `https://www.sjoh.co.za` return HTTP 200.
+4. Ran:
 
 ```bash
 SITE_URL=https://sjoh.co.za npm run check:production
@@ -78,7 +78,7 @@ SITE_URL=https://sjoh.co.za npm run check:production
    - `/directory`
    - `/sitemap.xml`
 
-Status: the Pages project and first deployment have been created. Custom domain/DNS cutover is still pending.
+Status: Cloudflare Pages is now serving the production domain. Keep Lovable available as a rollback fallback until the Cloudflare deploy has been stable for 24-48 hours and payment smoke tests are complete.
 
 ## Rollback Plan
 
