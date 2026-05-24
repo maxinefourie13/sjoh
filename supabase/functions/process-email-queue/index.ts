@@ -1,4 +1,3 @@
-import { sendLovableEmail } from 'npm:@lovable.dev/email-js'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
 const MAX_RETRIES = 5
@@ -7,9 +6,118 @@ const DEFAULT_SEND_DELAY_MS = 200
 const DEFAULT_AUTH_TTL_MINUTES = 15
 const DEFAULT_TRANSACTIONAL_TTL_MINUTES = 60
 
+class EmailProviderError extends Error {
+  status: number
+  retryAfterSeconds: number | null
+
+  constructor(message: string, status: number, retryAfterSeconds: number | null = null) {
+    super(message)
+    this.name = 'EmailProviderError'
+    this.status = status
+    this.retryAfterSeconds = retryAfterSeconds
+  }
+}
+
+type QueueEmailPayload = {
+  run_id?: string
+  to?: string
+  from?: string
+  sender_domain?: string
+  subject?: string
+  html?: string
+  text?: string
+  purpose?: string
+  label?: string
+  idempotency_key?: string
+  unsubscribe_token?: string
+  message_id?: string
+}
+
+function sanitizeTagValue(value: unknown): string {
+  const clean = String(value ?? 'unknown')
+    .replace(/[^A-Za-z0-9_-]/g, '_')
+    .slice(0, 256)
+  return clean || 'unknown'
+}
+
+function buildUnsubscribeUrl(supabaseUrl: string, token: unknown): string | null {
+  if (typeof token !== 'string' || !token) {
+    return null
+  }
+  return `${supabaseUrl}/functions/v1/handle-email-unsubscribe?token=${encodeURIComponent(token)}`
+}
+
+async function sendResendEmail(
+  payload: QueueEmailPayload,
+  options: {
+    apiKey: string
+    supabaseUrl: string
+    fromOverride?: string
+    replyTo?: string
+  },
+): Promise<{ providerMessageId?: string }> {
+  if (!payload.to || !payload.subject || (!payload.html && !payload.text)) {
+    throw new EmailProviderError('Email payload missing to, subject, html/text', 400)
+  }
+
+  const unsubscribeUrl = buildUnsubscribeUrl(options.supabaseUrl, payload.unsubscribe_token)
+  const headers: Record<string, string> = {}
+  if (unsubscribeUrl) {
+    headers['List-Unsubscribe'] = `<${unsubscribeUrl}>`
+    headers['List-Unsubscribe-Post'] = 'List-Unsubscribe=One-Click'
+  }
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${options.apiKey}`,
+      'Content-Type': 'application/json',
+      ...(payload.idempotency_key
+        ? { 'Idempotency-Key': String(payload.idempotency_key).slice(0, 256) }
+        : {}),
+    },
+    body: JSON.stringify({
+      from: options.fromOverride || payload.from || 'Sjoh <hello@sjoh.co.za>',
+      to: payload.to,
+      subject: payload.subject,
+      html: payload.html,
+      text: payload.text,
+      ...(options.replyTo ? { reply_to: options.replyTo } : {}),
+      ...(Object.keys(headers).length ? { headers } : {}),
+      tags: [
+        { name: 'template', value: sanitizeTagValue(payload.label) },
+        { name: 'purpose', value: sanitizeTagValue(payload.purpose || 'transactional') },
+      ],
+    }),
+  })
+
+  let responseBody: Record<string, unknown> | null = null
+  try {
+    responseBody = await response.json()
+  } catch {
+    responseBody = null
+  }
+
+  if (!response.ok) {
+    const retryAfter = Number(response.headers.get('retry-after'))
+    const message =
+      typeof responseBody?.message === 'string'
+        ? responseBody.message
+        : `Resend API error (${response.status})`
+    throw new EmailProviderError(
+      message,
+      response.status,
+      Number.isFinite(retryAfter) ? retryAfter : null,
+    )
+  }
+
+  return {
+    providerMessageId:
+      typeof responseBody?.id === 'string' ? responseBody.id : undefined,
+  }
+}
+
 // Check if an error is a rate-limit (429) response.
-// Uses EmailAPIError.status when available (email-js >=0.x with structured errors),
-// falls back to parsing the error message for older versions.
 function isRateLimited(error: unknown): boolean {
   if (error && typeof error === 'object' && 'status' in error) {
     return (error as { status: number }).status === 429
@@ -17,13 +125,21 @@ function isRateLimited(error: unknown): boolean {
   return error instanceof Error && error.message.includes('429')
 }
 
-// Check if an error is a forbidden (403) response, which means emails are
-// disabled for this project. Retrying won't help — move straight to DLQ.
-function isForbidden(error: unknown): boolean {
+// Message validation errors are usually specific to this payload and can go to DLQ.
+function isPermanentMessageError(error: unknown): boolean {
   if (error && typeof error === 'object' && 'status' in error) {
-    return (error as { status: number }).status === 403
+    return [400, 422].includes((error as { status: number }).status)
   }
-  return error instanceof Error && error.message.includes('403')
+  return false
+}
+
+// Provider/config errors should stop processing but leave messages queued for retry
+// after the secret, sender domain, or provider account is fixed.
+function isProviderConfigError(error: unknown): boolean {
+  if (error && typeof error === 'object' && 'status' in error) {
+    return [401, 403, 404].includes((error as { status: number }).status)
+  }
+  return false
 }
 
 // Extract Retry-After seconds from a structured EmailAPIError, or default to 60s.
@@ -79,11 +195,13 @@ async function moveToDlq(
 }
 
 Deno.serve(async (req) => {
-  const apiKey = Deno.env.get('LOVABLE_API_KEY')
+  const resendApiKey = Deno.env.get('RESEND_API_KEY')
+  const emailFrom = Deno.env.get('EMAIL_FROM')
+  const emailReplyTo = Deno.env.get('EMAIL_REPLY_TO')
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
-  if (!apiKey || !supabaseUrl || !supabaseServiceKey) {
+  if (!resendApiKey || !supabaseUrl || !supabaseServiceKey) {
     console.error('Missing required environment variables')
     return new Response(
       JSON.stringify({ error: 'Server configuration error' }),
@@ -249,26 +367,12 @@ Deno.serve(async (req) => {
       }
 
       try {
-        await sendLovableEmail(
-          {
-            run_id: payload.run_id,
-            to: payload.to,
-            from: payload.from,
-            sender_domain: payload.sender_domain,
-            subject: payload.subject,
-            html: payload.html,
-            text: payload.text,
-            purpose: payload.purpose,
-            label: payload.label,
-            idempotency_key: payload.idempotency_key,
-            unsubscribe_token: payload.unsubscribe_token,
-            message_id: payload.message_id,
-          },
-          // sendUrl is optional — when LOVABLE_SEND_URL is not set, the library
-          // falls back to the default Lovable API endpoint (https://api.lovable.dev).
-          // Set LOVABLE_SEND_URL as a Supabase secret to override (e.g. for local dev).
-          { apiKey, sendUrl: Deno.env.get('LOVABLE_SEND_URL') }
-        )
+        const sendResult = await sendResendEmail(payload as QueueEmailPayload, {
+          apiKey: resendApiKey,
+          supabaseUrl,
+          fromOverride: emailFrom ?? undefined,
+          replyTo: emailReplyTo ?? undefined,
+        })
 
         // Log success
         await supabase.from('email_send_log').insert({
@@ -276,6 +380,10 @@ Deno.serve(async (req) => {
           template_name: payload.label || queue,
           recipient_email: payload.to,
           status: 'sent',
+          metadata: {
+            provider: 'resend',
+            provider_message_id: sendResult.providerMessageId ?? null,
+          },
         })
 
         // Delete from queue
@@ -298,14 +406,6 @@ Deno.serve(async (req) => {
         })
 
         if (isRateLimited(error)) {
-          await supabase.from('email_send_log').insert({
-            message_id: payload.message_id,
-            template_name: payload.label || queue,
-            recipient_email: payload.to,
-            status: 'rate_limited',
-            error_message: errorMsg.slice(0, 1000),
-          })
-
           const retryAfterSecs = getRetryAfterSeconds(error)
           await supabase
             .from('email_send_state')
@@ -324,12 +424,27 @@ Deno.serve(async (req) => {
           )
         }
 
-        // 403 means emails are disabled for this project — retrying won't help.
-        // Move straight to DLQ and stop processing the rest of the batch.
-        if (isForbidden(error)) {
-          await moveToDlq(supabase, queue, msg, 'Emails disabled for this project')
+        if (isProviderConfigError(error)) {
           return new Response(
-            JSON.stringify({ processed: totalProcessed, stopped: 'emails_disabled' }),
+            JSON.stringify({
+              processed: totalProcessed,
+              stopped: 'provider_config_error',
+              error: errorMsg.slice(0, 500),
+            }),
+            { headers: { 'Content-Type': 'application/json' } }
+          )
+        }
+
+        // Message validation errors will not be fixed by retrying this payload.
+        if (isPermanentMessageError(error)) {
+          await moveToDlq(
+            supabase,
+            queue,
+            msg,
+            `Permanent email payload error: ${errorMsg.slice(0, 500)}`
+          )
+          return new Response(
+            JSON.stringify({ processed: totalProcessed, stopped: 'payload_error' }),
             { headers: { 'Content-Type': 'application/json' } }
           )
         }

@@ -1,8 +1,8 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
-import { WebhookError, verifyWebhookRequest } from 'npm:@lovable.dev/webhooks-js'
 
-// Suppression event payload sent by the Go API when Mailgun reports
-// a bounce, complaint, or unsubscribe.
+// Generic suppression webhook endpoint for email providers/adapters.
+// The request must include an HMAC SHA-256 signature in `x-sjoh-signature`
+// using EMAIL_SUPPRESSION_WEBHOOK_SECRET over the raw request body.
 interface SuppressionPayload {
   email: string
   reason: 'bounce' | 'complaint' | 'unsubscribe'
@@ -14,14 +14,41 @@ interface SuppressionPayload {
 
 function parseSuppressionPayload(body: string): SuppressionPayload {
   const parsed = JSON.parse(body)
-  if (!parsed.data) {
-    throw new Error('Missing data field in payload')
-  }
-  const data = parsed.data as SuppressionPayload
+  const data = (parsed.data ?? parsed) as Partial<SuppressionPayload>
   if (!data.email || !data.reason) {
     throw new Error('Missing required fields: email, reason')
   }
-  return data
+
+  const reason = normalizeReason(data.reason)
+  if (!reason) {
+    throw new Error('Unsupported suppression reason')
+  }
+
+  return {
+    email: data.email,
+    reason,
+    message_id: data.message_id,
+    metadata: data.metadata,
+    is_retry: Boolean(data.is_retry),
+    retry_count: Number(data.retry_count ?? 0),
+  }
+}
+
+function normalizeReason(reason: string): SuppressionPayload['reason'] | null {
+  switch (reason.toLowerCase()) {
+    case 'bounce':
+    case 'bounced':
+      return 'bounce'
+    case 'complaint':
+    case 'complained':
+    case 'spam':
+      return 'complaint'
+    case 'unsubscribe':
+    case 'unsubscribed':
+      return 'unsubscribe'
+    default:
+      return null
+  }
 }
 
 function jsonResponse(data: Record<string, unknown>, status = 200): Response {
@@ -31,52 +58,64 @@ function jsonResponse(data: Record<string, unknown>, status = 200): Response {
   })
 }
 
+function toHex(buffer: ArrayBuffer): string {
+  return Array.from(new Uint8Array(buffer))
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('')
+}
+
+function safeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) {
+    return false
+  }
+  let result = 0
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i)
+  }
+  return result === 0
+}
+
+async function verifySignature(body: string, secret: string, signature: string): Promise<boolean> {
+  const encoder = new TextEncoder()
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  )
+  const signed = await crypto.subtle.sign('HMAC', key, encoder.encode(body))
+  const expected = toHex(signed)
+  const received = signature.replace(/^sha256=/i, '').trim().toLowerCase()
+  return safeEqual(expected, received)
+}
+
 Deno.serve(async (req) => {
   if (req.method !== 'POST') {
     return jsonResponse({ error: 'Method not allowed' }, 405)
   }
 
-  const apiKey = Deno.env.get('LOVABLE_API_KEY')
+  const webhookSecret = Deno.env.get('EMAIL_SUPPRESSION_WEBHOOK_SECRET')
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
-  if (!apiKey || !supabaseUrl || !supabaseServiceKey) {
+  if (!webhookSecret || !supabaseUrl || !supabaseServiceKey) {
     console.error('Missing required environment variables')
     return jsonResponse({ error: 'Server configuration error' }, 500)
   }
 
-  // Verify HMAC signature using the Lovable API Key (same as auth-email-hook)
   let payload: SuppressionPayload
   try {
-    const verified = await verifyWebhookRequest({
-      req,
-      secret: apiKey,
-      parser: parseSuppressionPayload,
-    })
-    payload = verified.payload
-  } catch (error) {
-    if (error instanceof WebhookError) {
-      switch (error.code) {
-        case 'invalid_signature':
-          console.error('Invalid webhook signature')
-          return jsonResponse({ error: 'Invalid signature' }, 401)
-        case 'stale_timestamp':
-          console.error('Stale webhook timestamp')
-          return jsonResponse({ error: 'Stale timestamp' }, 401)
-        case 'invalid_payload':
-        case 'invalid_json':
-          console.error('Invalid payload', { code: error.code })
-          return jsonResponse({ error: 'Invalid payload' }, 400)
-        default:
-          console.error('Webhook verification failed', {
-            code: error.code,
-            message: error.message,
-          })
-          return jsonResponse({ error: 'Verification failed' }, 401)
-      }
+    const rawBody = await req.text()
+    const signature = req.headers.get('x-sjoh-signature') ?? ''
+    if (!signature || !(await verifySignature(rawBody, webhookSecret, signature))) {
+      console.error('Invalid webhook signature')
+      return jsonResponse({ error: 'Invalid signature' }, 401)
     }
-    console.error('Unexpected error during verification', { error })
-    return jsonResponse({ error: 'Internal error' }, 500)
+    payload = parseSuppressionPayload(rawBody)
+  } catch (error) {
+    console.error('Suppression webhook verification failed', { error })
+    return jsonResponse({ error: 'Invalid payload' }, 400)
   }
 
   const supabase = createClient(supabaseUrl, supabaseServiceKey)

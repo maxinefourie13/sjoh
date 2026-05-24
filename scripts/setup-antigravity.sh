@@ -110,6 +110,9 @@ PAYFAST_SANDBOX=0
 # Optional service integrations
 OPENAI_API_KEY=replace-if-used
 RESEND_API_KEY=replace-if-used
+EMAIL_FROM="Sjoh <hello@sjoh.co.za>"
+EMAIL_SENDER_DOMAIN=sjoh.co.za
+EMAIL_REPLY_TO=hello@sjoh.co.za
 VITE_ONESIGNAL_APP_ID=replace-if-used
 ENV
 

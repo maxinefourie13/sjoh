@@ -74,10 +74,15 @@ PAYFAST_MERCHANT_KEY
 PAYFAST_PASSPHRASE
 PUBLIC_SITE_URL=https://sjoh.co.za
 GOOGLE_PLACES_API_KEY
-LOVABLE_API_KEY
-LOVABLE_SEND_URL
+RESEND_API_KEY
+EMAIL_FROM="Sjoh <hello@sjoh.co.za>"
+EMAIL_SENDER_DOMAIN=sjoh.co.za
+EMAIL_REPLY_TO=hello@sjoh.co.za
+EMAIL_PREVIEW_API_KEY
+EMAIL_SUPPRESSION_WEBHOOK_SECRET
 ONESIGNAL_APP_ID
 ONESIGNAL_REST_API_KEY
+LOVABLE_API_KEY (legacy WhatsApp connector only, not transactional email)
 TWILIO_API_KEY
 TWILIO_WHATSAPP_FROM
 ```
@@ -104,7 +109,7 @@ cd /Users/maxin/Downloads/sjoh
 - Privacy email: `privacy@sjoh.co.za`
 - Legal email: `legal@sjoh.co.za`
 - General email: `hello@sjoh.co.za`
-- Transactional email provider:
+- Transactional email provider: Resend
 - WhatsApp/Twilio account:
 - OneSignal account:
 - Password-manager item names:

@@ -26,14 +26,20 @@ Add these first because they block launch testing:
 - `PAYFAST_MERCHANT_KEY` from PayFast live mode.
 - `PAYFAST_PASSPHRASE` from the PayFast integration settings.
 - `OPENAI_API_KEY` for the automated Sjoh ID Check.
+- `RESEND_API_KEY` for transactional email delivery.
 
 Optional but useful before a bigger launch:
 
 - `PAYFAST_SANDBOX=1` only while testing in PayFast sandbox.
 - `PUBLIC_SITE_URL=https://sjoh.co.za`.
 - `GOOGLE_PLACES_API_KEY` for Places imports/linking.
-- `LOVABLE_API_KEY` and `LOVABLE_SEND_URL` for transactional email sending.
+- `EMAIL_FROM` for the sender address, for example `Sjoh <hello@sjoh.co.za>`.
+- `EMAIL_SENDER_DOMAIN=sjoh.co.za` for email queue metadata.
+- `EMAIL_REPLY_TO=hello@sjoh.co.za`.
+- `EMAIL_PREVIEW_API_KEY` for internal email-template preview tooling.
+- `EMAIL_SUPPRESSION_WEBHOOK_SECRET` if a provider suppression webhook is connected.
 - `ONESIGNAL_APP_ID` and `ONESIGNAL_REST_API_KEY` for push notifications.
+- `LOVABLE_API_KEY` only if the legacy Lovable/Twilio connector is still being used for WhatsApp alerts.
 - `TWILIO_API_KEY` and `TWILIO_WHATSAPP_FROM` for WhatsApp notifications.
 
 ## Supabase
@@ -51,12 +57,16 @@ Optional but useful before a bigger launch:
   - `PAYFAST_PASSPHRASE`
   - `PAYFAST_SANDBOX` only for sandbox testing
   - `GOOGLE_PLACES_API_KEY`
+  - `RESEND_API_KEY`
+  - `EMAIL_FROM`
+  - `EMAIL_SENDER_DOMAIN`
+  - `EMAIL_REPLY_TO`
   - `ONESIGNAL_APP_ID`
   - `ONESIGNAL_REST_API_KEY`
   - `TWILIO_API_KEY`
   - `TWILIO_WHATSAPP_FROM`
-  - `LOVABLE_API_KEY`
   - `PUBLIC_SITE_URL`
+  - `LOVABLE_API_KEY` only if legacy WhatsApp alerts are enabled
 
 ## PayFast
 
@@ -113,8 +123,9 @@ Optional but useful before a bigger launch:
 - `sjoh.co.za` nameservers are now:
   - `chase.ns.cloudflare.com`
   - `selah.ns.cloudflare.com`
-- Keep Lovable available as a rollback fallback until the Cloudflare deploy has been stable for at least 24-48 hours and PayFast live checkout/ITN has been smoke-tested.
+- Keep Lovable available as a rollback fallback until the Cloudflare deploy has been stable for at least 24-48 hours, PayFast live checkout/ITN has been smoke-tested, and transactional emails have been verified through Resend.
 - Cloudflare migration guide: `docs/cloudflare-migration.md`.
+- Email migration guide: `docs/email-provider-migration.md`.
 - Verify the live deploy picked up the latest bundle whenever a new launch change is pushed:
   ```bash
   npm run check:production

@@ -78,7 +78,13 @@ SITE_URL=https://sjoh.co.za npm run check:production
    - `/directory`
    - `/sitemap.xml`
 
-Status: Cloudflare Pages is now serving the production domain. Keep Lovable available as a rollback fallback until the Cloudflare deploy has been stable for 24-48 hours and payment smoke tests are complete.
+Status: Cloudflare Pages is now serving the production domain. Keep Lovable available as a rollback fallback until the Cloudflare deploy has been stable for 24-48 hours, payment smoke tests are complete, and the remaining Lovable runtime dependencies have been removed or intentionally kept.
+
+Current Lovable dependencies to clear before cancellation:
+
+- Transactional email was moved locally to a Resend-backed Supabase queue processor, but still needs Resend DNS/secrets, function deploy, and production quote/invoice email smoke tests.
+- Social login still uses Lovable Cloud Auth.
+- WhatsApp alerts still use the legacy Lovable/Twilio connector if enabled.
 
 ## Rollback Plan
 

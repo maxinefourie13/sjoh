@@ -1,6 +1,6 @@
 # Sjoh Antigravity Memory File
 
-Last updated: 2026-05-22
+Last updated: 2026-05-24
 
 Use this as Antigravity's long-term memory for the Sjoh launch. It is deliberately explicit so agents can continue work without needing the full Codex chat.
 
@@ -50,7 +50,7 @@ Sjoh is not Laravel.
 - PayFast is the launch payment provider.
 - Supabase remains the backend.
 - Cloudflare Pages is the target frontend host.
-- Keep Lovable only as a fallback until DNS cutover is verified.
+- Keep Lovable only as a fallback until DNS cutover, PayFast, email, social auth, and any WhatsApp runtime dependencies are verified off Lovable.
 - `SORTED30` is the free-trial code and must remain 30 days, redeemable once per user.
 - Businesses should be able to keep setting up their profile while ID verification is pending.
 - Verification pending should block applying for jobs where required, not block the entire app.
@@ -65,10 +65,9 @@ Sjoh is not Laravel.
 - Cloudflare default domain: `https://sjoh.pages.dev/`
 - First Cloudflare preview deployment: `https://103d886f.sjoh.pages.dev/`
 - Production domain: `https://sjoh.co.za`
-- Current production DNS before cutover:
-  - nameservers: `ns15.domaincontrol.com`, `ns16.domaincontrol.com`
-  - apex A record observed: `185.158.133.1`
-  - likely still pointing at the old Lovable hosting path
+- Current production DNS:
+  - nameservers: `chase.ns.cloudflare.com`, `selah.ns.cloudflare.com`
+  - `https://sjoh.co.za` and `https://www.sjoh.co.za` are served by Cloudflare Pages
 
 ## Secret Handling Rules
 
@@ -120,17 +119,9 @@ Server secrets belong in Supabase Edge Function secrets.
 
 ## Current Migration State
 
-The Cloudflare preview works. The production domain is not cut over yet.
+Cloudflare Pages is serving the production domain, and the hosting migration is mostly complete. Keep Lovable available until the remaining runtime dependencies are cleared.
 
-Remaining hosting task:
-
-1. Add `sjoh.co.za` as a custom domain to the Cloudflare Pages project `sjoh`.
-2. Follow Cloudflare's DNS instructions.
-3. Because `sjoh.co.za` is on GoDaddy/domaincontrol nameservers, the likely clean path is either:
-   - move DNS/nameservers to Cloudflare, then let Cloudflare manage the apex domain; or
-   - use the DNS records Cloudflare Pages gives for the custom domain if GoDaddy supports the required record shape.
-4. Keep Lovable live until `https://sjoh.co.za` works on Cloudflare.
-5. After cutover, run:
+Latest production smoke command:
 
 ```bash
 SITE_URL=https://sjoh.co.za npm run check:production
@@ -149,13 +140,15 @@ This looked like a Cloudflare API/transient account-side issue, not an app build
 
 ## Current Launch Blockers
 
-1. Custom domain/DNS cutover from old hosting to Cloudflare Pages.
-2. PayFast live account approval and live ITN/dashboard verification.
-3. Full live smoke test after DNS cutover:
+1. PayFast live account approval and live ITN/dashboard verification.
+2. Transactional email has been refactored locally from Lovable to Resend but still needs Resend DNS/secrets, Supabase function deploy, and production quote/invoice email smoke tests.
+3. Social login still uses Lovable Cloud Auth unless replaced or removed from the launch flow.
+4. WhatsApp alerts still use the legacy Lovable/Twilio connector if enabled.
+5. Full live smoke test after these changes:
    - customer search/post-job flow
    - business signup/profile/verification/trial/payment flow
    - quote/invoice email/download flow
-4. Support channel confirmation.
+6. Support channel confirmation.
 
 ## Important Files
 

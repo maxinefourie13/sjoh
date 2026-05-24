@@ -16,14 +16,14 @@ Status key:
 | `[DONE]` | GitHub repo | Repo renamed to `sjoh`, latest code pushed to `main` | Codex |
 | `[DONE]` | Local app health | Lint, build, and unit tests pass | Codex |
 | `[DONE]` | Supabase project | New project is linked, migrations are applied, functions are deployed | Codex |
-| `[DONE]` | Supabase secrets | Live PayFast, OpenAI, email/notification keys are added to Supabase | Maxine + Codex |
+| `[CHECKING]` | Supabase secrets | Live PayFast, OpenAI, email/notification keys are added to Supabase | Maxine + Codex |
 | `[DONE]` | Security audit | High-severity npm audit findings are resolved without force-upgrading launch tooling | Codex |
 | `[CHECKING]` | PayFast | PayFast live account is verified and live merchant credentials/ITN are configured | Maxine + Codex |
 | `[DONE]` | Trial code | `SORTED30` gives a one-time 30-day Verified Pro trial without a card | Codex |
 | `[DONE]` | Production deploy | `sjoh.co.za` is live from the latest GitHub `main` Cloudflare Pages build | Codex |
 | `[DONE]` | Hosting migration | Frontend hosting is cut over from Lovable to Cloudflare Pages while keeping Supabase Free | Maxine + Codex |
-| `[CHECKING]` | Customer journey | Customer can search, post a job, and receive quote/invoice emails | Codex |
-| `[CHECKING]` | Business journey | Business can sign up, pay, create profile, verify ID, browse opportunities, quote, and invoice | Codex |
+| `[CHECKING]` | Customer journey | Customer can search, post a job, and receive quote/invoice emails through the non-Lovable mail sender | Codex |
+| `[CHECKING]` | Business journey | Business can sign up, pay, create profile, verify ID, browse opportunities, quote, and invoice through the non-Lovable mail sender | Codex |
 | `[DONE]` | Legal/trust copy | Privacy, terms, cancellation, acceptable use, delivery, refund, and ID-check language are present and clear | Codex |
 | `[YOU]` | Support channel | Launch users can reach a real support email or WhatsApp when stuck | Maxine |
 
@@ -31,7 +31,8 @@ Status key:
 
 1. PayFast live account approval still needs to be confirmed before paid business signup can be fully live-tested.
 2. The PayFast ITN URL should be checked in the PayFast dashboard: `https://omhjcalrfhswjmanriqv.supabase.co/functions/v1/payfast-webhook`.
-3. No additional code blockers are known right now; keep testing the live customer and business journeys on production.
+3. Transactional email is being moved off Lovable to Resend. Before Lovable can be cancelled, Resend must be configured, the updated Supabase email functions must be deployed, and quote/invoice emails must be smoke-tested on production.
+4. Social login still uses Lovable Cloud Auth, and WhatsApp alerts still use the legacy Lovable/Twilio connector if enabled. Either replace those or keep Lovable available until they are disabled.
 
 ## Latest Overnight Checks
 
@@ -48,6 +49,8 @@ Status key:
 - Policy pages are now present for PayFast/compliance review: `/acceptable-use`, `/shipping`, and `/returns`.
 - `sitemap.xml` includes the policy pages and both business landing aliases (`/for-businesses/creative` and `/for-businesses/creatives`).
 - PayFast webhook events now explicitly record `provider = 'payfast'`, and the production database default has been corrected from the old Paystack default.
+- Transactional email code has been refactored locally away from Lovable's email package and toward a Resend-backed queue processor. This is not launch-verified until Resend DNS/secrets are in place and the Supabase functions are deployed/tested.
+- Email migration guide: `docs/email-provider-migration.md`.
 
 ## Launch Nice-To-Haves
 
