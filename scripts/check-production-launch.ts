@@ -92,6 +92,7 @@ async function main() {
     "SORTED30",
     "You do the work. We make sure local customers can find you.",
     "Acceptable Use Policy",
+    "Google and Apple sign-in are paused",
   ];
 
   for (const marker of requiredBundleMarkers) {
@@ -99,6 +100,19 @@ async function main() {
       name: `bundle marker ${marker.slice(0, 28)}`,
       ok: bundleText.includes(marker),
       detail: bundleText.includes(marker) ? "found in deployed JS" : "missing from deployed JS",
+    });
+  }
+
+  const prohibitedBundleMarkers = [
+    "@lovable.dev/cloud-auth-js",
+    "connector-gateway.lovable.dev",
+  ];
+
+  for (const marker of prohibitedBundleMarkers) {
+    checks.push({
+      name: `bundle excludes ${marker.slice(0, 28)}`,
+      ok: !bundleText.includes(marker),
+      detail: bundleText.includes(marker) ? "found old runtime marker" : "not present",
     });
   }
 

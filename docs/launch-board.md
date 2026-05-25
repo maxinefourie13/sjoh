@@ -34,6 +34,7 @@ Status key:
 2. The PayFast ITN URL should be checked in the PayFast dashboard: `https://omhjcalrfhswjmanriqv.supabase.co/functions/v1/payfast-webhook`.
 3. Transactional email is being moved off Lovable to Resend. Before Lovable can be cancelled, Resend must be configured, the updated Supabase email functions must be deployed, and quote/invoice emails must be smoke-tested on production.
 4. Social login is paused for launch and WhatsApp lead alerts are disabled until they are rebuilt on a non-Lovable provider. Email/password auth, quote/invoice email, and public profile WhatsApp contact remain available.
+5. Supabase has the PayFast, OpenAI, and `PUBLIC_SITE_URL` secret names present. Resend email secrets and optional OneSignal push secrets are not present yet.
 
 ## Latest Overnight Checks
 
@@ -46,6 +47,7 @@ Status key:
 - Cloudflare Pages was redeployed from the latest local build at `https://c8743418.sjoh.pages.dev`.
 - `SITE_URL=https://sjoh.co.za npm run check:production` passes on the live site: launch icon, policy sitemap entries, `SORTED30`, pricing copy, and Acceptable Use markers are all present in production.
 - The live bundle now includes the email/password-only auth notice and no longer contains the Lovable Cloud Auth package or Lovable/Twilio connector gateway string.
+- Production smoke checks now verify the email/password-only auth notice and reject old Lovable auth/connector markers in the live bundle.
 - PayFast checkout/webhook is now the active payment path; the old Paystack path is being removed from launch-critical setup.
 - Trial behavior has moved to `SORTED30`: no automatic 30-day Basic trial, one 30-day Verified Pro trial per user, then R250/month to continue.
 - Policy pages are now present for PayFast/compliance review: `/acceptable-use`, `/shipping`, and `/returns`.
