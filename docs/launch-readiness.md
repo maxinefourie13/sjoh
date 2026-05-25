@@ -39,8 +39,7 @@ Optional but useful before a bigger launch:
 - `EMAIL_PREVIEW_API_KEY` for internal email-template preview tooling.
 - `EMAIL_SUPPRESSION_WEBHOOK_SECRET` if a provider suppression webhook is connected.
 - `ONESIGNAL_APP_ID` and `ONESIGNAL_REST_API_KEY` for push notifications.
-- `LOVABLE_API_KEY` only if the legacy Lovable/Twilio connector is still being used for WhatsApp alerts.
-- `TWILIO_API_KEY` and `TWILIO_WHATSAPP_FROM` for WhatsApp notifications.
+- WhatsApp lead alerts are paused for launch, so no Lovable/Twilio WhatsApp connector secrets are required.
 
 ## Supabase
 
@@ -63,10 +62,9 @@ Optional but useful before a bigger launch:
   - `EMAIL_REPLY_TO`
   - `ONESIGNAL_APP_ID`
   - `ONESIGNAL_REST_API_KEY`
-  - `TWILIO_API_KEY`
-  - `TWILIO_WHATSAPP_FROM`
   - `PUBLIC_SITE_URL`
-  - `LOVABLE_API_KEY` only if legacy WhatsApp alerts are enabled
+- Social login is paused for launch to avoid Lovable Cloud Auth. Email/password login remains available.
+- WhatsApp lead alerts are paused for launch. Customers can still WhatsApp a business from the public business profile.
 
 ## PayFast
 

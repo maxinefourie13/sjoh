@@ -67,9 +67,6 @@ set_secret "EMAIL_PREVIEW_API_KEY" "optional"
 set_secret "EMAIL_SUPPRESSION_WEBHOOK_SECRET" "optional"
 set_secret "ONESIGNAL_APP_ID" "optional"
 set_secret "ONESIGNAL_REST_API_KEY" "optional"
-set_secret "LOVABLE_API_KEY" "optional"
-set_secret "TWILIO_API_KEY" "optional"
-set_secret "TWILIO_WHATSAPP_FROM" "optional"
 
 echo
 echo "Done. Current Supabase secret names:"

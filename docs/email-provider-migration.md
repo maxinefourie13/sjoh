@@ -53,5 +53,5 @@ Do not cancel Lovable until:
 - Cloudflare production hosting is stable.
 - PayFast live checkout and ITN are smoke-tested.
 - Resend transactional email is verified on production.
-- Social login is moved away from Lovable Cloud Auth or disabled.
-- WhatsApp alerts are moved away from the Lovable/Twilio connector or disabled.
+- Social login is paused or moved away from Lovable Cloud Auth.
+- WhatsApp lead alerts are paused or moved away from the Lovable/Twilio connector.

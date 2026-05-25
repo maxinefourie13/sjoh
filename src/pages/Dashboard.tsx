@@ -987,30 +987,20 @@ const NotificationPrefsCard = () => {
   const { user } = useAuth();
   const [emailOn, setEmailOn] = useState(true);
   const [pushOn, setPushOn] = useState(false);
-  const [waOn, setWaOn] = useState(false);
-  const [waNumber, setWaNumber] = useState("");
   const [loading, setLoading] = useState(true);
-  const [busy, setBusy] = useState<"email" | "push" | "wa" | null>(null);
+  const [busy, setBusy] = useState<"email" | "push" | null>(null);
 
   useEffect(() => {
     if (!user) return;
     (async () => {
       const { data } = await supabase
         .from("provider_balances")
-        .select("email_alerts_optin, push_alerts_optin, whatsapp_alerts_optin, whatsapp_number")
+        .select("email_alerts_optin, push_alerts_optin")
         .eq("user_id", user.id)
         .maybeSingle();
       if (data) {
-        const prefs = data as {
-          email_alerts_optin?: boolean | null;
-          push_alerts_optin?: boolean | null;
-          whatsapp_alerts_optin?: boolean | null;
-          whatsapp_number?: string | null;
-        };
         setEmailOn(data.email_alerts_optin ?? true);
         setPushOn(data.push_alerts_optin ?? false);
-        setWaOn(prefs.whatsapp_alerts_optin ?? false);
-        setWaNumber(prefs.whatsapp_number ?? "");
       }
       setLoading(false);
     })();
@@ -1053,30 +1043,6 @@ const NotificationPrefsCard = () => {
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : String(e);
       toast({ title: "Aikona, push failed", description: message, variant: "destructive" });
-    }
-    setBusy(null);
-  };
-
-  const saveWhatsApp = async (enable: boolean) => {
-    setBusy("wa");
-    const cleaned = waNumber.replace(/[^0-9+]/g, "");
-    if (enable && cleaned.length < 8) {
-      toast({ title: "Need a valid number", description: "Pop in your WhatsApp number with country code (e.g. +27821234567).", variant: "destructive" });
-      setBusy(null);
-      return;
-    }
-    const { error } = await supabase.rpc("set_whatsapp_alerts", { _enabled: enable, _number: cleaned });
-    if (error) {
-      toast({ title: "Couldn't save", description: error.message, variant: "destructive" });
-    } else {
-      setWaOn(enable);
-      setWaNumber(cleaned);
-      toast({
-        title: enable ? "WhatsApp alerts on 💬" : "WhatsApp alerts off",
-        description: enable
-          ? "We'll ping your WhatsApp the second a fresh lead drops in your area."
-          : "No more WhatsApp pings from Sjoh.",
-      });
     }
     setBusy(null);
   };
@@ -1146,58 +1112,24 @@ const NotificationPrefsCard = () => {
         )}
       </div>
 
-      {/* WhatsApp — App-Fatigue fix: bring leads to where Pros already live */}
+      {/* WhatsApp is intentionally paused until it is moved off Lovable/Twilio connector. */}
       <div className="py-3 border-t border-border">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3 min-w-0">
             <MessageCircle className="size-4 text-ink-2 mt-0.5 shrink-0" />
             <div className="min-w-0">
-              <p className="text-sm font-semibold">WhatsApp me when fresh leads drop</p>
+              <p className="text-sm font-semibold">WhatsApp lead alerts</p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Lead alerts on WhatsApp — no need to keep checking the app. Capped at 5/hour.
+                Coming soon. For launch, email and browser alerts keep fresh jobs moving without relying on the old Lovable connector.
               </p>
             </div>
           </div>
-          {waOn && (
-            <span className="shrink-0 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full bg-primary/10 text-primary border border-primary/30">
-              On
-            </span>
-          )}
-        </div>
-        <div className="mt-3 flex flex-col sm:flex-row gap-2">
-          <input
-            type="tel"
-            inputMode="tel"
-            value={waNumber}
-            onChange={(e) => setWaNumber(e.target.value)}
-            placeholder="+27 82 123 4567"
-            className="db-input flex-1"
-            disabled={loading || busy === "wa"}
-          />
-          {waOn ? (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => saveWhatsApp(false)}
-              disabled={busy === "wa"}
-              className="shrink-0"
-            >
-              {busy === "wa" ? "..." : "Turn off"}
-            </Button>
-          ) : (
-            <Button
-              size="sm"
-              onClick={() => saveWhatsApp(true)}
-              disabled={busy === "wa"}
-              className="shrink-0 gap-1.5"
-            >
-              <MessageCircle className="size-3.5" strokeWidth={2.5} />
-              {busy === "wa" ? "Saving…" : "Enable WhatsApp alerts"}
-            </Button>
-          )}
+          <span className="shrink-0 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full bg-secondary text-muted-foreground border border-border">
+            Coming soon
+          </span>
         </div>
         <p className="mt-2 text-[11px] text-muted-foreground">
-          Standard WhatsApp message rates apply on Twilio's side. We'll only send when a lead matches your category &amp; area.
+          This keeps the launch build independent from Lovable. Customers can still contact you by WhatsApp from your public profile.
         </p>
       </div>
     </div>

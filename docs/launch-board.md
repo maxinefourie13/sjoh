@@ -24,6 +24,7 @@ Status key:
 | `[DONE]` | Hosting migration | Frontend hosting is cut over from Lovable to Cloudflare Pages while keeping Supabase Free | Maxine + Codex |
 | `[CHECKING]` | Customer journey | Customer can search, post a job, and receive quote/invoice emails through the non-Lovable mail sender | Codex |
 | `[CHECKING]` | Business journey | Business can sign up, pay, create profile, verify ID, browse opportunities, quote, and invoice through the non-Lovable mail sender | Codex |
+| `[DONE]` | Lovable runtime cleanup | Social login and WhatsApp alerts no longer depend on Lovable runtime connectors for launch | Codex |
 | `[DONE]` | Legal/trust copy | Privacy, terms, cancellation, acceptable use, delivery, refund, and ID-check language are present and clear | Codex |
 | `[YOU]` | Support channel | Launch users can reach a real support email or WhatsApp when stuck | Maxine |
 
@@ -32,7 +33,7 @@ Status key:
 1. PayFast live account approval still needs to be confirmed before paid business signup can be fully live-tested.
 2. The PayFast ITN URL should be checked in the PayFast dashboard: `https://omhjcalrfhswjmanriqv.supabase.co/functions/v1/payfast-webhook`.
 3. Transactional email is being moved off Lovable to Resend. Before Lovable can be cancelled, Resend must be configured, the updated Supabase email functions must be deployed, and quote/invoice emails must be smoke-tested on production.
-4. Social login still uses Lovable Cloud Auth, and WhatsApp alerts still use the legacy Lovable/Twilio connector if enabled. Either replace those or keep Lovable available until they are disabled.
+4. Social login is paused for launch and WhatsApp lead alerts are disabled until they are rebuilt on a non-Lovable provider. Email/password auth, quote/invoice email, and public profile WhatsApp contact remain available.
 
 ## Latest Overnight Checks
 
@@ -50,6 +51,8 @@ Status key:
 - `sitemap.xml` includes the policy pages and both business landing aliases (`/for-businesses/creative` and `/for-businesses/creatives`).
 - PayFast webhook events now explicitly record `provider = 'payfast'`, and the production database default has been corrected from the old Paystack default.
 - Transactional email code has been refactored locally away from Lovable's email package and toward a Resend-backed queue processor. This is not launch-verified until Resend DNS/secrets are in place and the Supabase functions are deployed/tested.
+- Social login has been paused for launch to remove Lovable Cloud Auth from the critical path. Users sign in with email/password.
+- WhatsApp lead alerts are paused for launch. The edge function returns a safe disabled response, and customers can still WhatsApp a business from the public profile.
 - Email migration guide: `docs/email-provider-migration.md`.
 
 ## Launch Nice-To-Haves

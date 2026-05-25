@@ -82,9 +82,6 @@ EMAIL_PREVIEW_API_KEY
 EMAIL_SUPPRESSION_WEBHOOK_SECRET
 ONESIGNAL_APP_ID
 ONESIGNAL_REST_API_KEY
-LOVABLE_API_KEY (legacy WhatsApp connector only, not transactional email)
-TWILIO_API_KEY
-TWILIO_WHATSAPP_FROM
 ```
 
 Use this local helper to update Supabase secrets:

@@ -6,10 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { Loader2, ShieldCheck, HandCoins, Handshake, Gift, Apple } from "lucide-react";
+import { Loader2, ShieldCheck, HandCoins, Handshake, Gift } from "lucide-react";
 import heroGroup from "@/assets/hero-group-3.jpg";
 
 interface AuthShellProps {
@@ -107,55 +106,9 @@ const AuthShell = ({ title, subtitle, footer, children }: AuthShellProps) => (
   </SiteLayout>
 );
 
-const GoogleGlyph = () => (
-  <svg viewBox="0 0 48 48" className="size-4" aria-hidden="true">
-    <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.5 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/>
-    <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6.6 29.3 4.6 24 4.6 16.3 4.6 9.7 8.9 6.3 14.7z"/>
-    <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35 26.7 36 24 36c-5.3 0-9.7-3.4-11.3-8.1l-6.5 5C9.6 39.6 16.3 44 24 44z"/>
-    <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.5l6.2 5.2C41 35 44 30 44 24c0-1.3-.1-2.4-.4-3.5z"/>
-  </svg>
-);
-
-const SocialButtons = ({ nextPath }: { nextPath: string }) => {
-  const [loading, setLoading] = useState<"google" | "apple" | null>(null);
-
-  const handle = async (provider: "google" | "apple") => {
-    setLoading(provider);
-    try {
-      const result = await lovable.auth.signInWithOAuth(provider, {
-        redirect_uri: `${window.location.origin}${nextPath}`,
-      });
-      if (result.error) {
-        toast({ title: "Sign-in failed", description: String(result.error), variant: "destructive" });
-        setLoading(null);
-        return;
-      }
-      if (result.redirected) return;
-      window.location.href = nextPath;
-    } catch (e) {
-      toast({ title: "Sign-in failed", description: e instanceof Error ? e.message : "Unknown error", variant: "destructive" });
-      setLoading(null);
-    }
-  };
-
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-      <Button type="button" variant="outline" size="lg" className="h-12 w-full rounded-2xl border-white/15 bg-white/[0.06] text-white hover:bg-white/[0.12] hover:text-white" onClick={() => handle("google")} disabled={loading !== null}>
-        {loading === "google" ? <Loader2 className="size-4 animate-spin" /> : <GoogleGlyph />}
-        Google
-      </Button>
-      <Button type="button" variant="outline" size="lg" className="h-12 w-full rounded-2xl border-white/15 bg-white/[0.06] text-white hover:bg-white/[0.12] hover:text-white" onClick={() => handle("apple")} disabled={loading !== null}>
-        {loading === "apple" ? <Loader2 className="size-4 animate-spin" /> : <Apple className="size-4" />}
-        Apple
-      </Button>
-    </div>
-  );
-};
-
-const Divider = () => (
-  <div className="relative text-center my-2">
-    <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/15" /></div>
-    <span className="relative bg-[#111]/80 px-3 text-xs text-white/50 uppercase tracking-widest font-semibold">or</span>
+const EmailOnlyNotice = () => (
+  <div className="rounded-2xl border border-white/15 bg-white/[0.06] px-4 py-3 text-xs leading-5 text-white/60">
+    Google and Apple sign-in are paused for launch while Sjoh finishes moving fully off Lovable. Use email and password for now.
   </div>
 );
 
@@ -214,8 +167,7 @@ export const Login = () => {
           {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
           Log in
         </Button>
-        <Divider />
-        <SocialButtons nextPath={nextPath} />
+        <EmailOnlyNotice />
       </form>
     </AuthShell>
   );
@@ -332,8 +284,7 @@ export const Register = () => {
           {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
           Create account
         </Button>
-        <Divider />
-        <SocialButtons nextPath={nextPath} />
+        <EmailOnlyNotice />
       </form>
     </AuthShell>
   );

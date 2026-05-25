@@ -50,7 +50,7 @@ Sjoh is not Laravel.
 - PayFast is the launch payment provider.
 - Supabase remains the backend.
 - Cloudflare Pages is the target frontend host.
-- Keep Lovable only as a fallback until DNS cutover, PayFast, email, social auth, and any WhatsApp runtime dependencies are verified off Lovable.
+- Keep Lovable only as a fallback until Cloudflare, PayFast, and Resend production smoke tests are stable. Social login is paused for launch, and WhatsApp lead alerts are disabled until they are rebuilt off Lovable.
 - `SORTED30` is the free-trial code and must remain 30 days, redeemable once per user.
 - Businesses should be able to keep setting up their profile while ID verification is pending.
 - Verification pending should block applying for jobs where required, not block the entire app.
@@ -142,8 +142,8 @@ This looked like a Cloudflare API/transient account-side issue, not an app build
 
 1. PayFast live account approval and live ITN/dashboard verification.
 2. Transactional email has been refactored locally from Lovable to Resend but still needs Resend DNS/secrets, Supabase function deploy, and production quote/invoice email smoke tests.
-3. Social login still uses Lovable Cloud Auth unless replaced or removed from the launch flow.
-4. WhatsApp alerts still use the legacy Lovable/Twilio connector if enabled.
+3. Full production auth smoke test now that social login is paused and email/password is the launch auth path.
+4. WhatsApp lead alerts are paused for launch; confirm customers can still WhatsApp businesses from public profiles.
 5. Full live smoke test after these changes:
    - customer search/post-job flow
    - business signup/profile/verification/trial/payment flow
