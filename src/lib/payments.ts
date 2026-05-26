@@ -29,7 +29,7 @@ async function startPayFastCheckout(
     },
   });
 
-  if (error || !data?.redirect_url) {
+  if (error || (!data?.form_action && !data?.redirect_url)) {
     toast({
       title: "Aikona!",
       description: "Payment setup failed. The system might still be waking up — try again.",
@@ -38,9 +38,26 @@ async function startPayFastCheckout(
     return null;
   }
 
-  // PayFast supports both GET redirect and form POST.
-  // The edge function returns a full redirect URL with all signed params.
-  window.location.href = data.redirect_url;
+  if (data.form_action && data.fields && typeof data.fields === "object") {
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = data.form_action;
+    form.style.display = "none";
+
+    for (const [name, value] of Object.entries(data.fields as Record<string, string>)) {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = name;
+      input.value = String(value);
+      form.appendChild(input);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+  } else {
+    window.location.href = data.redirect_url;
+  }
+
   return data.m_payment_id as string;
 }
 

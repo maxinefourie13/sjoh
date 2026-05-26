@@ -41,11 +41,22 @@ function cleanPayload(data: Record<string, string>, includeSignature = false): R
 
 function toSignatureString(data: Record<string, string>, passphrase: string): string {
   const paramString = Object.entries(cleanPayload(data))
-    .sort(([a], [b]) => a.localeCompare(b))
     .map(([key, value]) => `${key}=${encodePayFastValue(value)}`)
     .join('&');
 
   return `${paramString}&passphrase=${encodePayFastValue(passphrase)}`;
+}
+
+function expectedAmountFor(tier: string, billingCycle: 'monthly' | 'annual'): number {
+  if (tier === 'basic') {
+    return billingCycle === 'annual' ? 540 : 50;
+  }
+  return billingCycle === 'annual' ? 2700 : 250;
+}
+
+function amountsMatch(actual: string, expected: number): boolean {
+  const parsed = Number.parseFloat(actual || '0');
+  return Number.isFinite(parsed) && Math.abs(parsed - expected) < 0.01;
 }
 
 async function validateItn(rawData: Record<string, string>): Promise<boolean> {
@@ -138,19 +149,7 @@ Deno.serve(async (req) => {
   const token = data.token || ''; // subscription token (for recurring)
   const pfSubscriptionId = data.subscription_id || '';
 
-  // Deduplicate by pf_payment_id
-  const { data: existing } = await admin
-    .from('payment_events')
-    .select('id')
-    .eq('payfast_pf_payment_id', pfPaymentId)
-    .maybeSingle();
-
-  if (existing) {
-    console.log('Duplicate ITN, already processed', { pf_payment_id: pfPaymentId });
-    return new Response('ok', { status: 200 });
-  }
-
-  // Determine event kind
+  // Determine event kind before any business-rule validation.
   let kind = 'other';
   if (paymentStatus === 'COMPLETE' && token) {
     kind = 'subscription_charge';
@@ -162,6 +161,32 @@ Deno.serve(async (req) => {
   } else {
     // Log but don't fail — could be a new PayFast event type
     console.log('Unknown PayFast payment_status', { paymentStatus, pf_payment_id: pfPaymentId });
+  }
+
+  if (kind === 'subscription_charge') {
+    const expectedAmount = expectedAmountFor(tier, billingCycle);
+    if (!amountsMatch(amount, expectedAmount)) {
+      console.warn('PayFast amount mismatch', {
+        pf_payment_id: pfPaymentId,
+        got: amount,
+        expected: expectedAmount,
+        tier,
+        billingCycle,
+      });
+      return new Response('Amount mismatch', { status: 403 });
+    }
+  }
+
+  // Deduplicate by pf_payment_id
+  const { data: existing } = await admin
+    .from('payment_events')
+    .select('id')
+    .eq('payfast_pf_payment_id', pfPaymentId)
+    .maybeSingle();
+
+  if (existing) {
+    console.log('Duplicate ITN, already processed', { pf_payment_id: pfPaymentId });
+    return new Response('ok', { status: 200 });
   }
 
   // Insert payment event

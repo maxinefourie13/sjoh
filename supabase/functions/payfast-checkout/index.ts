@@ -38,7 +38,6 @@ function cleanPayload(data: Record<string, string>): Record<string, string> {
 
 function toPayFastParamString(data: Record<string, string>, passphrase?: string): string {
   const paramString = Object.entries(cleanPayload(data))
-    .sort(([a], [b]) => a.localeCompare(b))
     .map(([key, value]) => `${key}=${encodePayFastValue(value)}`)
     .join('&');
 

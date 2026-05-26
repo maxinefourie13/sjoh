@@ -71,6 +71,11 @@ Optional but useful before a bigger launch:
 - Wait for PayFast account verification if the account is still under review.
 - Launch trial mechanic: `SORTED30` unlocks a one-time 30-day Verified Pro trial without a card. New accounts no longer receive an automatic 30-day Basic trial. After the code trial, the business chooses the R250/month subscription to continue.
 - Paid checkout should be positioned as a normal R250/month subscription, not as a card-required free trial.
+- The current checkout submits signed PayFast fields through a form POST. Keep the GET `redirect_url` only as a fallback for older clients.
+- The current webhook verifies PayFast's signature, merchant id, PayFast validation response, duplicate `pf_payment_id`, and expected amount for the selected tier/billing cycle.
+- Latest deployed PayFast functions:
+  - `payfast-checkout` v6
+  - `payfast-webhook` v7
 - Confirm live keys are saved as Supabase secrets:
   - `PAYFAST_MERCHANT_ID`
   - `PAYFAST_MERCHANT_KEY`
@@ -106,7 +111,7 @@ Optional but useful before a bigger launch:
   - Account: `sjohforwarding@gmail.com`
   - Project: `sjoh`
   - Default domain: `https://sjoh.pages.dev/`
-- Current production preview/deployment: `https://68e30a79.sjoh.pages.dev/`
+- Current production preview/deployment: `https://86e16cf1.sjoh.pages.dev/`
 - Cloudflare Pages settings:
   - Project name: `sjoh`
   - Production branch: `main`

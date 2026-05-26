@@ -39,18 +39,21 @@ Status key:
 
 ## Latest Overnight Checks
 
-- Latest launch-code commit on `main`: `5719539` removes the last Lovable dev-only Vite tagger and is pushed.
+- Latest launch-code commit on `main`: `ec55024` clarifies the Resend launch gate and is pushed.
 - Local production build, lint, unit tests, route smoke tests, and mobile pricing overflow checks pass.
 - `npm audit --audit-level=high` passes. Remaining audit items require force upgrades to dev tooling and are not launch blockers.
 - Local build points at production Supabase `omhjcalrfhswjmanriqv`.
 - Live `sjoh.co.za` now resolves through Cloudflare nameservers: `chase.ns.cloudflare.com` and `selah.ns.cloudflare.com`.
 - `https://sjoh.co.za` and `https://www.sjoh.co.za` return HTTP 200 from Cloudflare.
-- Cloudflare Pages was redeployed from the latest local build at `https://e10f84f8.sjoh.pages.dev`.
+- Cloudflare Pages was redeployed from the latest local build at `https://86e16cf1.sjoh.pages.dev`.
 - `SITE_URL=https://sjoh.co.za npm run check:production` passes on the live site: launch icon, policy sitemap entries, `SORTED30`, pricing copy, and Acceptable Use markers are all present in production.
 - The live bundle now includes the email/password-only auth notice and no longer contains the Lovable Cloud Auth package or Lovable/Twilio connector gateway string.
 - Production smoke checks now verify the email/password-only auth notice and reject old Lovable auth/connector markers in the live bundle.
 - Production smoke checks also pass against the latest Cloudflare preview deployment.
 - PayFast checkout/webhook is now the active payment path; the old Paystack path is being removed from launch-critical setup.
+- PayFast checkout now submits the signed fields through a form POST, matching the hosted PayFast checkout flow.
+- PayFast checkout/webhook functions were redeployed on 26 May 2026 as `payfast-checkout` v6 and `payfast-webhook` v7.
+- PayFast ITN validation now preserves PayFast field order for signatures and rejects paid subscription events whose amount does not match the selected tier/billing cycle.
 - Trial behavior has moved to `SORTED30`: no automatic 30-day Basic trial, one 30-day Verified Pro trial per user, then R250/month to continue.
 - Policy pages are now present for PayFast/compliance review: `/acceptable-use`, `/shipping`, and `/returns`.
 - `sitemap.xml` includes the policy pages and both business landing aliases (`/for-businesses/creative` and `/for-businesses/creatives`).
