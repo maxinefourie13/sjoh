@@ -32,7 +32,7 @@ Check required secret names without printing values:
 npm run check:supabase-secrets
 ```
 
-The command should pass before the Resend-backed email functions are treated as launch-ready.
+The command should pass before deploying the Resend-backed email functions. Until then, leave the currently deployed email functions and Lovable fallback in place.
 
 ## Required DNS
 

@@ -35,6 +35,7 @@ Status key:
 3. Transactional email is being moved off Lovable to Resend. Before Lovable can be cancelled, Resend must be configured, the updated Supabase email functions must be deployed, and quote/invoice emails must be smoke-tested on production.
 4. Social login is paused for launch and WhatsApp lead alerts are disabled until they are rebuilt on a non-Lovable provider. Email/password auth, quote/invoice email, and public profile WhatsApp contact remain available.
 5. `npm run check:supabase-secrets` confirms Supabase has the PayFast, OpenAI, Google Places, and `PUBLIC_SITE_URL` secret names present. Required Resend secrets still missing: `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_SENDER_DOMAIN`, and `EMAIL_REPLY_TO`.
+6. Supabase email functions are intentionally not redeployed to the Resend code yet. Deploy them only after the required Resend secrets pass, then smoke-test quote and invoice email delivery.
 
 ## Latest Overnight Checks
 
@@ -55,6 +56,7 @@ Status key:
 - `sitemap.xml` includes the policy pages and both business landing aliases (`/for-businesses/creative` and `/for-businesses/creatives`).
 - PayFast webhook events now explicitly record `provider = 'payfast'`, and the production database default has been corrected from the old Paystack default.
 - Transactional email code has been refactored locally away from Lovable's email package and toward a Resend-backed queue processor. This is not launch-verified until Resend DNS/secrets are in place and the Supabase functions are deployed/tested.
+- Supabase function list shows the transactional email functions are still on their pre-Resend deployed versions, so Lovable must stay available until the Resend deployment and email smoke tests are complete.
 - Social login has been paused for launch to remove Lovable Cloud Auth from the critical path. Users sign in with email/password.
 - WhatsApp lead alerts are paused for launch. The edge function returns a safe disabled response, and customers can still WhatsApp a business from the public profile.
 - Email migration guide: `docs/email-provider-migration.md`.
