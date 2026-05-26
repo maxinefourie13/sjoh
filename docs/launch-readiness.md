@@ -60,9 +60,9 @@ Optional but useful before a bigger launch:
   - `EMAIL_FROM`
   - `EMAIL_SENDER_DOMAIN`
   - `EMAIL_REPLY_TO`
-  - `ONESIGNAL_APP_ID`
-  - `ONESIGNAL_REST_API_KEY`
   - `PUBLIC_SITE_URL`
+- Required launch secrets were confirmed present on 26 May 2026 with `npm run check:supabase-secrets`.
+- `ONESIGNAL_APP_ID` and `ONESIGNAL_REST_API_KEY` are optional and can stay unset until push notifications are enabled.
 - Social login is paused for launch to avoid Lovable Cloud Auth. Email/password login remains available.
 - WhatsApp lead alerts are paused for launch. Customers can still WhatsApp a business from the public business profile.
 
@@ -80,8 +80,10 @@ Optional but useful before a bigger launch:
   - `PAYFAST_MERCHANT_ID`
   - `PAYFAST_MERCHANT_KEY`
   - `PAYFAST_PASSPHRASE`
+- PayFast security passphrase was saved in the PayFast dashboard and synced to Supabase on 26 May 2026. Because this is a security setting, PayFast required MFA before Codex could continue dashboard confirmation.
 - Configure the PayFast ITN / notify URL as:
   - `https://omhjcalrfhswjmanriqv.supabase.co/functions/v1/payfast-webhook`
+- After the next MFA login, confirm Recurring Billing no longer shows the missing-passphrase blocker.
 - Test the `SORTED30` trial redemption, first R250 subscription charge, duplicate ITN handling, cancellation, and webhook state update.
 - Confirm PayFast sends a recurring token/subscription id to the webhook; Sjoh stores it for cancellation and failed-payment matching.
 - Confirm `payment_events.provider` is `payfast` after the first live ITN.
@@ -126,7 +128,8 @@ Optional but useful before a bigger launch:
 - `sjoh.co.za` nameservers are now:
   - `chase.ns.cloudflare.com`
   - `selah.ns.cloudflare.com`
-- Keep Lovable available as a rollback fallback until the Cloudflare deploy has been stable for at least 24-48 hours, PayFast live checkout/ITN has been smoke-tested, and transactional emails have been verified through Resend.
+- Keep Lovable available as a rollback fallback until the Cloudflare deploy has been stable for at least 24-48 hours and PayFast live checkout/ITN has been smoke-tested.
+- Transactional emails have been verified through Resend: the `sjoh.co.za` Resend domain is verified, required email secrets are set in Supabase, email functions are deployed, and a production invoice email smoke test queued and processed successfully.
 - Cloudflare migration guide: `docs/cloudflare-migration.md`.
 - Email migration guide: `docs/email-provider-migration.md`.
 - Verify the live deploy picked up the latest bundle whenever a new launch change is pushed:

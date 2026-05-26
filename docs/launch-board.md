@@ -16,9 +16,9 @@ Status key:
 | `[DONE]` | GitHub repo | Repo renamed to `sjoh`, latest code pushed to `main` | Codex |
 | `[DONE]` | Local app health | Lint, build, and unit tests pass | Codex |
 | `[DONE]` | Supabase project | New project is linked, migrations are applied, functions are deployed | Codex |
-| `[CHECKING]` | Supabase secrets | Live PayFast, OpenAI, email/notification keys are added to Supabase | Maxine + Codex |
+| `[DONE]` | Supabase secrets | Live PayFast, OpenAI, and Resend email keys are added to Supabase | Maxine + Codex |
 | `[DONE]` | Security audit | High-severity npm audit findings are resolved without force-upgrading launch tooling | Codex |
-| `[CHECKING]` | PayFast | PayFast live account is verified and live merchant credentials/ITN are configured | Maxine + Codex |
+| `[CHECKING]` | PayFast | PayFast live credentials, passphrase, and ITN are configured; recurring billing still needs dashboard/live smoke confirmation | Maxine + Codex |
 | `[DONE]` | Trial code | `SORTED30` gives a one-time 30-day Verified Pro trial without a card | Codex |
 | `[DONE]` | Production deploy | `sjoh.co.za` is live from the latest GitHub `main` Cloudflare Pages build | Codex |
 | `[DONE]` | Hosting migration | Frontend hosting is cut over from Lovable to Cloudflare Pages while keeping Supabase Free | Maxine + Codex |
@@ -30,12 +30,11 @@ Status key:
 
 ## Current Launch Blockers
 
-1. PayFast live account approval still needs to be confirmed before paid business signup can be fully live-tested.
-2. The PayFast ITN URL should be checked in the PayFast dashboard: `https://omhjcalrfhswjmanriqv.supabase.co/functions/v1/payfast-webhook`.
-3. Transactional email is being moved off Lovable to Resend. Before Lovable can be cancelled, Resend must be configured, the updated Supabase email functions must be deployed, and quote/invoice emails must be smoke-tested on production.
+1. PayFast dashboard MFA is needed to confirm recurring billing is unlocked after saving the security passphrase.
+2. PayFast live account approval still needs to be confirmed before paid business signup can be fully live-tested.
+3. The first live R250 subscription checkout/ITN should only be smoke-tested when Maxine is awake and ready to approve a real payment flow.
 4. Social login is paused for launch and WhatsApp lead alerts are disabled until they are rebuilt on a non-Lovable provider. Email/password auth, quote/invoice email, and public profile WhatsApp contact remain available.
-5. `npm run check:supabase-secrets` confirms Supabase has the PayFast, OpenAI, Google Places, and `PUBLIC_SITE_URL` secret names present. Required Resend secrets still missing: `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_SENDER_DOMAIN`, and `EMAIL_REPLY_TO`.
-6. Supabase email functions are intentionally not redeployed to the Resend code yet. Deploy them only after the required Resend secrets pass, then smoke-test quote and invoice email delivery.
+5. `npm run check:supabase-secrets` confirms Supabase has the PayFast, OpenAI, Google Places, `PUBLIC_SITE_URL`, and required Resend email secrets present.
 
 ## Latest Overnight Checks
 
@@ -54,12 +53,16 @@ Status key:
 - PayFast checkout now submits the signed fields through a form POST, matching the hosted PayFast checkout flow.
 - PayFast checkout/webhook functions were redeployed on 26 May 2026 as `payfast-checkout` v6 and `payfast-webhook` v7.
 - PayFast ITN validation now preserves PayFast field order for signatures and rejects paid subscription events whose amount does not match the selected tier/billing cycle.
+- PayFast security passphrase was saved in the PayFast dashboard on 26 May 2026 and rotated into the matching Supabase secret; PayFast required MFA before dashboard recurring-billing confirmation could continue.
+- Resend domain verification is complete for `sjoh.co.za`.
+- Supabase required email secrets are now present: `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_SENDER_DOMAIN`, and `EMAIL_REPLY_TO`.
+- Supabase transactional email functions were redeployed on 26 May 2026: `send-transactional-email`, `process-email-queue`, `preview-transactional-email`, and `handle-email-suppression`.
+- A production email smoke test queued and processed an invoice email through Resend successfully.
 - Trial behavior has moved to `SORTED30`: no automatic 30-day Basic trial, one 30-day Verified Pro trial per user, then R250/month to continue.
 - Policy pages are now present for PayFast/compliance review: `/acceptable-use`, `/shipping`, and `/returns`.
 - `sitemap.xml` includes the policy pages and both business landing aliases (`/for-businesses/creative` and `/for-businesses/creatives`).
 - PayFast webhook events now explicitly record `provider = 'payfast'`, and the production database default has been corrected from the old Paystack default.
-- Transactional email code has been refactored locally away from Lovable's email package and toward a Resend-backed queue processor. This is not launch-verified until Resend DNS/secrets are in place and the Supabase functions are deployed/tested.
-- Supabase function list shows the transactional email functions are still on their pre-Resend deployed versions, so Lovable must stay available until the Resend deployment and email smoke tests are complete.
+- Transactional email has been moved off Lovable's email package and onto the Resend-backed Supabase queue processor.
 - Social login has been paused for launch to remove Lovable Cloud Auth from the critical path. Users sign in with email/password.
 - WhatsApp lead alerts are paused for launch. The edge function returns a safe disabled response, and customers can still WhatsApp a business from the public profile.
 - Email migration guide: `docs/email-provider-migration.md`.
