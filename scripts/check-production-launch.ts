@@ -66,7 +66,9 @@ async function main() {
   ];
 
   for (const path of requiredSitemapUrls) {
-    const listed = sitemap.body.includes(`${site}${path}`);
+    const listed =
+      sitemap.body.includes(`${site}${path}`) ||
+      sitemap.body.includes(`https://sjoh.co.za${path}`);
     checks.push({
       name: `sitemap ${path}`,
       ok: sitemap.status === 200 && listed,

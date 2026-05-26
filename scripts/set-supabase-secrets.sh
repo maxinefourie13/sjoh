@@ -6,8 +6,15 @@ SUPABASE_CLI="${SUPABASE_CLI:-/private/tmp/supabase-cli/supabase}"
 SHOW_SECRETS="${SHOW_SECRETS:-0}"
 MISSING_REQUIRED=()
 
-if [[ ! -x "$SUPABASE_CLI" ]]; then
-  echo "Supabase CLI not found at $SUPABASE_CLI"
+SUPABASE_CMD=()
+if [[ -n "${SUPABASE_CLI:-}" && -x "$SUPABASE_CLI" ]]; then
+  SUPABASE_CMD=("$SUPABASE_CLI")
+elif command -v supabase >/dev/null 2>&1; then
+  SUPABASE_CMD=("supabase")
+elif command -v npx >/dev/null 2>&1; then
+  SUPABASE_CMD=("npx" "-y" "supabase@latest")
+else
+  echo "Supabase CLI not found. Install Supabase CLI or npm/npx, then try again." >&2
   exit 1
 fi
 
@@ -37,7 +44,7 @@ set_secret() {
     return 0
   fi
 
-  "$SUPABASE_CLI" secrets set "$name=$value" \
+  "${SUPABASE_CMD[@]}" secrets set "$name=$value" \
     --project-ref "$PROJECT_REF" \
     --workdir "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 }
@@ -70,7 +77,7 @@ set_secret "ONESIGNAL_REST_API_KEY" "optional"
 
 echo
 echo "Done. Current Supabase secret names:"
-"$SUPABASE_CLI" secrets list \
+"${SUPABASE_CMD[@]}" secrets list \
   --project-ref "$PROJECT_REF" \
   --workdir "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 

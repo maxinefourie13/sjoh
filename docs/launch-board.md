@@ -34,20 +34,21 @@ Status key:
 2. The PayFast ITN URL should be checked in the PayFast dashboard: `https://omhjcalrfhswjmanriqv.supabase.co/functions/v1/payfast-webhook`.
 3. Transactional email is being moved off Lovable to Resend. Before Lovable can be cancelled, Resend must be configured, the updated Supabase email functions must be deployed, and quote/invoice emails must be smoke-tested on production.
 4. Social login is paused for launch and WhatsApp lead alerts are disabled until they are rebuilt on a non-Lovable provider. Email/password auth, quote/invoice email, and public profile WhatsApp contact remain available.
-5. Supabase has the PayFast, OpenAI, and `PUBLIC_SITE_URL` secret names present. Resend email secrets and optional OneSignal push secrets are not present yet.
+5. `npm run check:supabase-secrets` confirms Supabase has the PayFast, OpenAI, Google Places, and `PUBLIC_SITE_URL` secret names present. Required Resend secrets still missing: `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_SENDER_DOMAIN`, and `EMAIL_REPLY_TO`.
 
 ## Latest Overnight Checks
 
-- Latest GitHub commit on `main`: `00b5270` removes Lovable launch runtime dependencies and is pushed.
+- Latest launch-code commit on `main`: `5719539` removes the last Lovable dev-only Vite tagger and is pushed.
 - Local production build, lint, unit tests, route smoke tests, and mobile pricing overflow checks pass.
 - `npm audit --audit-level=high` passes. Remaining audit items require force upgrades to dev tooling and are not launch blockers.
 - Local build points at production Supabase `omhjcalrfhswjmanriqv`.
 - Live `sjoh.co.za` now resolves through Cloudflare nameservers: `chase.ns.cloudflare.com` and `selah.ns.cloudflare.com`.
 - `https://sjoh.co.za` and `https://www.sjoh.co.za` return HTTP 200 from Cloudflare.
-- Cloudflare Pages was redeployed from the latest local build at `https://c8743418.sjoh.pages.dev`.
+- Cloudflare Pages was redeployed from the latest local build at `https://e10f84f8.sjoh.pages.dev`.
 - `SITE_URL=https://sjoh.co.za npm run check:production` passes on the live site: launch icon, policy sitemap entries, `SORTED30`, pricing copy, and Acceptable Use markers are all present in production.
 - The live bundle now includes the email/password-only auth notice and no longer contains the Lovable Cloud Auth package or Lovable/Twilio connector gateway string.
 - Production smoke checks now verify the email/password-only auth notice and reject old Lovable auth/connector markers in the live bundle.
+- Production smoke checks also pass against the latest Cloudflare preview deployment.
 - PayFast checkout/webhook is now the active payment path; the old Paystack path is being removed from launch-critical setup.
 - Trial behavior has moved to `SORTED30`: no automatic 30-day Basic trial, one 30-day Verified Pro trial per user, then R250/month to continue.
 - Policy pages are now present for PayFast/compliance review: `/acceptable-use`, `/shipping`, and `/returns`.
@@ -57,6 +58,7 @@ Status key:
 - Social login has been paused for launch to remove Lovable Cloud Auth from the critical path. Users sign in with email/password.
 - WhatsApp lead alerts are paused for launch. The edge function returns a safe disabled response, and customers can still WhatsApp a business from the public profile.
 - Email migration guide: `docs/email-provider-migration.md`.
+- Added `npm run check:supabase-secrets` so launch-critical Supabase secret names can be checked without printing secret values.
 
 ## Launch Nice-To-Haves
 

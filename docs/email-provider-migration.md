@@ -26,6 +26,14 @@ EMAIL_SUPPRESSION_WEBHOOK_SECRET=<random long secret, optional until webhook is 
 
 Keep these server-side only. Do not put them in Cloudflare Pages public environment variables.
 
+Check required secret names without printing values:
+
+```bash
+npm run check:supabase-secrets
+```
+
+The command should pass before the Resend-backed email functions are treated as launch-ready.
+
 ## Required DNS
 
 Verify `sjoh.co.za` in Resend and add the DNS records Resend gives you in Cloudflare DNS. Usually this includes SPF, DKIM, and DMARC-related records. Wait for Resend to show the domain as verified before sending production email from `hello@sjoh.co.za`.
