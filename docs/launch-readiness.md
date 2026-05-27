@@ -80,10 +80,10 @@ Optional but useful before a bigger launch:
   - `PAYFAST_MERCHANT_ID`
   - `PAYFAST_MERCHANT_KEY`
   - `PAYFAST_PASSPHRASE`
-- PayFast security passphrase was saved in the PayFast dashboard and synced to Supabase on 26 May 2026. After MFA, Recurring Billing still showed PayFast's missing-passphrase blocker. The Developer Settings link then returned a PayFast-side 500 error and the dashboard session needed password/Touch ID unlock before Codex could continue confirmation.
+- PayFast security passphrase was re-entered in the PayFast dashboard and synced to Supabase on 27 May 2026. `npm run check:supabase-secrets` confirms the Supabase secret exists. Next confirmation: reopen PayFast Recurring Billing and confirm the missing-passphrase blocker is gone.
 - Configure the PayFast ITN / notify URL as:
   - `https://omhjcalrfhswjmanriqv.supabase.co/functions/v1/payfast-webhook`
-- After the next PayFast dashboard unlock/login, reopen Developer Settings and confirm whether the security passphrase is still saved. Then confirm Recurring Billing no longer shows the missing-passphrase blocker.
+- After the next PayFast dashboard check, confirm Recurring Billing no longer shows the missing-passphrase blocker.
 - Test the `SORTED30` trial redemption, first R250 subscription charge, duplicate ITN handling, cancellation, and webhook state update.
 - Confirm PayFast sends a recurring token/subscription id to the webhook; Sjoh stores it for cancellation and failed-payment matching.
 - Confirm `payment_events.provider` is `payfast` after the first live ITN.

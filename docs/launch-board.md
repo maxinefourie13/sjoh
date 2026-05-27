@@ -30,7 +30,7 @@ Status key:
 
 ## Current Launch Blockers
 
-1. PayFast dashboard access needs to be unlocked again with Maxine's Touch ID/Mac password. After MFA, the Recurring Billing page still showed the missing-passphrase blocker, and the PayFast Developer Settings link returned a PayFast-side 500 error.
+1. PayFast security passphrase has now been entered in both PayFast and Supabase. Recurring Billing still needs one dashboard confirmation, then the first live R250 subscription checkout/ITN needs a controlled smoke test.
 2. PayFast live account approval still needs to be confirmed before paid business signup can be fully live-tested.
 3. The first live R250 subscription checkout/ITN should only be smoke-tested when Maxine is awake and ready to approve a real payment flow.
 4. Social login is paused for launch and WhatsApp lead alerts are disabled until they are rebuilt on a non-Lovable provider. Email/password auth, quote/invoice email, and public profile WhatsApp contact remain available.
@@ -53,7 +53,7 @@ Status key:
 - PayFast checkout now submits the signed fields through a form POST, matching the hosted PayFast checkout flow.
 - PayFast checkout/webhook functions were redeployed on 26 May 2026 as `payfast-checkout` v6 and `payfast-webhook` v7.
 - PayFast ITN validation now preserves PayFast field order for signatures and rejects paid subscription events whose amount does not match the selected tier/billing cycle.
-- PayFast security passphrase was saved in the PayFast dashboard on 26 May 2026 and rotated into the matching Supabase secret; after MFA, PayFast still showed the recurring-billing passphrase blocker, then the Developer Settings link returned a PayFast-side 500 error and the session needed password/Touch ID unlock.
+- PayFast security passphrase was re-entered in PayFast and synced to the matching Supabase secret on 27 May 2026. `npm run check:supabase-secrets` confirms the Supabase secret exists. Next: confirm PayFast Recurring Billing no longer shows the missing-passphrase blocker.
 - Resend domain verification is complete for `sjoh.co.za`.
 - Supabase required email secrets are now present: `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_SENDER_DOMAIN`, and `EMAIL_REPLY_TO`.
 - Supabase transactional email functions were redeployed on 26 May 2026: `send-transactional-email`, `process-email-queue`, `preview-transactional-email`, and `handle-email-suppression`.
