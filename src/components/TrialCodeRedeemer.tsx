@@ -92,7 +92,7 @@ export function TrialCodeRedeemer({
         <Input
           value={code}
           onChange={(event) => setCode(event.target.value.toUpperCase())}
-          aria-label="Trial code"
+          aria-label="Trial or coupon code"
           className={cn(
             "h-12 font-bold tracking-[0.18em]",
             isDark ? "border-white/15 bg-black/35 text-white placeholder:text-white/35" : "bg-white",
@@ -106,7 +106,7 @@ export function TrialCodeRedeemer({
               Unlocking
             </>
           ) : (
-            "Unlock trial"
+            "Unlock code"
           )}
         </Button>
       </form>

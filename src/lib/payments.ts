@@ -4,7 +4,7 @@ import { toast } from "@/hooks/use-toast";
 type Tier = "basic" | "verified_pro";
 export type BillingCycle = "monthly" | "annual";
 export interface TrialCodeRedemption {
-  tier: "verified_pro_trial";
+  tier: "basic_trial" | "basic" | "verified_pro_trial" | "verified_pro";
   trial_ends_at: string;
   code: string;
 }
@@ -95,9 +95,18 @@ export const payments = {
       return null;
     }
 
+    const days = Math.max(
+      1,
+      Math.round((new Date(redemption.trial_ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
+    );
+    const isPaidStyleAccess = redemption.tier === "basic" || redemption.tier === "verified_pro";
+    const durationLabel = days >= 360 ? "1-year" : `${days}-day`;
+
     toast({
       title: `${redemption.code} unlocked`,
-      description: "Your 30-day Verified Pro trial is live. Go build that profile properly.",
+      description: isPaidStyleAccess
+        ? `Your ${durationLabel} Verified Pro access is live. Go build that profile properly.`
+        : `Your ${durationLabel} Verified Pro trial is live. Go build that profile properly.`,
     });
 
     return redemption as TrialCodeRedemption;
