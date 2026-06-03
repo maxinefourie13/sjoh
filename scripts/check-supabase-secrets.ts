@@ -77,7 +77,19 @@ type SupabaseSecret = {
 let secrets: SupabaseSecret[];
 
 try {
-  secrets = JSON.parse(result.stdout) as SupabaseSecret[];
+  const parsed = JSON.parse(result.stdout) as
+    | SupabaseSecret[]
+    | { secrets?: SupabaseSecret[]; result?: SupabaseSecret[] };
+
+  if (Array.isArray(parsed)) {
+    secrets = parsed;
+  } else if (Array.isArray(parsed.secrets)) {
+    secrets = parsed.secrets;
+  } else if (Array.isArray(parsed.result)) {
+    secrets = parsed.result;
+  } else {
+    throw new Error("Unexpected Supabase secrets JSON shape");
+  }
 } catch (error) {
   console.error("Supabase did not return JSON. Raw output:");
   console.error(result.stdout.trim());

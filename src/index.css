@@ -133,11 +133,13 @@
   h1, h2, h3, h4, h5, h6, .font-display {
     font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
     font-weight: 800;
-    letter-spacing: 0;
+    letter-spacing: -0.025em;
   }
 
   h1, .font-display {
-    letter-spacing: 0;
+    -webkit-text-stroke: 0.5px currentColor;
+    text-stroke: 0.5px currentColor;
+    letter-spacing: -0.02em;
   }
 }
 
@@ -207,7 +209,7 @@
   --sa-shadow-pop:  0 24px 60px -20px rgba(15,17,23,0.22);
 }
 
-.font-display-bold { font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; font-weight: 900; letter-spacing: 0; }
+.font-display-bold { font-family: "Plus Jakarta Sans", sans-serif; font-weight: 900; letter-spacing: -0.04em; }
 
 /* SA palette text utilities (for Typewriter rotation + ad hoc use) */
 .text-sa-red   { color: var(--sa-red); }
@@ -253,6 +255,15 @@
   60% { background-color: var(--sa-green); color: #fff; }
   80% { background-color: var(--sa-pink); color: #fff; }
 }
+@keyframes sa-brand-flicker {
+  0%, 100% { color: var(--sa-gold); }
+  14% { color: var(--sa-red); }
+  28% { color: var(--sa-peri); }
+  42% { color: var(--sa-green); }
+  56% { color: var(--sa-pink); }
+  70% { color: var(--sa-navy); }
+  84% { color: var(--sa-gold); }
+}
 @keyframes sa-float-bob {
   0%, 100% { transform: translateY(0px) rotate(var(--rot, 0deg)); }
   50%      { transform: translateY(-8px) rotate(var(--rot, 0deg)); }
@@ -271,3 +282,14 @@
 .sa-float-bob { animation: sa-float-bob 4s ease-in-out infinite; }
 .animate-sjoh-mark { animation: sjoh-mark-color 5s ease-in-out infinite; }
 .animate-sa-card-colors { animation: sa-card-colors 8s ease-in-out infinite; }
+.animate-brand-flicker {
+  color: var(--sa-gold);
+  animation: sa-brand-flicker 2.3s steps(1, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-brand-flicker {
+    animation: none;
+    color: var(--sa-gold);
+  }
+}

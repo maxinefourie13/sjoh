@@ -17,8 +17,8 @@ export interface FlameButtonProps
 }
 
 const sizeClasses: Record<NonNullable<FlameButtonProps["size"]>, string> = {
-  default: "h-10 px-6 text-sm",
-  lg: "h-12 px-8 text-sm",
+  default: "h-11 min-h-[44px] px-6 text-sm",
+  lg: "h-12 min-h-[48px] px-8 text-base",
   xl: "h-14 px-10 text-base",
 };
 
@@ -93,7 +93,7 @@ export const FlameButton = React.forwardRef<HTMLButtonElement, FlameButtonProps>
           ref={ref}
           className={cn(
             "relative z-10 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full",
-            "border border-white/10 bg-foreground/90 text-background font-semibold uppercase tracking-wide",
+            "border border-white/10 bg-foreground/90 text-background font-semibold",
             "shadow-[0_8px_24px_-8px_hsl(230_22%_8%_/_0.45)]",
             "transition-[transform,box-shadow,background-color] duration-200",
             "hover:-translate-y-[1px] hover:shadow-[0_14px_36px_-10px_hsl(43_100%_55%_/_0.55)]",

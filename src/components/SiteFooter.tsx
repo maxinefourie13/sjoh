@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { SjohWordmark } from "@/components/SjohWordmark";
 
 const cols = [
   {
@@ -30,13 +31,9 @@ export const SiteFooter = () => {
         <div className="grid gap-12 lg:grid-cols-3">
           <div className="space-y-4">
             <Link to="/" className="inline-block" aria-label="Sjoh home">
-              <span className="font-display text-4xl font-black tracking-normal text-white">
-                sjoh<span className="text-sa-gold">!</span>
-              </span>
+              <SjohWordmark className="text-4xl" />
             </Link>
-            <p className="text-sm text-white/55 max-w-xs leading-relaxed">
-              Find someone who can do it properly. Help proper local pros get found. Just sorted.
-            </p>
+            <p className="text-sm text-white/55 max-w-xs leading-relaxed">finally, someone reliable</p>
           </div>
           {cols.map((col) => (
             <div key={col.title}>

@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Search, Star, ArrowRight, ShieldCheck, Zap, CheckCircle2, UsersRound } from "lucide-react";
+import { Search, Star, ArrowRight, CheckCircle2, UsersRound } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { SeoHead } from "@/components/SeoHead";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ import { getCategoryGroupIcon } from "@/lib/categoryIcons";
 import { useReveal } from "@/hooks/useReveal";
 import { cn } from "@/lib/utils";
 import heroGroup1 from "@/assets/hero-group-1.jpg";
-import heroGroup2 from "@/assets/hero-group-2.jpg";
+import earlyAccessAbstractFrame from "@/assets/early-access-abstract-frame.png";
 import heroGroup3 from "@/assets/hero-group-3.jpg";
 import heroGroup4 from "@/assets/hero-group-4.jpg";
 
@@ -47,10 +47,46 @@ const MARQUEE_ITEMS = [
 ];
 
 const HOW_STEPS = [
-  { n: "01", Icon: Search, title: "Post the job", body: "Describe what you need in 60 seconds.", bg: "var(--sa-gold)", color: "var(--sa-dark)", rot: "-1.5deg" },
-  { n: "02", Icon: UsersRound, title: "Get real quotes", body: "Vetted local businesses send quotes to your dashboard.", bg: "var(--sa-red)", color: "#fff", rot: "1.2deg" },
-  { n: "03", Icon: Star, title: "Check the reviews", body: "Browse profiles, work history, and the Sjoh Trust Index.", bg: "var(--sa-navy)", color: "#fff", rot: "-0.8deg" },
-  { n: "04", Icon: CheckCircle2, title: "Get it sorted", body: "Contact them directly, compare proof, and choose who feels right.", bg: "var(--sa-green)", color: "#fff", rot: "1.5deg" },
+  {
+    n: "01",
+    Icon: Search,
+    title: "Post the job",
+    body: "Describe what you need in 60 seconds.",
+    bg: "linear-gradient(150deg, #f7bb3a 0%, #e79b05 100%)",
+    glow: "rgba(247, 187, 58, 0.34)",
+    color: "#fff",
+    rot: "-1.5deg",
+  },
+  {
+    n: "02",
+    Icon: UsersRound,
+    title: "Get real quotes",
+    body: "Vetted local businesses send quotes to your dashboard.",
+    bg: "linear-gradient(150deg, #ef3340 0%, #d9202d 100%)",
+    glow: "rgba(239, 51, 64, 0.34)",
+    color: "#fff",
+    rot: "1.2deg",
+  },
+  {
+    n: "03",
+    Icon: Star,
+    title: "Check the reviews",
+    body: "Browse profiles, work history, and the Sjoh Trust Index.",
+    bg: "linear-gradient(150deg, #4f79f6 0%, #355edc 100%)",
+    glow: "rgba(79, 121, 246, 0.36)",
+    color: "#fff",
+    rot: "-0.8deg",
+  },
+  {
+    n: "04",
+    Icon: CheckCircle2,
+    title: "Get it sorted",
+    body: "Contact them directly, compare proof, and choose who feels right.",
+    bg: "linear-gradient(150deg, #149a59 0%, #0f7e47 100%)",
+    glow: "rgba(20, 154, 89, 0.34)",
+    color: "#fff",
+    rot: "1.5deg",
+  },
 ];
 
 const HERO_SERVICE_CARDS = [
@@ -150,7 +186,7 @@ const HomePage = () => {
   const stats = useMemo(
     () => [
       { value: 0, suffix: "%", label: "Commission on jobs", color: "var(--sa-red)" },
-      { value: 240, suffix: "+", label: "Service categories", color: "var(--sa-navy)" },
+      { value: 240, suffix: "+", label: "Service categories", color: "#ffffff" },
       { value: 11, label: "Industry groups", color: "var(--sa-green)" },
       { value: 9, label: "Provinces covered", color: "var(--sa-pink)" },
     ],
@@ -187,7 +223,11 @@ const HomePage = () => {
       />
       {/* ========== HERO ========== */}
       <section
-        className="relative overflow-hidden border-b border-white/10 bg-[#050505]"
+        className="relative overflow-hidden border-b border-white/10"
+        style={{
+          background:
+            "radial-gradient(circle at 12% -18%, rgba(107,124,232,0.2), transparent 36%), radial-gradient(circle at 84% -10%, rgba(232,62,140,0.14), transparent 34%), #050505",
+        }}
       >
         <div
           aria-hidden
@@ -275,108 +315,35 @@ const HomePage = () => {
             </div>
           </div>
 
-          <div className="mt-12 hidden lg:grid grid-cols-[0.8fr_1.2fr_0.8fr] gap-6 items-end">
-            {/* Column 1: Left details */}
-            <div className="space-y-4 pb-6">
-              {/* Symmetrical Frosted Glass "Fast match" card */}
-              <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-5 shadow-card backdrop-blur-md">
-                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-sa-gold">
-                  <Zap className="size-4 fill-sa-gold" /> Fast match
-                </div>
-                <p className="mt-3 text-sm font-semibold leading-relaxed text-white/90">
-                  Find the right pro fast, then compare reviews before you choose.
-                </p>
-              </div>
-
-              {/* Matching Frosted Glass "Live searches" card */}
-              <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-5 shadow-card backdrop-blur-md">
-                <div className="pb-3 text-[10px] font-black uppercase tracking-widest text-white/40">
-                  Live searches
-                </div>
-                <div className="space-y-3">
-                  {HERO_SERVICE_CARDS.map((card) => (
-                    <div key={card.title} className="flex items-center justify-between gap-3 border-b border-white/5 pb-2.5 last:border-0 last:pb-0">
-                      <div>
-                        <p className="text-sm font-bold text-white">{card.title}</p>
-                        <p className="text-[11px] text-white/50">{card.meta}</p>
-                      </div>
-                      <span className="size-2 rounded-full" style={{ background: card.color }} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Column 2: Center Showcase */}
-            <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-3 shadow-pop">
-              <img src={heroGroup2} alt="South Africans using Sjoh" className="h-[430px] w-full rounded-[1.45rem] object-cover" />
-              <div className="absolute left-5 top-5 rounded-full border border-white/10 bg-black/45 px-3.5 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
-                Real people. Real work. All over SA.
-              </div>
-              <div className="absolute bottom-5 left-5 right-5 rounded-[1.25rem] border border-white/15 bg-black/55 p-4 text-white shadow-xl backdrop-blur-xl">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <div className="text-[10px] font-bold uppercase tracking-widest text-white/50">Search in progress</div>
-                    <div className="mt-0.5 font-display text-lg font-black">Compare trusted pros</div>
-                  </div>
-                  <span className="rounded-full bg-sa-gold px-3 py-1 text-xs font-black text-sa-dark shadow-sm">9 provinces</span>
-                </div>
-                <div className="mt-3 flex items-center gap-2 text-xs text-white/80">
-                  <ShieldCheck className="size-4 text-sa-green" />
-                  Reviews, verified badges, clear job details
-                </div>
-              </div>
-            </div>
-
-            {/* Column 3: Right details */}
-            <div className="space-y-4 pb-6">
-              {/* Cohesive Frosted Glass Rating capsule */}
-              <div className="flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-xs font-bold text-white shadow-md backdrop-blur-md">
-                <Star className="size-3.5 fill-sa-gold text-sa-gold" /> 4.9 average rating
-              </div>
-
-              {/* Symmetrical Frosted Glass "Proof before you call" card */}
-              <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-5 text-white shadow-card backdrop-blur-md">
-                <div className="mb-4 flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Proof before you call</span>
-                  <span className="rounded-full bg-sa-pink/20 border border-sa-pink/30 text-sa-pink px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider">Reviews</span>
-                </div>
-                <p className="text-xl font-black leading-snug">
-                  Profiles that show the work, the area, and the trust signals.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
-      <section className="bg-[#050505] px-4 py-8">
-        <div className="container">
-          <EarlyAccessNotice
-            title="Sjoh is open early, while the marketplace fills up."
-            body="That’s why some areas may look quiet right now. We’re onboarding proper South African pros category by category, and founding businesses can claim early visibility while the community grows."
-            ctaLabel="Get on early"
-            ctaTo="/list"
-          />
-        </div>
-      </section>
+      <EarlyAccessNotice
+        fullBleed
+        className="my-0"
+        backgroundImage={earlyAccessAbstractFrame}
+        title="Sjoh is open early, while the marketplace fills up."
+        body="That’s why some areas may look quiet right now. We’re onboarding proper South African pros category by category, and founding businesses can claim early visibility while the community grows."
+        ctaLabel="Get on early"
+        ctaTo="/list"
+      />
 
       {/* ========== MARQUEE STRIP ========== */}
       <div
         aria-hidden
-        className="relative overflow-hidden whitespace-nowrap border-y border-black/10 bg-white py-5"
+        className="relative overflow-hidden whitespace-nowrap border-y border-black/10 bg-white py-6 md:py-7"
       >
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-20 bg-gradient-to-r from-white to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-[1] w-20 bg-gradient-to-l from-white to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-24 bg-gradient-to-r from-white to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-[1] w-24 bg-gradient-to-l from-white to-transparent" />
         <div className="inline-flex sa-marquee-track items-center">
           {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((t, i) => (
             <span
               key={i}
-              className="font-display-bold inline-flex items-center gap-4 px-7 text-[15px] text-sa-dark/78 md:text-[17px]"
+              className="font-display-bold inline-flex items-center gap-5 px-8 text-[23px] leading-none tracking-tight text-sa-dark/92 md:text-[29px]"
             >
               {t}
               <span
-                className="size-2.5 rotate-45 rounded-[2px]"
+                className="size-3.5 rotate-45 rounded-[2px] shadow-[0_0_0_2px_rgba(0,0,0,0.04)]"
                 style={{
                   background:
                     i % 5 === 0 ? "var(--sa-gold)" :
@@ -392,7 +359,13 @@ const HomePage = () => {
       </div>
 
       {/* ========== PHOTO BAND — local work, product cards ========== */}
-      <section className="bg-[#050505] py-16">
+      <section
+        className="py-16"
+        style={{
+          background:
+            "radial-gradient(circle at 80% 8%, rgba(107,124,232,0.12), transparent 34%), radial-gradient(circle at 18% 90%, rgba(232,62,140,0.1), transparent 36%), #050505",
+        }}
+      >
           <div className="relative min-h-[620px] overflow-hidden border-y border-white/10">
             <img src={heroGroup1} alt="South Africans using Sjoh" className="absolute inset-0 h-full w-full object-cover" />
             <div
@@ -405,19 +378,25 @@ const HomePage = () => {
             />
             <div className="relative z-[1] flex min-h-[620px] items-end px-5 py-12 md:px-10 md:py-16 lg:px-14 xl:px-20">
               <div className="max-w-3xl">
-                <div className="mb-4 text-[11px] font-black uppercase tracking-[0.18em] text-white/78 drop-shadow-[0_2px_14px_rgba(0,0,0,0.95)]">
-                  ● Real help, close by
+                <div className="mb-4 inline-flex items-center rounded-full border border-white/22 bg-black/55 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-white/95 backdrop-blur-sm drop-shadow-[0_2px_14px_rgba(0,0,0,0.95)]">
+                  <span className="mr-2 text-sa-gold">●</span>Real help, close by
                 </div>
                 <h2 className="mb-4 font-display-bold text-5xl leading-[0.98] text-white drop-shadow-[0_6px_34px_rgba(0,0,0,0.95)] md:text-7xl">
-                  Find the skill.<br />Check the reviews.<br />Get it <span className="text-sa-gold">sorted.</span>
+                  Find the skill.<br />Check the reviews.<br />Get it <span className="animate-brand-flicker">sorted.</span>
                 </h2>
-                <p className="max-w-xl text-lg font-medium leading-relaxed text-white/86 drop-shadow-[0_3px_18px_rgba(0,0,0,0.95)]">
+                <p className="mt-4 inline-block max-w-xl rounded-xl border border-white/18 bg-black/58 px-4 py-3 text-lg font-medium leading-relaxed text-white/95 backdrop-blur-sm drop-shadow-[0_3px_18px_rgba(0,0,0,0.95)]">
                   Search the directory, post a request, or list your business where people are already looking for exactly what you do.
                 </p>
               </div>
             </div>
           </div>
-          <div className="border-b border-white/10 bg-[#050505] px-5 py-5 md:px-10 lg:px-14 xl:px-20">
+          <div
+            className="border-b border-white/10 px-5 py-5 md:px-10 lg:px-14 xl:px-20"
+            style={{
+              background:
+                "linear-gradient(180deg, rgba(7,10,18,0.98) 0%, rgba(5,5,5,0.98) 100%)",
+            }}
+          >
               <div className="grid gap-3 md:grid-cols-3">
                 {[
                   { title: "Post a request", body: "Share the job once and let interested pros come back to you.", cta: "Start here", to: "/requests/new" },
@@ -444,36 +423,42 @@ const HomePage = () => {
       </section>
 
       {/* ========== HOW IT WORKS — rotated colored cards ========== */}
-      <section className="bg-[#101010] py-20">
+      <section
+        className="py-20"
+        style={{
+          background:
+            "radial-gradient(circle at 15% 6%, rgba(107,124,232,0.11), transparent 36%), radial-gradient(circle at 88% 82%, rgba(11,110,58,0.1), transparent 38%), #101010",
+        }}
+      >
         <div className="container">
+          <div className="mb-10 max-w-2xl">
+            <div className="mb-4 w-fit rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-widest text-white backdrop-blur-md">
+              How Sjoh works
+            </div>
+            <h2 className="font-display-bold text-4xl leading-[1.03] text-white md:text-6xl">
+              Search once.<br />Choose properly.
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-white/76">
+              Browse the directory, compare the trust signals, and move from “who do I call?” to “this is the right person.”
+            </p>
+          </div>
           <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
             <div className="relative min-h-[520px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.05]">
               <img src={heroGroup4} alt="South Africans using Sjoh to find local services" className="absolute inset-0 h-full w-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/86 via-black/42 to-black/10" />
-              <div className="relative z-[1] flex h-full min-h-[520px] flex-col justify-end p-6 md:p-8">
-                <div className="max-w-md rounded-[1.35rem] border border-white/15 bg-black/52 p-5 backdrop-blur-sm">
-                  <div className="mb-4 w-fit rounded-full border border-white/20 bg-white/15 px-3 py-1.5 text-[11px] font-black uppercase tracking-widest text-white backdrop-blur-md">
-                    How Sjoh works
-                  </div>
-                  <h2 className="font-display-bold text-4xl md:text-5xl leading-[1.03] text-white">
-                    Search once.<br />Choose properly.
-                  </h2>
-                  <p className="mt-4 text-sm leading-relaxed text-white/80">
-                    Browse the directory, compare the trust signals, and move from “who do I call?” to “this is the right person.”
-                  </p>
-                </div>
-              </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               {HOW_STEPS.map((s) => (
                 <div
                   key={s.n}
-                  className="rounded-[1.65rem] p-7 flex flex-col gap-3.5 min-h-[250px] transition-transform duration-200 hover:translate-y-[-4px]"
+                  className="group relative overflow-hidden rounded-[1.65rem] p-7 flex flex-col gap-3.5 min-h-[250px] border border-white/5 transition-all duration-300 hover:brightness-110 hover:saturate-[1.08] hover:shadow-[0_28px_42px_-24px_rgba(0,0,0,0.9)]"
                   style={{ background: s.bg, color: s.color, transform: `rotate(${s.rot})` }}
                 >
+                  <span className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ boxShadow: `inset 0 0 80px ${s.glow}` }} />
+                  <span className="pointer-events-none absolute -top-14 -left-14 size-36 rounded-full bg-white/12 blur-2xl opacity-20 transition-opacity duration-300 group-hover:opacity-35" />
                   <div className="flex items-start justify-between">
                     <div className="font-display-bold text-4xl opacity-24">{s.n}</div>
-                    <div className="size-11 rounded-xl bg-black/10 grid place-items-center">
+                    <div className="size-11 rounded-xl bg-black/10 grid place-items-center transition-transform duration-300 group-hover:scale-110">
                       <s.Icon className="size-5" strokeWidth={2.4} />
                     </div>
                   </div>
@@ -487,7 +472,10 @@ const HomePage = () => {
       </section>
 
       {/* ========== STATS BAR ========== */}
-      <section ref={statsRef} className="bg-[#050505] border-y border-white/10">
+      <section
+        ref={statsRef}
+        className="border-y border-white/10 bg-[#050505]"
+      >
         <div className="container py-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 divide-y md:divide-y-0 md:divide-x divide-white/10">
             {stats.map((s) => (
@@ -505,20 +493,26 @@ const HomePage = () => {
       </section>
 
       {/* ========== CATEGORIES GRID ========== */}
-      <section className="bg-[#101010] border-b border-white/10">
+      <section
+        className="border-b border-black/10"
+        style={{
+          background:
+            "radial-gradient(circle at 10% 10%, rgba(245,166,35,0.13), transparent 30%), radial-gradient(circle at 92% 84%, rgba(107,124,232,0.14), transparent 34%), #f6f8fc",
+        }}
+      >
         <div className="container py-20">
           <div className="flex items-end justify-between mb-10">
             <div className="max-w-xl">
-              <h2 className="font-display-bold text-3xl md:text-5xl leading-[1.03] text-white">
+              <h2 className="font-display-bold text-3xl md:text-5xl leading-[1.03] text-sa-dark">
                 Browse by category
               </h2>
-              <p className="mt-3 text-white/55">From electricians to event planners — everything you need.</p>
+              <p className="mt-3 text-sa-dark/65">From electricians to event planners — everything you need.</p>
             </div>
-            <Link to="/directory" className="text-sm font-semibold hover:underline hidden md:inline-block text-sa-gold">
+            <Link to="/directory" className="text-sm font-semibold hover:underline hidden md:inline-block text-sa-dark">
               Browse all
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {groupCounts.map((g, index) => {
               const Icon = getCategoryGroupIcon(g.slug);
               const accent = CATEGORY_TILE_STYLES[index % CATEGORY_TILE_STYLES.length];
@@ -526,20 +520,27 @@ const HomePage = () => {
                 <Link
                   key={g.slug}
                   to={`/directory/g/${g.slug}`}
-                  className="group relative overflow-hidden rounded-xl bg-white/[0.06] p-5 flex items-center gap-4 border hover:bg-white/[0.1] hover:-translate-y-1 hover:shadow-card transition-all duration-300 ease-out"
-                  style={{ borderColor: `color-mix(in srgb, ${accent} 45%, transparent)` }}
+                  className="group relative overflow-hidden rounded-2xl p-5 flex items-center gap-4 border shadow-[0_18px_34px_-24px_rgba(16,24,40,0.45)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-[0_28px_48px_-20px_rgba(16,24,40,0.5)]"
+                  style={{
+                    borderColor: `color-mix(in srgb, ${accent} 55%, rgba(255,255,255,0.14))`,
+                    background: `linear-gradient(150deg, color-mix(in srgb, ${accent} 88%, white) 0%, color-mix(in srgb, ${accent} 72%, var(--sa-peri)) 58%, color-mix(in srgb, ${accent} 82%, white) 100%)`,
+                  }}
                 >
-                  <span className="pointer-events-none absolute -right-8 -top-10 size-28 rounded-full opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-25" style={{ background: accent }} />
+                  <span className="pointer-events-none absolute inset-x-0 top-0 h-1.5 opacity-95" style={{ background: `linear-gradient(90deg, ${accent} 0%, color-mix(in srgb, ${accent} 35%, transparent) 65%, transparent 100%)` }} />
+                  <span className="pointer-events-none absolute -right-8 -top-10 size-28 rounded-full opacity-24 blur-2xl transition-all duration-300 group-hover:opacity-45 group-hover:scale-110" style={{ background: accent }} />
+                  <span className="pointer-events-none absolute -bottom-12 -left-12 size-28 rounded-full opacity-0 blur-3xl transition-opacity duration-300 group-hover:opacity-30" style={{ background: accent }} />
                   <span
-                    className="relative size-11 rounded-xl bg-white/10 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300"
-                    style={{ color: accent }}
+                    className="relative size-11 rounded-xl border border-white/20 bg-white/10 text-white flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300"
                   >
                     <Icon className="size-5" strokeWidth={2} />
                   </span>
                   <div className="relative min-w-0">
-                    <p className="font-semibold text-sm text-white transition-colors leading-snug group-hover:text-white">{g.name}</p>
-                    <p className="text-xs text-white/45 mt-0.5 tabular-nums">{g.subCount} services</p>
+                    <p className="font-semibold text-[1.08rem] text-white transition-colors leading-snug">{g.name}</p>
+                    <p className="mt-1.5 inline-flex w-fit items-center rounded-full border border-white/24 bg-white/10 px-2.5 py-0.5 text-[12px] font-semibold text-white/85 tabular-nums">
+                      {g.subCount} services
+                    </p>
                   </div>
+                  <span className="ml-auto text-white/45 transition-all duration-300 group-hover:text-white/80 group-hover:translate-x-0.5">→</span>
                 </Link>
               );
             })}
@@ -548,7 +549,13 @@ const HomePage = () => {
       </section>
 
       {/* ========== FEATURED PROS RAIL ========== */}
-      <section className="bg-[#050505] py-20 overflow-hidden">
+      <section
+        className="py-20 overflow-hidden"
+        style={{
+          background:
+            "radial-gradient(circle at 12% 8%, rgba(11,110,58,0.1), transparent 32%), radial-gradient(circle at 88% 12%, rgba(107,124,232,0.12), transparent 34%), #050505",
+        }}
+      >
         <div className="container">
           <div className="mb-10 flex items-end justify-between gap-6">
             <div className="max-w-3xl">
@@ -660,42 +667,60 @@ const HomePage = () => {
       </section>
 
       {/* ========== LATEST CUSTOMER REQUESTS ========== */}
-      <section className="bg-[#101010] border-y border-white/10">
+      <section
+        className="border-y border-black/10"
+        style={{
+          background:
+            "linear-gradient(180deg, #ffffff 0%, #f7f9ff 100%)",
+        }}
+      >
         <div className="container py-20">
-          <div className="flex items-end justify-between mb-10">
+          <div className="mb-9 flex items-end justify-between">
             <div className="max-w-xl">
-              <h2 className="font-display-bold text-3xl md:text-5xl leading-[1.03] text-white">
+              <div className="mb-3 text-[11px] font-bold uppercase tracking-[0.1em] text-sa-dark/70">
+                ● Live job flow
+              </div>
+              <h2 className="font-display-bold text-3xl md:text-5xl leading-[1.03] text-sa-dark">
                 Latest customer requests
               </h2>
-              <p className="mt-3 text-white/55">Example jobs showing the kinds of requests customers can post on Sjoh.</p>
+              <p className="mt-3 text-sa-dark/62">Example jobs showing the kinds of requests customers can post on Sjoh.</p>
             </div>
-            <Link to="/requests" className="text-sm font-semibold hover:underline hidden md:inline-block text-sa-gold">
+            <Link to="/requests" className="text-sm font-semibold hover:underline hidden md:inline-block text-sa-dark">
               View all requests
             </Link>
           </div>
-          <div className="grid lg:grid-cols-3 gap-5">
-            {latest.map((o) => (
-              <JobCard key={o.id} job={o} />
-            ))}
+          <div className="rounded-[2rem] border border-black/10 bg-[#f1f4fb] p-4 md:p-5 shadow-[0_24px_54px_-46px_rgba(16,24,40,0.32)]">
+            <div className="grid lg:grid-cols-3 gap-5">
+              {latest.map((o) => (
+                <JobCard key={o.id} job={o} mixedColors />
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* ========== CTA — green section with tilted stat cards ========== */}
-      <section className="relative overflow-hidden grid md:grid-cols-2 gap-12 px-8 md:px-14 py-20" style={{ background: "var(--sa-green)" }}>
+      <section
+        className="relative overflow-hidden grid md:grid-cols-2 gap-12 px-8 md:px-14 py-20"
+        style={{
+          background:
+            "linear-gradient(140deg, #060606 0%, #0f1012 48%, #18191c 100%)",
+        }}
+      >
         <img
           aria-hidden
           src={heroGroup3}
           alt=""
-          className="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none mix-blend-luminosity"
+          className="absolute inset-0 w-full h-full object-cover opacity-62 pointer-events-none contrast-110 brightness-85"
+        />
+        <div className="absolute inset-0 bg-black/70 pointer-events-none" />
+        <div
+          className="absolute pointer-events-none rounded-full opacity-12 blur-3xl"
+          style={{ width: 520, height: 520, background: "rgba(255,255,255,0.32)", top: -220, right: -120 }}
         />
         <div
-          className="absolute pointer-events-none rounded-full opacity-15"
-          style={{ width: 500, height: 500, background: "var(--sa-gold)", top: -200, right: -100 }}
-        />
-        <div
-          className="absolute pointer-events-none rounded-full opacity-10"
-          style={{ width: 300, height: 300, background: "var(--sa-navy)", bottom: -100, left: "30%" }}
+          className="absolute pointer-events-none rounded-full opacity-10 blur-3xl"
+          style={{ width: 340, height: 340, background: "rgba(255,255,255,0.24)", bottom: -120, left: "30%" }}
         />
         <div className="relative z-[1]">
           <div className="text-[11px] font-bold tracking-[0.1em] uppercase mb-5" style={{ color: "rgba(255,255,255,0.5)" }}>
@@ -703,7 +728,7 @@ const HomePage = () => {
           </div>
           <h2 className="font-display-bold text-white text-5xl md:text-6xl leading-[1.02] mb-5">
             Do the work.<br />We help customers<br />
-            <span className="px-3 py-1 rounded-lg" style={{ background: "var(--sa-gold)", color: "var(--sa-dark)" }}>
+            <span className="px-3 py-1 rounded-lg" style={{ background: "var(--sa-red)", color: "#fff" }}>
               find you.
             </span>
           </h2>
@@ -711,7 +736,7 @@ const HomePage = () => {
             Sjoh gives proper service businesses a professional online reputation: profile, work photos, reviews, quotes, and invoices, without website building, social media admin, or Google Ads confusion.
           </p>
           <div className="flex gap-3 flex-wrap">
-            <Button size="lg" asChild className="font-bold rounded-full" style={{ background: "var(--sa-gold)", color: "var(--sa-dark)" }}>
+            <Button size="lg" asChild className="font-bold rounded-full" style={{ background: "var(--sa-green)", color: "#fff" }}>
               <Link to="/list">List your business <ArrowRight className="size-4" /></Link>
             </Button>
             <Button size="lg" variant="outline" asChild className="font-bold rounded-full bg-white/10 border-white/30 text-white hover:bg-white/20">
@@ -721,14 +746,35 @@ const HomePage = () => {
         </div>
         <div className="relative z-[1] flex flex-col gap-4">
           {[
-            { num: "1", lbl: "Professional profile", bg: "var(--sa-gold)", color: "var(--sa-dark)", rot: "-1.5deg" },
-            { num: "240+", lbl: "Service categories", bg: "var(--sa-navy)", color: "#fff", rot: "1.2deg" },
-            { num: "0%", lbl: "Founding commission bonus", bg: "var(--sa-pink)", color: "#fff", rot: "-0.8deg" },
+            {
+              num: "1",
+              lbl: "Professional profile",
+              bg: "var(--sa-gold)",
+              gradient: "linear-gradient(90deg, var(--sa-gold) 0%, #d8a24f 100%)",
+              color: "#fff",
+              rot: "-1.5deg",
+            },
+            {
+              num: "240+",
+              lbl: "Service categories",
+              bg: "var(--sa-navy)",
+              gradient: "linear-gradient(90deg, var(--sa-navy) 0%, #0f2f7e 100%)",
+              color: "#fff",
+              rot: "1.2deg",
+            },
+            {
+              num: "0%",
+              lbl: "Founding commission bonus",
+              bg: "var(--sa-pink)",
+              gradient: "linear-gradient(90deg, var(--sa-pink) 0%, #c93482 100%)",
+              color: "#fff",
+              rot: "-0.8deg",
+            },
           ].map((s) => (
             <div
               key={s.lbl}
               className="rounded-3xl px-7 py-6 flex items-center gap-6"
-              style={{ background: s.bg, color: s.color, transform: `rotate(${s.rot})` }}
+              style={{ background: s.gradient ?? s.bg, color: s.color, transform: `rotate(${s.rot})` }}
             >
               <div className="font-display-bold text-5xl tabular-nums shrink-0">{s.num}</div>
               <div className="text-sm font-semibold opacity-75">{s.lbl}</div>

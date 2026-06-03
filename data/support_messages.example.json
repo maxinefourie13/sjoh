@@ -1,0 +1,28 @@
+[
+  {
+    "id": "email-001",
+    "channel": "email",
+    "from": "thandi@example.co.za",
+    "subject": "I paid but my business is still locked",
+    "body": "PayFast charged me R250 but the dashboard says I need a plan.",
+    "received_at": "2026-06-03T08:10:00+02:00",
+    "attachments": []
+  },
+  {
+    "id": "email-002",
+    "channel": "email",
+    "from": "seo-pitch@example.com",
+    "subject": "Guest post backlink proposal",
+    "body": "Dear website owner, we can improve your domain authority with link insertion and backlinks.",
+    "received_at": "2026-06-03T08:22:00+02:00",
+    "attachments": []
+  },
+  {
+    "id": "wa-001",
+    "channel": "whatsapp",
+    "from": "+27000000000",
+    "body": "The quote won't send when I apply for an urgent job.",
+    "received_at": "2026-06-03T09:04:00+02:00",
+    "attachments": []
+  }
+]

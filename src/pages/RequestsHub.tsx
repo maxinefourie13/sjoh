@@ -45,23 +45,29 @@ const RequestsHub = () => {
         description="Tell us the job — vetted South African pros come back with quotes. Free for customers. No commission. No middleman."
         canonical="https://sjoh.co.za/requests"
       />
-      <div className="bg-[#050505] text-white">
+      <div
+        className="text-sa-dark"
+        style={{
+          background:
+            "linear-gradient(180deg, #fbfcff 0%, #f5f7fc 100%)",
+        }}
+      >
       <div className="container py-10 md:py-14">
-        <header className="relative mb-8 overflow-hidden rounded-[2rem] border border-white/10 bg-[#101010] p-6 md:p-10">
-          <img src={heroGroup3} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover opacity-28" />
+        <header className="relative mb-8 overflow-hidden rounded-[2rem] border border-black/10 bg-[#f7f8fc] p-6 md:p-10 shadow-[0_24px_54px_-42px_rgba(16,24,40,0.35)]">
+          <img src={heroGroup3} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover opacity-10 grayscale" />
           <div
             aria-hidden
             className="absolute inset-0"
-            style={{ background: "linear-gradient(90deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.74) 48%, rgba(0,0,0,0.28) 100%)" }}
+            style={{ background: "linear-gradient(90deg, rgba(247,248,252,0.97) 0%, rgba(247,248,252,0.92) 52%, rgba(247,248,252,0.76) 100%)" }}
           />
-          <div className="relative max-w-3xl">
-            <span className="text-xs font-bold uppercase tracking-widest text-sa-gold">
+          <div className="relative max-w-3xl text-sa-dark">
+            <span className="text-xs font-bold uppercase tracking-widest text-sa-dark/65">
               Post a Job
             </span>
             <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight mt-2">
               Need someone who can do it properly?
             </h1>
-            <p className="mt-3 text-white/74 text-lg">
+            <p className="mt-3 text-sa-dark/72 text-lg">
               Tell us what you need once. Vetted SA pros send quotes back to your Sjoh dashboard, then you choose who to contact.
             </p>
           </div>
@@ -76,12 +82,12 @@ const RequestsHub = () => {
         />
 
         <Tabs value={tab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="grid h-auto w-full max-w-2xl grid-cols-2 mb-8 rounded-full border border-white/15 bg-white/[0.07] p-1.5 text-white/55">
-            <TabsTrigger value="quote" className="rounded-full py-3 font-extrabold data-[state=active]:bg-sa-gold data-[state=active]:text-sa-dark data-[state=active]:shadow-none">
+          <TabsList className="grid h-auto w-full max-w-2xl grid-cols-2 mb-8 rounded-full border border-black/10 bg-white p-1.5 text-sa-dark/55 shadow-[0_12px_26px_-22px_rgba(16,24,40,0.4)]">
+            <TabsTrigger value="quote" className="rounded-full py-3 font-extrabold hover:text-sa-dark data-[state=active]:bg-sa-gold data-[state=active]:text-sa-dark data-[state=active]:shadow-none">
               <Sparkles className="size-4 mr-1.5" />
               Tell us what you need
             </TabsTrigger>
-            <TabsTrigger value="pros" className="rounded-full py-3 font-extrabold data-[state=active]:bg-sa-green data-[state=active]:text-white data-[state=active]:shadow-none">
+            <TabsTrigger value="pros" className="rounded-full py-3 font-extrabold hover:text-sa-dark data-[state=active]:bg-sa-green data-[state=active]:text-white data-[state=active]:shadow-none">
               <Send className="size-4 mr-1.5" />
               For businesses
             </TabsTrigger>
@@ -289,21 +295,23 @@ const GetQuotePanel = () => {
 
       {/* Recent requests strip — social proof */}
       {recent.length > 0 && (
-        <section>
-          <div className="flex items-end justify-between mb-5">
+        <section className="rounded-[2rem] border border-black/10 bg-white p-6 md:p-8 shadow-[0_24px_54px_-42px_rgba(16,24,40,0.24)]">
+          <div className="mb-5 flex items-end justify-between">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-sa-green">
+              <span className="text-xs font-bold uppercase tracking-widest text-sa-dark/68">
                 Live on Sjoh right now
               </span>
-          <h3 className="font-display text-2xl font-extrabold tracking-tight mt-1 text-white">
+              <h3 className="mt-1 font-display text-2xl font-extrabold tracking-tight text-sa-dark">
                 Recent requests from other Saffas
               </h3>
             </div>
           </div>
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="rounded-[1.4rem] border border-black/8 bg-[#f2f5fc] p-4 md:p-5">
+            <div className="grid gap-4 md:grid-cols-3">
             {recent.map((o) => (
-              <JobCard key={o.id} job={o} />
+              <JobCard key={o.id} job={o} mixedColors />
             ))}
+            </div>
           </div>
         </section>
       )}

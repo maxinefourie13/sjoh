@@ -17,6 +17,7 @@
     "test": "vitest run",
     "hermes:worker": "tsx workers/hermes/index.ts",
     "hermes:once": "tsx workers/hermes/index.ts --once",
+    "hermes:support-triage": "tsx scripts/hermes-support-triage.ts",
     "validate:leads": "tsx scripts/validate-hermes-leads.ts",
     "test:watch": "vitest"
   },

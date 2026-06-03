@@ -7,7 +7,7 @@ type JsonObject = Record<string, unknown>;
 type HermesTask = {
   id: string;
   campaign_id: string | null;
-  task_type: "source_url_check" | "seed_page_scan" | "lead_row_validate" | "heartbeat";
+  task_type: "source_url_check" | "seed_page_scan" | "lead_row_validate" | "support_message_triage" | "heartbeat";
   payload: JsonObject;
   attempts: number;
   max_attempts: number;
@@ -36,6 +36,15 @@ type LeadRow = {
   notes?: string;
 };
 
+type SupportMessage = {
+  channel?: string;
+  from?: string;
+  subject?: string;
+  body?: string;
+  received_at?: string;
+  attachments?: unknown[];
+};
+
 const CONTACT_TYPES = new Set([
   "no_email_found",
   "generic_business_email",
@@ -59,6 +68,29 @@ const REQUIRED_LEAD_FIELDS = [
   "email_marketing_allowed_now",
   "allowed_next_step",
 ] as const;
+
+const SPAM_PATTERNS: Array<[RegExp, string, number]> = [
+  [/\b(guest post|backlink|link insertion|seo audit|rank on google|domain authority)\b/i, "SEO/link-building pitch", 35],
+  [/\b(crypto|forex|binary options|casino|betting|loan offer|investment opportunity)\b/i, "finance or gambling spam", 40],
+  [/\b(buy followers|instagram growth|telegram subscribers|whatsapp database|email list)\b/i, "growth/list spam", 40],
+  [/\b(dear sir\/madam|dear website owner|kindly revert|business proposal)\b/i, "generic cold outreach wording", 20],
+  [/\b(i can redesign your website|website development services|app development company)\b/i, "agency cold pitch", 30],
+  [/\b(viagra|adult|xxx|escort)\b/i, "adult spam", 70],
+];
+
+const SUPPORT_BUCKET_PATTERNS: Array<[string, RegExp]> = [
+  ["payment_billing", /\b(payfast|payment|paid|charged|card|subscription|billing|refund|invoice|r250|checkout|itn)\b/i],
+  ["identity_privacy", /\b(id check|identity|id document|delete my data|privacy|popia|personal information|account deletion|remove my data)\b/i],
+  ["login_account", /\b(login|log in|sign in|password|magic link|account|email verification|cannot access)\b/i],
+  ["quote_job_flow", /\b(quote|request|job post|customer request|proposal|apply|lead|opportunity|urgent job)\b/i],
+  ["listing_profile", /\b(listing|business profile|profile photo|service area|category|verified pro|business page)\b/i],
+  ["email_delivery", /\b(email|receipt|notification|didn't receive|did not receive|spam folder)\b/i],
+  ["abuse_safety", /\b(scam|fraud|unsafe|threat|harass|abuse|stolen|fake business|report)\b/i],
+  ["sales_partnership", /\b(partnership|press|investor|advertising|sponsor|collaboration)\b/i],
+];
+
+const SUPPORT_P0_PATTERN = /\b(charged twice|unauthori[sz]ed|fraud|delete my data|privacy complaint|popia|id document leaked|can't pay|cannot pay|payment failed|live payment|refund)\b/i;
+const SUPPORT_P1_PATTERN = /\b(cannot login|can't login|checkout broken|quote won't send|urgent|customer can't|business can't|invoice failed|email not received)\b/i;
 
 const getEnv = (name: string, fallback?: string) => {
   const value = process.env[name] ?? fallback;
@@ -85,6 +117,11 @@ const asString = (value: unknown) => (typeof value === "string" ? value.trim() :
 
 const asObject = (value: unknown): JsonObject =>
   value && typeof value === "object" && !Array.isArray(value) ? (value as JsonObject) : {};
+
+const summarizeText = (value: string, limit = 180) => {
+  const clean = value.replace(/\s+/g, " ").trim();
+  return `${clean.slice(0, limit)}${clean.length > limit ? "..." : ""}`;
+};
 
 const assertHttpUrl = (value: unknown) => {
   const raw = asString(value);
@@ -218,6 +255,89 @@ const validateLeadRow = (row: LeadRow) => {
   }
 
   return errors;
+};
+
+const triageSupportMessage = (payload: JsonObject) => {
+  const message = payload as SupportMessage;
+  const subject = asString(message.subject);
+  const body = asString(message.body);
+  const combined = `${subject}\n${body}`;
+  const attachments = Array.isArray(message.attachments) ? message.attachments.map((a) => asString(a)) : [];
+  const spamSignals: string[] = [];
+  let spamScore = 0;
+
+  for (const [pattern, label, score] of SPAM_PATTERNS) {
+    if (pattern.test(combined)) {
+      spamSignals.push(label);
+      spamScore += score;
+    }
+  }
+
+  const urlCount = (combined.match(/https?:\/\//gi) ?? []).length;
+  if (urlCount >= 3) {
+    spamSignals.push("multiple links");
+    spamScore += 20;
+  }
+
+  if (attachments.some((name) => /\.(exe|scr|bat|cmd|js|vbs|zip|rar)$/i.test(name))) {
+    spamSignals.push("risky attachment type");
+    spamScore += 35;
+  }
+
+  if (!subject && body.length < 12) {
+    spamSignals.push("too little context");
+    spamScore += 12;
+  }
+
+  const matchedBucket = SUPPORT_BUCKET_PATTERNS.find(([, pattern]) => pattern.test(combined))?.[0] ?? "general_support";
+  const priority =
+    spamScore >= 50
+      ? "spam"
+      : SUPPORT_P0_PATTERN.test(combined)
+        ? "p0"
+        : SUPPORT_P1_PATTERN.test(combined)
+          ? "p1"
+          : matchedBucket === "payment_billing" || matchedBucket === "identity_privacy" || matchedBucket === "abuse_safety"
+            ? "p1"
+            : matchedBucket === "general_support" || matchedBucket === "sales_partnership"
+              ? "p3"
+              : "p2";
+  const bucket = priority === "spam" ? "spam" : matchedBucket;
+
+  const escalation =
+    priority === "spam"
+      ? spamScore >= 80
+        ? "ignore"
+        : "quarantine"
+      : priority === "p0"
+        ? "maxine_now"
+        : priority === "p1" && ["payment_billing", "identity_privacy", "abuse_safety"].includes(bucket)
+          ? "maxine_now"
+          : ["quote_job_flow", "login_account", "email_delivery"].includes(bucket)
+            ? "codex_bugfix"
+            : "draft_reply";
+
+  return {
+    channel: asString(message.channel) || "manual",
+    from: asString(message.from),
+    subject,
+    received_at: asString(message.received_at),
+    bucket,
+    priority,
+    spam_score: Math.min(spamScore, 100),
+    spam_signals: spamSignals,
+    escalation,
+    summary: `[${bucket}] ${summarizeText(subject || body || "No message text supplied")}`,
+    suggested_reply:
+      priority === "spam"
+        ? null
+        : bucket === "payment_billing"
+          ? "Thanks for flagging this. We are checking the payment record and will come back with the exact status before making any billing changes."
+          : bucket === "identity_privacy"
+            ? "Thanks for reaching out. We treat identity and privacy requests carefully, so this has been escalated for manual review before we take action."
+            : "Thanks for reaching out. We have received this and will come back to you shortly.",
+    checked_at: new Date().toISOString(),
+  };
 };
 
 const insertFinding = async (task: HermesTask, finding: JsonObject) => {
@@ -367,6 +487,38 @@ const handleLeadRowValidate = async (task: HermesTask) => {
   await completeTask(task, result);
 };
 
+const handleSupportMessageTriage = async (task: HermesTask) => {
+  const messagesPayload = Array.isArray(task.payload.messages)
+    ? task.payload.messages
+    : task.payload.message
+      ? [task.payload.message]
+      : [task.payload];
+  const messages = messagesPayload.map((message) => asObject(message));
+  const results = messages.map((message) => triageSupportMessage(message));
+  const needsReview = results.some((result) => result.escalation !== "ignore");
+
+  const result = {
+    messages_checked: results.length,
+    spam_count: results.filter((item) => item.priority === "spam").length,
+    maxine_now_count: results.filter((item) => item.escalation === "maxine_now").length,
+    codex_bugfix_count: results.filter((item) => item.escalation === "codex_bugfix").length,
+    results,
+    checked_at: new Date().toISOString(),
+  };
+
+  await insertFinding(task, {
+    finding_type: "support_triage",
+    status: needsReview ? "needs_review" : "new",
+    source_name: "Sjoh support inbox",
+    source_checked_date: today(),
+    confidence_score: results.some((item) => item.priority === "spam") ? 0.75 : 0.65,
+    data: result,
+    notes: "Hermes support triage classifies spam, urgency, and escalation. It does not send customer replies.",
+  });
+
+  await completeTask(task, result);
+};
+
 const handleHeartbeat = async (task: HermesTask) => {
   await completeTask(task, {
     worker_id: WORKER_ID,
@@ -379,6 +531,7 @@ const processTask = async (task: HermesTask) => {
   if (task.task_type === "source_url_check") return handleSourceUrlCheck(task);
   if (task.task_type === "seed_page_scan") return handleSeedPageScan(task);
   if (task.task_type === "lead_row_validate") return handleLeadRowValidate(task);
+  if (task.task_type === "support_message_triage") return handleSupportMessageTriage(task);
   if (task.task_type === "heartbeat") return handleHeartbeat(task);
   throw new Error(`Unsupported task_type ${task.task_type}`);
 };

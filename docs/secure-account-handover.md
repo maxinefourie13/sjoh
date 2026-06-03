@@ -102,11 +102,17 @@ cd /Users/maxin/Downloads/sjoh
 
 ## Email And Notifications
 
-- Support email:
+- Support email: `hello@sjoh.co.za`
+- Launch forwarding destination: `sjohforwarding@gmail.com`
+- Email routing status: Cloudflare Email Routing enabled on 2026-06-02 for `hello@sjoh.co.za` -> `sjohforwarding@gmail.com`.
+- Email DNS status: Cloudflare MX/SPF/DKIM records are live; old GoDaddy/SecureServer MX/SPF records were removed.
+- Email receipt status: confirmed in `sjohforwarding@gmail.com` on 2026-06-02. First test landed in Spam, so keep a Gmail filter for `to:hello@sjoh.co.za` with "Never send it to Spam".
 - Privacy email: `privacy@sjoh.co.za`
 - Legal email: `legal@sjoh.co.za`
 - General email: `hello@sjoh.co.za`
 - Transactional email provider: Resend
+- Support triage playbook: `docs/hermes-support.md`
+- Email routing runbook: `docs/cloudflare-email-routing.md`
 - WhatsApp/Twilio account:
 - OneSignal account:
 - Password-manager item names:

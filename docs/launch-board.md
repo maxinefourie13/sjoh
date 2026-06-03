@@ -26,7 +26,7 @@ Status key:
 | `[CHECKING]` | Business journey | Business can sign up, pay, create profile, verify ID, browse opportunities, quote, and invoice through the non-Lovable mail sender | Codex |
 | `[DONE]` | Lovable runtime cleanup | Social login and WhatsApp alerts no longer depend on Lovable runtime connectors for launch | Codex |
 | `[DONE]` | Legal/trust copy | Privacy, terms, cancellation, acceptable use, delivery, refund, and ID-check language are present and clear | Codex |
-| `[YOU]` | Support channel | Launch users can reach a real support email or WhatsApp when stuck | Maxine |
+| `[DONE]` | Support channel | `hello@sjoh.co.za` is routed through Cloudflare Email Routing to `sjohforwarding@gmail.com`; inbox receipt is confirmed; Hermes support triage is ready for spam filtering, drafts, and escalation | Maxine + Hermes |
 
 ## Current Launch Blockers
 
@@ -55,6 +55,8 @@ Status key:
 - PayFast ITN validation now preserves PayFast field order for signatures and rejects paid subscription events whose amount does not match the selected tier/billing cycle.
 - PayFast security passphrase was re-entered in PayFast and synced to the matching Supabase secret on 27 May 2026. `npm run check:supabase-secrets` confirms the Supabase secret exists. Next: confirm PayFast Recurring Billing no longer shows the missing-passphrase blocker.
 - Resend domain verification is complete for `sjoh.co.za`.
+- Cloudflare Email Routing is enabled for `hello@sjoh.co.za` -> `sjohforwarding@gmail.com`; old GoDaddy/SecureServer MX/SPF records were removed and public DNS now shows Cloudflare MX/SPF/DKIM.
+- A launch test email to `hello@sjoh.co.za` was accepted by the production Supabase transactional email queue on 2026-06-02. Cloudflare also logged an authenticated external test from `maxinefourie13@gmail.com` to `hello@sjoh.co.za` as `Forwarded`; Gmail receipt was confirmed inside `sjohforwarding@gmail.com`. First placement was Spam, so add a Gmail filter for `to:hello@sjoh.co.za` -> never send to Spam.
 - Supabase required email secrets are now present: `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_SENDER_DOMAIN`, and `EMAIL_REPLY_TO`.
 - Supabase transactional email functions were redeployed on 26 May 2026: `send-transactional-email`, `process-email-queue`, `preview-transactional-email`, and `handle-email-suppression`.
 - A production email smoke test queued and processed an invoice email through Resend successfully.
@@ -92,6 +94,7 @@ Status key:
 ## Hermes Lead Workflow
 
 - Use the Hermes workflow for lead sourcing, source checking, POPIA-aware contact triage, and concierge lead drafts.
+- Use `docs/hermes-support.md` for launch support triage, spam filtering, draft replies, and escalation routing.
 - Keep Hermes read/research oriented: it returns reviewed rows or handoff JSON, then Codex or Maxine persists approved data.
 - Workflow guide: `docs/hermes-agent.md`.
 - Hosted worker guide: `docs/hermes-hostinger.md`.

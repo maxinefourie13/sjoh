@@ -13,9 +13,10 @@ Hermes v1 is a cheap always-on worker. It does not use Kimi or any paid AI model
 - Check whether a source URL is still reachable.
 - Scan a seed/source page for possible emails, phone numbers, page title, and useful links.
 - Validate lead rows before import.
+- Classify launch support messages into spam, support buckets, priority, and escalation owner.
 - Write findings back to Supabase for human review.
 
-Hermes v1 does not automatically send outreach and does not approve a lead for marketing. Public contact info is not consent.
+Hermes v1 does not automatically send outreach, send support replies, approve a lead for marketing, promise refunds, change billing, approve ID checks, or handle legal/privacy requests. Public contact info is not consent.
 
 ## Setup Steps
 
@@ -121,6 +122,23 @@ The worker should claim the task, mark it completed, and create a `source_check`
   }
 }
 ```
+
+`support_message_triage`
+
+```json
+{
+  "message": {
+    "channel": "email",
+    "from": "customer@example.co.za",
+    "subject": "I paid but my account is still locked",
+    "body": "PayFast charged me R250 but Sjoh still asks me to choose a plan.",
+    "received_at": "2026-06-03T08:10:00+02:00",
+    "attachments": []
+  }
+}
+```
+
+For the support operating rules, see `docs/hermes-support.md`.
 
 ## Cheap Operating Rule
 

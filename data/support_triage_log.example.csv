@@ -1,0 +1,4 @@
+ticket_id,received_at,channel,from,bucket,priority,spam_score,escalation,status,owner,summary,next_action,resolution_notes
+email-001,2026-06-03T08:10:00+02:00,email,thandi@example.co.za,payment_billing,p0,0,maxine_now,new,Maxine,"PayFast charged customer but dashboard still locked","Check payment_events and subscription row before replying",""
+email-002,2026-06-03T08:22:00+02:00,email,seo-pitch@example.com,spam,spam,75,quarantine,quarantined,Hermes,"SEO backlink pitch","No reply unless later confirmed legitimate",""
+wa-001,2026-06-03T09:04:00+02:00,whatsapp,+27000000000,quote_job_flow,p2,0,codex_bugfix,new,Codex,"Customer cannot submit quote request","Reproduce request form and patch if broken",""

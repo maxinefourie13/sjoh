@@ -1,8 +1,8 @@
 # Hermes Agent Workflow
 
-Hermes is Sjoh's Codex-facing research and operations workflow for lead sourcing, outreach hygiene, and concierge handoff. Codex remains the main system: it deploys Hermes agents for bounded research missions, consolidates their findings, validates the data, and decides what should be persisted.
+Hermes is Sjoh's Codex-facing research and operations workflow for lead sourcing, outreach hygiene, concierge handoff, and launch support triage. Codex remains the main system: it deploys Hermes agents for bounded missions, consolidates their findings, validates the data, and decides what should be persisted or fixed.
 
-Use Hermes when the task is about finding or qualifying service providers, turning outside job posts into concierge leads, checking source evidence, or preparing outreach-safe batches. Keep normal Codex work for code changes, migrations, UI fixes, deploy checks, and tests.
+Use Hermes when the task is about finding or qualifying service providers, turning outside job posts into concierge leads, checking source evidence, preparing outreach-safe batches, or filtering support inbox noise. Keep normal Codex work for code changes, migrations, UI fixes, deploy checks, and tests.
 
 ## How To Invoke
 
@@ -37,6 +37,7 @@ Good lanes:
 - `Concierge sourcing`: "Turn public customer job posts into `/admin/concierge` drafts."
 - `Gap fill`: "Find phone-only businesses where email is missing, but do not guess email addresses."
 - `Dedupe pass`: "Compare new rows against `data/*.csv` and flag likely duplicates."
+- `Support triage`: "Classify launch support messages, filter spam, draft safe replies, and escalate payment/privacy/account issues."
 
 Avoid vague lanes like "find leads in South Africa." Split broad missions by province, city, category, or source type.
 
@@ -53,6 +54,7 @@ For the always-on hosted worker, see `docs/hermes-hostinger.md`.
 
 - Public contact data is not opt-in consent.
 - Personal-looking emails need extra care and explicit opt-in before promotional outreach.
+- Support triage is draft-only. Hermes must not promise refunds, change billing, approve ID checks, delete data, or send legal/privacy replies.
 - Every row needs a source name, source URL, checked date, and uncertainty notes.
 - Fewer high-confidence leads are better than a large noisy batch.
 - Do not carry sensitive personal information into Sjoh unless it is necessary and appropriate for the workflow.
@@ -79,6 +81,20 @@ Concierge lead drafts should match the `/admin/concierge` form:
   "external_contact_url": "",
   "why_it_is_real": "",
   "risk_notes": ""
+}
+```
+
+Support triage output should match the launch support playbook in `docs/hermes-support.md`:
+
+```json
+{
+  "bucket": "payment_billing",
+  "priority": "p0",
+  "spam_score": 0,
+  "spam_signals": [],
+  "escalation": "maxine_now",
+  "summary": "",
+  "suggested_reply": ""
 }
 ```
 
