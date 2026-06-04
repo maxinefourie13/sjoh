@@ -1,6 +1,6 @@
 // Lightweight HTML→print quotation generator. No backend needed.
 // Opens a print-styled window the user can save as PDF.
-import { BUSINESSES, formatRand } from "./mockData";
+import { formatRand } from "./mockData";
 
 export interface QuotationInput {
   jobId: string;
@@ -15,13 +15,22 @@ export interface QuotationInput {
   loomUrl?: string;
   notes?: string;
   providerBusinessId: string;
+  providerBusiness?: {
+    name: string;
+    address?: string | null;
+    city?: string | null;
+    province?: string | null;
+    phone?: string | null;
+    email?: string | null;
+    website?: string | null;
+  } | null;
 }
 
 const escape = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 export const buildQuotationHtml = (input: QuotationInput): string => {
-  const biz = BUSINESSES.find((b) => b.id === input.providerBusinessId);
+  const biz = input.providerBusiness;
   const ref = `SJOH-${Date.now().toString(36).toUpperCase()}`;
   const today = new Date().toLocaleDateString("en-ZA", {
     year: "numeric", month: "long", day: "numeric",
@@ -73,10 +82,10 @@ export const buildQuotationHtml = (input: QuotationInput): string => {
   <div class="block">
     <div class="label">From</div>
     <p><strong>${escape(biz?.name ?? "")}</strong></p>
-    <p>${escape(biz?.address ?? "")}</p>
-    <p>${escape(biz?.city ?? "")}, ${escape(biz?.province ?? "")}</p>
-    <p>${escape(biz?.phone ?? "")}</p>
-    <p>${escape(biz?.email ?? "")}</p>
+    ${biz?.address ? `<p>${escape(biz.address)}</p>` : ""}
+    <p>${escape([biz?.city, biz?.province].filter(Boolean).join(", "))}</p>
+    ${biz?.phone ? `<p>${escape(biz.phone)}</p>` : ""}
+    ${biz?.email ? `<p>${escape(biz.email)}</p>` : ""}
     ${biz?.website ? `<p>${escape(biz.website)}</p>` : ""}
   </div>
   <div class="block">

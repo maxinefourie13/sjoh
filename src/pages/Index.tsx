@@ -9,8 +9,8 @@ import { JobCard } from "@/components/JobCard";
 import { Typewriter } from "@/components/Typewriter";
 import { FoundingSpotsBanner } from "@/components/FoundingSpotsBanner";
 import { EarlyAccessNotice } from "@/components/EarlyAccessNotice";
-import { BUSINESSES, CATEGORIES, CATEGORY_GROUPS, OPPORTUNITIES, PROVINCES } from "@/lib/mockData";
-import { useBusinesses } from "@/hooks/useDirectory";
+import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
+import { useBusinesses, useOpportunities } from "@/hooks/useDirectory";
 import { getCategoryGroupIcon } from "@/lib/categoryIcons";
 import { useReveal } from "@/hooks/useReveal";
 import { cn } from "@/lib/utils";
@@ -168,12 +168,12 @@ const HomePage = () => {
   };
 
   const { data: allBusinesses } = useBusinesses();
+  const { data: allOpportunities } = useOpportunities();
   const featuredRailRef = useRef<HTMLDivElement | null>(null);
-  const featured = [...allBusinesses, ...BUSINESSES]
-    .filter((business, index, businesses) => businesses.findIndex((item) => item.slug === business.slug) === index)
+  const featured = allBusinesses
     .sort((a, b) => (b.reviewCount - a.reviewCount) || (b.rating - a.rating))
     .slice(0, 8);
-  const latest = OPPORTUNITIES.slice(0, 3);
+  const latest = allOpportunities.slice(0, 3);
   const popularCatSlugs = ["plumbing", "electrical", "home-cleaning", "garden-services", "mechanics", "web-design"];
   const popularCats = popularCatSlugs
     .map((s) => CATEGORIES.find((c) => c.slug === s))
@@ -549,57 +549,58 @@ const HomePage = () => {
       </section>
 
       {/* ========== FEATURED PROS RAIL ========== */}
-      <section
-        className="py-20 overflow-hidden"
-        style={{
-          background:
-            "radial-gradient(circle at 12% 8%, rgba(11,110,58,0.1), transparent 32%), radial-gradient(circle at 88% 12%, rgba(107,124,232,0.12), transparent 34%), #050505",
-        }}
-      >
-        <div className="container">
-          <div className="mb-10 flex items-end justify-between gap-6">
-            <div className="max-w-3xl">
-              <div className="text-[11px] font-bold tracking-[0.1em] uppercase mb-3 text-sa-gold">
-                ● Pros of the month
+      {featured.length > 0 && (
+        <section
+          className="py-20 overflow-hidden"
+          style={{
+            background:
+              "radial-gradient(circle at 12% 8%, rgba(11,110,58,0.1), transparent 32%), radial-gradient(circle at 88% 12%, rgba(107,124,232,0.12), transparent 34%), #050505",
+          }}
+        >
+          <div className="container">
+            <div className="mb-10 flex items-end justify-between gap-6">
+              <div className="max-w-3xl">
+                <div className="text-[11px] font-bold tracking-[0.1em] uppercase mb-3 text-sa-gold">
+                  ● Pros of the month
+                </div>
+                <h2 className="font-display-bold text-4xl md:text-6xl leading-[1.02] text-white">
+                  Local pros people keep recommending.
+                </h2>
+                <p className="mt-3 max-w-xl text-white/58">
+                  Featured spots are picked from reviews, response rate, and profile quality.
+                </p>
               </div>
-              <h2 className="font-display-bold text-4xl md:text-6xl leading-[1.02] text-white">
-                Local pros people keep recommending.
-              </h2>
-              <p className="mt-3 max-w-xl text-white/58">
-                Featured spots are picked from reviews, response rate, and profile quality. For now, these are example listings while Sjoh fills up.
-              </p>
-            </div>
-            <div className="hidden md:flex items-center gap-2">
-              <button
-                type="button"
-                aria-label="Scroll featured pros left"
-                onClick={() => featuredRailRef.current?.scrollBy({ left: -360, behavior: "smooth" })}
-                className="grid size-10 place-items-center rounded-full bg-white text-sa-dark font-black transition hover:-translate-x-0.5 hover:bg-sa-peri"
-              >
-                ←
-              </button>
-              <button
-                type="button"
-                aria-label="Scroll featured pros right"
-                onClick={() => featuredRailRef.current?.scrollBy({ left: 360, behavior: "smooth" })}
-                className="grid size-10 place-items-center rounded-full bg-sa-gold text-sa-dark font-black transition hover:translate-x-0.5 hover:bg-white"
-              >
-                →
-              </button>
-            </div>
-          </div>
-
-          <div
-            ref={featuredRailRef}
-            className="-mx-4 overflow-x-auto scroll-smooth px-4 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          >
-            <div className="flex w-max gap-5">
-              {featured.map((b, index) => (
-                <Link
-                  key={b.id}
-                  to={`/business/${b.slug}`}
-                  className="group w-[282px] shrink-0 overflow-hidden rounded-[1.7rem] border border-white/10 bg-white/[0.06] p-4 text-white shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-sa-gold hover:shadow-pop md:w-[330px]"
+              <div className="hidden md:flex items-center gap-2">
+                <button
+                  type="button"
+                  aria-label="Scroll featured pros left"
+                  onClick={() => featuredRailRef.current?.scrollBy({ left: -360, behavior: "smooth" })}
+                  className="grid size-10 place-items-center rounded-full bg-white text-sa-dark font-black transition hover:-translate-x-0.5 hover:bg-sa-peri"
                 >
+                  ←
+                </button>
+                <button
+                  type="button"
+                  aria-label="Scroll featured pros right"
+                  onClick={() => featuredRailRef.current?.scrollBy({ left: 360, behavior: "smooth" })}
+                  className="grid size-10 place-items-center rounded-full bg-sa-gold text-sa-dark font-black transition hover:translate-x-0.5 hover:bg-white"
+                >
+                  →
+                </button>
+              </div>
+            </div>
+
+            <div
+              ref={featuredRailRef}
+              className="-mx-4 overflow-x-auto scroll-smooth px-4 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+              <div className="flex w-max gap-5">
+                {featured.map((b, index) => (
+                  <Link
+                    key={b.id}
+                    to={`/business/${b.slug}`}
+                    className="group w-[282px] shrink-0 overflow-hidden rounded-[1.7rem] border border-white/10 bg-white/[0.06] p-4 text-white shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-sa-gold hover:shadow-pop md:w-[330px]"
+                  >
                   <div
                     className="mb-4 rounded-[1.35rem] p-5 min-h-[210px] flex flex-col"
                     style={{
@@ -659,45 +660,48 @@ const HomePage = () => {
                       </span>
                     ))}
                   </div>
-                </Link>
-              ))}
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ========== LATEST CUSTOMER REQUESTS ========== */}
-      <section
-        className="border-y border-black/10"
-        style={{
-          background:
-            "linear-gradient(180deg, #ffffff 0%, #f7f9ff 100%)",
-        }}
-      >
-        <div className="container py-20">
-          <div className="mb-9 flex items-end justify-between">
-            <div className="max-w-xl">
-              <div className="mb-3 text-[11px] font-bold uppercase tracking-[0.1em] text-sa-dark/70">
-                ● Live job flow
+      {latest.length > 0 && (
+        <section
+          className="border-y border-black/10"
+          style={{
+            background:
+              "linear-gradient(180deg, #ffffff 0%, #f7f9ff 100%)",
+          }}
+        >
+          <div className="container py-20">
+            <div className="mb-9 flex items-end justify-between">
+              <div className="max-w-xl">
+                <div className="mb-3 text-[11px] font-bold uppercase tracking-[0.1em] text-sa-dark/70">
+                  ● Live job flow
+                </div>
+                <h2 className="font-display-bold text-3xl md:text-5xl leading-[1.03] text-sa-dark">
+                  Latest customer requests
+                </h2>
+                <p className="mt-3 text-sa-dark/62">Fresh requests from real customers on Sjoh.</p>
               </div>
-              <h2 className="font-display-bold text-3xl md:text-5xl leading-[1.03] text-sa-dark">
-                Latest customer requests
-              </h2>
-              <p className="mt-3 text-sa-dark/62">Example jobs showing the kinds of requests customers can post on Sjoh.</p>
+              <Link to="/requests" className="text-sm font-semibold hover:underline hidden md:inline-block text-sa-dark">
+                View all requests
+              </Link>
             </div>
-            <Link to="/requests" className="text-sm font-semibold hover:underline hidden md:inline-block text-sa-dark">
-              View all requests
-            </Link>
-          </div>
-          <div className="rounded-[2rem] border border-black/10 bg-[#f1f4fb] p-4 md:p-5 shadow-[0_24px_54px_-46px_rgba(16,24,40,0.32)]">
-            <div className="grid lg:grid-cols-3 gap-5">
-              {latest.map((o) => (
-                <JobCard key={o.id} job={o} mixedColors />
-              ))}
+            <div className="rounded-[2rem] border border-black/10 bg-[#f1f4fb] p-4 md:p-5 shadow-[0_24px_54px_-46px_rgba(16,24,40,0.32)]">
+              <div className="grid lg:grid-cols-3 gap-5">
+                {latest.map((o) => (
+                  <JobCard key={o.id} job={o} mixedColors />
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ========== CTA — green section with tilted stat cards ========== */}
       <section

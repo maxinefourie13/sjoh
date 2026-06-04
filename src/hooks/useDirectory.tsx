@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { BUSINESSES, OPPORTUNITIES, type Business, type Opportunity, type Province } from "@/lib/mockData";
+import type { Business, Opportunity, Province } from "@/lib/mockData";
 import { mapBusinessRow } from "@/lib/businessAdapter";
-import { buildExampleBusiness } from "@/lib/exampleBusiness";
 
 interface State<T> {
   data: T[];
@@ -31,13 +30,12 @@ export function useBusinesses(): State<Business> {
         .order("created_at", { ascending: false })
         .limit(500);
       if (cancelled) return;
-      const example = buildExampleBusiness();
       if (error || !data) {
-        setState({ data: [example], loading: false, isFallback: false });
+        setState({ data: [], loading: false, isFallback: false });
         return;
       }
       setState({
-        data: [example, ...data.map(mapBusinessRow)],
+        data: data.map(mapBusinessRow),
         loading: false,
         isFallback: false,
       });
@@ -95,9 +93,9 @@ function relative(iso: string) {
 
 export function useOpportunities(): State<Opportunity> {
   const [state, setState] = useState<State<Opportunity>>({
-    data: OPPORTUNITIES,
+    data: [],
     loading: true,
-    isFallback: true,
+    isFallback: false,
   });
 
   useEffect(() => {
@@ -112,7 +110,11 @@ export function useOpportunities(): State<Opportunity> {
         .limit(200);
       if (cancelled) return;
       if (error || !data || data.length === 0) {
-        setState({ data: OPPORTUNITIES, loading: false, isFallback: true });
+        setState({
+          data: [],
+          loading: false,
+          isFallback: false,
+        });
         return;
       }
       setState({ data: data.map(mapOpportunity), loading: false, isFallback: false });

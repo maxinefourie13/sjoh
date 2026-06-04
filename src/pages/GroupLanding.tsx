@@ -9,7 +9,6 @@ import {
   CATEGORIES,
 } from "@/lib/mockData";
 import { useBusinesses, useOpportunities } from "@/hooks/useDirectory";
-import { EXAMPLE_BUSINESS_ID } from "@/lib/exampleBusiness";
 
 const GroupLanding = () => {
   const { groupSlug } = useParams<{ groupSlug: string }>();
@@ -32,12 +31,7 @@ const GroupLanding = () => {
 
   const subs = CATEGORIES.filter((c) => c.groupSlug === group.slug);
   const subSlugs = subs.map((s) => s.slug);
-  const featured = [
-    ...allBusinesses.filter((b) => b.id === EXAMPLE_BUSINESS_ID),
-    ...allBusinesses.filter(
-      (b) => b.id !== EXAMPLE_BUSINESS_ID && subSlugs.includes(b.categorySlug),
-    ),
-  ].slice(0, 3);
+  const featured = allBusinesses.filter((b) => subSlugs.includes(b.categorySlug)).slice(0, 3);
   const jobs = allOpps.filter((o) => subSlugs.includes(o.categorySlug)).slice(0, 3);
 
   return (

@@ -6,7 +6,6 @@ import { SeoHead } from "@/components/SeoHead";
 import { BusinessCard } from "@/components/BusinessCard";
 import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { useBusinesses } from "@/hooks/useDirectory";
-import { EXAMPLE_BUSINESS_ID } from "@/lib/exampleBusiness";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getCategoryGroupIcon } from "@/lib/categoryIcons";
@@ -54,7 +53,6 @@ const DirectoryPage = () => {
 
   const filtered = useMemo(() => {
     let list = businesses.filter((b) => {
-      if (b.id === EXAMPLE_BUSINESS_ID) return true; // always show preview card
       if (keyword && !b.name.toLowerCase().includes(keyword.toLowerCase()) && !b.category.toLowerCase().includes(keyword.toLowerCase())) return false;
       if (cats.length && !cats.includes(b.categorySlug)) return false;
       if (provs.length && !provs.includes(b.province)) return false;
@@ -70,11 +68,6 @@ const DirectoryPage = () => {
         const order = { featured: 0, standard: 1, free: 2 } as const;
         return order[a.plan] - order[b.plan];
       });
-    // Pin example card to the top regardless of sort
-    list = [
-      ...list.filter((b) => b.id === EXAMPLE_BUSINESS_ID),
-      ...list.filter((b) => b.id !== EXAMPLE_BUSINESS_ID),
-    ];
     return list;
   }, [businesses, keyword, cats, provs, verifiedOnly, promoOnly, topRated, sort]);
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { BUSINESSES, type Business } from "@/lib/mockData";
+import type { Business } from "@/lib/mockData";
 import { mapBusinessRow, mapServiceRow, mapReviewRow } from "@/lib/businessAdapter";
 
 interface GoogleReview {
@@ -52,9 +52,7 @@ export function useBusinessBySlug(slug: string | undefined): State {
       if (cancelled) return;
 
       if (!pub) {
-        // Fall back to mock data so dev/launch profiles still render.
-        const mock = BUSINESSES.find((b) => b.slug === slug) ?? null;
-        setState({ ...empty, business: mock, loading: false, isFallback: true });
+        setState({ ...empty, business: null, loading: false, isFallback: false });
         return;
       }
 

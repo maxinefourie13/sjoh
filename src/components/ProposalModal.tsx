@@ -145,6 +145,7 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
       contactPref,
       loomUrl: loomUrl || undefined,
       providerBusinessId: myBusiness?.id ?? "",
+      providerBusiness: myBusiness,
     });
     if (!ok) {
       toast({ title: "Pop-up blocked", description: "Allow pop-ups to download the quotation." });
