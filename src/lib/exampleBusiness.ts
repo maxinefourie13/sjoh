@@ -4,7 +4,7 @@ import type { Business, Province } from "@/lib/mockData";
 export const EXAMPLE_BUSINESS_ID = "example-listing";
 
 /**
- * Build the "Example Business" preview card. Used while the directory is still
+ * Build the preview listing card. Used while the directory is still
  * thin — gives visitors a sense of what a real listing looks like without
  * pretending to be a bookable pro. Remove this file + its three injection
  * points once we have enough real verified pros per category.
@@ -18,7 +18,7 @@ export function buildExampleBusiness(opts?: {
   return {
     id: EXAMPLE_BUSINESS_ID,
     slug: EXAMPLE_BUSINESS_ID,
-    name: "Example Business",
+    name: "Preview Listing",
     category: opts?.category ?? "Your category",
     categorySlug: opts?.categorySlug ?? "example",
     province: (opts?.province ?? "Gauteng") as Province,

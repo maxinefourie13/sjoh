@@ -148,7 +148,7 @@ const VerifiedReviewPage = () => {
             </div>
             <div>
               <Label htmlFor="rc">Your company <span className="text-muted-foreground font-normal">(optional)</span></Label>
-              <Input id="rc" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Naledi Properties" />
+              <Input id="rc" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Customer company or project name" />
             </div>
             <div>
               <Label htmlFor="rb">Tell other customers how it went</Label>

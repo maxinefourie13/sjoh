@@ -206,7 +206,7 @@ const EarlyAccessLanding = () => {
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-sa-dark/55">Sample profile</p>
-                    <p className="font-display text-xl font-black">Khumalo Electrical</p>
+                    <p className="font-display text-xl font-black">Local Electrical Team</p>
                   </div>
                   <span className="grid size-11 place-items-center rounded-full bg-sa-gold text-sa-dark">
                     <ArrowRight className="size-4" strokeWidth={3} />

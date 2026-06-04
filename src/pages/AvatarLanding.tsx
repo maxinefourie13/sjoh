@@ -88,7 +88,7 @@ export const AVATAR_LANDING_PAGES: Record<string, AvatarLandingConfig> = {
     image: workImage,
     accent: "var(--sa-gold)",
     quoteDemo: {
-      businessName: "Khumalo Electrical",
+      businessName: "Local Electrical Team",
       clientName: "M. Naidoo",
       quoteTitle: "DB board upgrade + COC",
       quoteTotal: "R 18,750",

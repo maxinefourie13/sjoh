@@ -15,7 +15,7 @@ import { VerifiedBadge } from "@/components/VerifiedBadge";
 
 /**
  * Public preview of what a client sees when they land on a real Sjoh business
- * profile. Linked from every "Example Business" card across the directory.
+ * profile. Linked from sample cards across the directory.
  * Pure presentation — no DB, no SEO indexing.
  */
 const ExampleProfile = () => {
@@ -53,7 +53,7 @@ const ExampleProfile = () => {
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="font-display text-3xl md:text-4xl tracking-tight">
-                    Example Business
+                    Preview Listing
                   </h1>
                   <VerifiedBadge size="sm" withLabel />
                 </div>

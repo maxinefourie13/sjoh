@@ -212,7 +212,7 @@ const ListBusiness = () => {
               <Field label="Business name">
                 <input
                   className="input"
-                  placeholder="e.g. Khumalo Electrical Contractors"
+                  placeholder="e.g. Your registered business name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
