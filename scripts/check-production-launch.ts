@@ -95,6 +95,7 @@ async function main() {
     "You do the work. We make sure local customers can find you.",
     "Acceptable Use Policy",
     "Google and Apple sign-in are paused",
+    "Fresh requests from real customers on Sjoh.",
   ];
 
   for (const marker of requiredBundleMarkers) {
@@ -108,6 +109,8 @@ async function main() {
   const prohibitedBundleMarkers = [
     "@lovable.dev/cloud-auth-js",
     "connector-gateway.lovable.dev",
+    "Khumalo Electrical Contractors",
+    "Naledi Properties",
   ];
 
   for (const marker of prohibitedBundleMarkers) {
