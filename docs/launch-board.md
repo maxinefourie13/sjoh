@@ -20,7 +20,7 @@ Status key:
 | `[DONE]` | Security audit | High-severity npm audit findings are resolved without force-upgrading launch tooling | Codex |
 | `[CHECKING]` | PayFast | PayFast live credentials, passphrase, and ITN are configured; recurring billing still needs dashboard/live smoke confirmation | Maxine + Codex |
 | `[DONE]` | Trial code | `SORTED30` gives a one-time 30-day Verified Pro trial without a card | Codex |
-| `[DONE]` | Production deploy | `sjoh.co.za` is live from the latest GitHub `main` Cloudflare Pages build | Codex |
+| `[CHECKING]` | Production deploy | `sjoh.co.za` is live on Cloudflare Pages, but the latest clean bundle still needs the refreshed manual zip upload | Maxine + Codex |
 | `[DONE]` | Hosting migration | Frontend hosting is cut over from Lovable to Cloudflare Pages while keeping Supabase Free | Maxine + Codex |
 | `[CHECKING]` | Customer journey | Customer can search, post a job, and receive quote/invoice emails through the non-Lovable mail sender | Codex |
 | `[CHECKING]` | Business journey | Business can sign up, pay, create profile, verify ID, browse opportunities, quote, and invoice through the non-Lovable mail sender | Codex |
@@ -35,9 +35,15 @@ Status key:
 3. The first live R250 subscription checkout/ITN should only be smoke-tested when Maxine is awake and ready to approve a real payment flow.
 4. Social login is paused for launch and WhatsApp lead alerts are disabled until they are rebuilt on a non-Lovable provider. Email/password auth, quote/invoice email, and public profile WhatsApp contact remain available.
 5. `npm run check:supabase-secrets` confirms Supabase has the PayFast, OpenAI, Google Places, `PUBLIC_SITE_URL`, and required Resend email secrets present.
+6. Cloudflare production is still serving an older bundle with archived demo names. The clean bundle is built, pushed, and packaged at `/Users/maxin/Downloads/sjoh-clean-launch.zip`; upload that zip to the `sjoh` Cloudflare Pages project, then rerun `npm run check:production`.
 
 ## Latest Overnight Checks
 
+- Latest launch-code commit on `main`: `fda8c07` removes remaining demo labels/placeholders from the launch runtime and deletes the unused tracked seed archive from `src`.
+- Current clean deploy package: `/Users/maxin/Downloads/sjoh-clean-launch.zip`, SHA-256 `b3362f009f116bb3a9e1e36ed1110f6e37e6d38a5a145b5ccc90d0de626c9438`.
+- Local `npm run lint`, `npm test`, and `npm run build` pass on 2026-06-04.
+- Local `dist` no longer contains `Khumalo Electrical Contractors`, `Naledi Properties`, `Example Business`, `@lovable.dev/cloud-auth-js`, or `connector-gateway.lovable.dev`.
+- Live `npm run check:production` still fails on the old `Khumalo Electrical Contractors` and `Naledi Properties` markers until Cloudflare is redeployed with the refreshed zip.
 - Latest launch-code commit on `main`: `ec55024` clarifies the Resend launch gate and is pushed.
 - Local production build, lint, unit tests, route smoke tests, and mobile pricing overflow checks pass.
 - `npm audit --audit-level=high` passes. Remaining audit items require force upgrades to dev tooling and are not launch blockers.
