@@ -223,7 +223,7 @@ const GetQuotePanel = () => {
           <h4 className="font-display text-xl md:text-2xl font-extrabold tracking-tight mt-2">
             What you'll need to send
           </h4>
-          <p className="text-white/62 text-sm mt-2">
+          <p className="text-ink-2 text-sm mt-2">
             Have these ready — it'll take you 2 minutes, tops.
           </p>
           <ul className="mt-5 space-y-3">
@@ -232,7 +232,7 @@ const GetQuotePanel = () => {
                 <span className="size-5 rounded-full bg-sa-green/15 text-sa-green flex items-center justify-center shrink-0 mt-0.5">
                   <CheckCircle2 className="size-3.5" strokeWidth={2.5} />
                 </span>
-                <span className="text-sm text-white/85">{item}</span>
+                <span className="text-sm font-medium text-ink">{item}</span>
               </li>
             ))}
           </ul>
@@ -245,7 +245,7 @@ const GetQuotePanel = () => {
           <h4 className="font-display text-xl md:text-2xl font-extrabold tracking-tight mt-2">
             Quotes from vetted pros, in your dashboard
           </h4>
-          <p className="text-white/62 text-sm mt-2">
+          <p className="text-ink-2 text-sm mt-2">
             We keep the quote trail tidy, then you pay the business directly. Sjoh never takes commission.
           </p>
           <ul className="mt-5 space-y-3">
@@ -254,7 +254,7 @@ const GetQuotePanel = () => {
                 <span className="size-5 rounded-full bg-sa-green text-white flex items-center justify-center shrink-0 mt-0.5">
                   <p.icon className="size-3.5" strokeWidth={2.5} />
                 </span>
-                <span className="text-sm font-medium text-white/85">{p.text}</span>
+                <span className="text-sm font-semibold text-ink">{p.text}</span>
               </li>
             ))}
           </ul>
