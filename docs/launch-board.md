@@ -20,7 +20,7 @@ Status key:
 | `[DONE]` | Security audit | High-severity npm audit findings are resolved without force-upgrading launch tooling | Codex |
 | `[CHECKING]` | PayFast | PayFast live credentials, passphrase, and ITN are configured; recurring billing still needs dashboard/live smoke confirmation | Maxine + Codex |
 | `[DONE]` | Trial code | `SORTED30` gives a one-time 30-day Verified Pro trial without a card | Codex |
-| `[DONE]` | Production deploy | `sjoh.co.za`, `www.sjoh.co.za`, and `sjoh.pages.dev` are serving the verified clean Cloudflare Pages bundle | Maxine + Codex |
+| `[DONE]` | Production deploy | `sjoh.co.za`, `www.sjoh.co.za`, and `sjoh-git.pages.dev` are served by the Git-connected Cloudflare Pages project from GitHub `main` | Maxine + Codex |
 | `[DONE]` | Hosting migration | Frontend hosting is cut over from Lovable to Cloudflare Pages while keeping Supabase Free | Maxine + Codex |
 | `[CHECKING]` | Customer journey | Customer can search, post a job, and receive quote/invoice emails through the non-Lovable mail sender | Codex |
 | `[CHECKING]` | Business journey | Business can sign up, pay, create profile, verify ID, browse opportunities, quote, and invoice through the non-Lovable mail sender | Codex |
@@ -35,7 +35,7 @@ Status key:
 3. The first live R250 subscription checkout/ITN should only be smoke-tested when Maxine is awake and ready to approve a real payment flow.
 4. Social login is paused for launch and WhatsApp lead alerts are disabled until they are rebuilt on a non-Lovable provider. Email/password auth, quote/invoice email, and public profile WhatsApp contact remain available.
 5. `npm run check:supabase-secrets` confirms Supabase has the PayFast, OpenAI, Google Places, `PUBLIC_SITE_URL`, and required Resend email secrets present.
-6. Cloudflare production now serves the clean bundle. `npm run check:production` passes on 5 June 2026, and the live JS excludes the old demo markers `Khumalo Electrical Contractors`, `Naledi Properties`, and `Example Business`.
+6. Cloudflare production now serves the Git-connected clean bundle from project `sjoh-git`. `npm run check:production` passes on 5 June 2026 for both `sjoh.co.za` and `www.sjoh.co.za`, and the live JS excludes the old demo markers `Khumalo Electrical Contractors`, `Naledi Properties`, and `Example Business`.
 
 ## Latest Overnight Checks
 
@@ -43,15 +43,16 @@ Status key:
 - Current clean deploy package: `/Users/maxin/Downloads/sjoh-clean-launch.zip`, SHA-256 `b3362f009f116bb3a9e1e36ed1110f6e37e6d38a5a145b5ccc90d0de626c9438`.
 - Local `npm run lint`, `npm test`, and `npm run build` pass on 2026-06-04.
 - Local `dist` no longer contains `Khumalo Electrical Contractors`, `Naledi Properties`, `Example Business`, `@lovable.dev/cloud-auth-js`, or `connector-gateway.lovable.dev`.
-- Live `npm run check:production` passes on 2026-06-05 after the refreshed Cloudflare Pages upload.
-- `https://sjoh.pages.dev/`, `https://sjoh.co.za/`, and `https://www.sjoh.co.za/` all serve `/assets/index-3V3QZ02S.js`; that bundle includes `Preview Listing` and excludes `Khumalo Electrical Contractors`, `Naledi Properties`, and `Example Business`.
+- Live `npm run check:production` passes on 2026-06-05 after the Cloudflare Pages migration to the Git-connected `sjoh-git` project.
+- `https://sjoh.co.za/`, `https://www.sjoh.co.za/`, and `https://ddaee773.sjoh-git.pages.dev/` all serve `/assets/index-nGWI9YeJ.js`; that bundle includes the request checklist contrast fix and excludes `Khumalo Electrical Contractors`, `Naledi Properties`, and `Example Business`.
+- Custom domains `sjoh.co.za` and `www.sjoh.co.za` were removed from the old direct-upload `sjoh` Pages project and added to the Git-connected `sjoh-git` project. Both domains are Active with SSL enabled.
 - Latest launch-code commit on `main`: `ec55024` clarifies the Resend launch gate and is pushed.
 - Local production build, lint, unit tests, route smoke tests, and mobile pricing overflow checks pass.
 - `npm audit --audit-level=high` passes. Remaining audit items require force upgrades to dev tooling and are not launch blockers.
 - Local build points at production Supabase `omhjcalrfhswjmanriqv`.
 - Live `sjoh.co.za` now resolves through Cloudflare nameservers: `chase.ns.cloudflare.com` and `selah.ns.cloudflare.com`.
 - `https://sjoh.co.za` and `https://www.sjoh.co.za` return HTTP 200 from Cloudflare.
-- Cloudflare Pages was redeployed from the latest local build at `https://86e16cf1.sjoh.pages.dev`.
+- Cloudflare Pages now deploys automatically from GitHub `main` on project `sjoh-git`; the old direct-upload `sjoh` Pages project is no longer the production owner for the custom domains.
 - `SITE_URL=https://sjoh.co.za npm run check:production` passes on the live site: launch icon, policy sitemap entries, `SORTED30`, pricing copy, and Acceptable Use markers are all present in production.
 - The live bundle now includes the email/password-only auth notice and no longer contains the Lovable Cloud Auth package or Lovable/Twilio connector gateway string.
 - Production smoke checks now verify the email/password-only auth notice and reject old Lovable auth/connector markers in the live bundle.

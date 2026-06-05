@@ -110,32 +110,38 @@ Optional but useful before a bigger launch:
 
 - Push the latest code to GitHub.
 - Current hosting: frontend is on Cloudflare Pages while Supabase remains the backend.
-- Cloudflare Pages project has been created:
+- Production Cloudflare Pages project:
   - Account: `sjohforwarding@gmail.com`
-  - Project: `sjoh`
-  - Default domain: `https://sjoh.pages.dev/`
-- Current production preview/deployment: `https://86e16cf1.sjoh.pages.dev/`
+  - Account ID: `7356313895a62a1f442cb17b7e4483bb`
+  - Project: `sjoh-git`
+  - GitHub repo: `maxinefourie13/sjoh`
+  - Production branch: `main`
+  - Default domain: `https://sjoh-git.pages.dev/`
+  - Verified preview/deployment: `https://ddaee773.sjoh-git.pages.dev/`
+  - Custom domains: `https://sjoh.co.za/` and `https://www.sjoh.co.za/`
 - Cloudflare Pages settings:
-  - Project name: `sjoh`
+  - Project name: `sjoh-git`
   - Production branch: `main`
   - Build command: `npm ci && npm run build`
   - Output directory: `dist`
+  - `bun.lockb` has been removed so Cloudflare uses `package-lock.json`/npm instead of Bun frozen-lockfile installs.
 - Set the production frontend env vars in the deploy host:
   - `VITE_SUPABASE_PROJECT_ID=omhjcalrfhswjmanriqv`
   - `VITE_SUPABASE_URL=https://omhjcalrfhswjmanriqv.supabase.co`
   - `VITE_SUPABASE_PUBLISHABLE_KEY=<the publishable key from the local .env>`
   - Optional: `VITE_ONESIGNAL_APP_ID=<your OneSignal app id>`
-- The latest GitHub `main` build has been deployed to `sjoh.co.za` through Cloudflare Pages.
+- The latest GitHub `main` build has been deployed to `sjoh.co.za` and `www.sjoh.co.za` through the Git-connected Cloudflare Pages project.
 - `sjoh.co.za` nameservers are now:
   - `chase.ns.cloudflare.com`
   - `selah.ns.cloudflare.com`
-- Keep Lovable available as a rollback fallback until the Cloudflare deploy has been stable for at least 24-48 hours and PayFast live checkout/ITN has been smoke-tested.
+- The old direct-upload Cloudflare Pages project `sjoh` no longer owns the production custom domains. Keep it only as a rollback reference until the Git-connected deploy has been stable for at least 24-48 hours and PayFast live checkout/ITN has been smoke-tested.
 - Transactional emails have been verified through Resend: the `sjoh.co.za` Resend domain is verified, required email secrets are set in Supabase, email functions are deployed, and a production invoice email smoke test queued and processed successfully.
 - Cloudflare migration guide: `docs/cloudflare-migration.md`.
 - Email migration guide: `docs/email-provider-migration.md`.
 - Verify the live deploy picked up the latest bundle whenever a new launch change is pushed:
   ```bash
   npm run check:production
+  SITE_URL=https://www.sjoh.co.za npm run check:production
   ```
 - Confirm:
   - `https://sjoh.co.za/`
