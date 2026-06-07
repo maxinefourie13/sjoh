@@ -28,6 +28,9 @@ const getSafeNextPath = (location: ReturnType<typeof useLocation>) => {
 const withNext = (path: string, nextPath: string) =>
   nextPath === "/dashboard" ? path : `${path}?next=${encodeURIComponent(nextPath)}`;
 
+const getAuthConfirmUrl = (nextPath: string) =>
+  `${window.location.origin}/auth/confirm?next=${encodeURIComponent(nextPath)}`;
+
 const authInputClass =
   "h-12 border-white/15 bg-white/[0.08] text-white placeholder:text-white/35 shadow-inner shadow-black/10 focus-visible:ring-white/35";
 
@@ -214,7 +217,7 @@ export const Register = () => {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}${nextPath}`,
+        emailRedirectTo: getAuthConfirmUrl(nextPath),
         data: { display_name: displayName, referral_code: referralCode || null },
       },
     });

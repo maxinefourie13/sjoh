@@ -520,7 +520,7 @@ const HomePage = () => {
                 <Link
                   key={g.slug}
                   to={`/directory/g/${g.slug}`}
-                  className="group relative overflow-hidden rounded-2xl p-5 flex items-center gap-4 border shadow-[0_18px_34px_-24px_rgba(16,24,40,0.45)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-[0_28px_48px_-20px_rgba(16,24,40,0.5)]"
+                  className="group relative grid min-h-[172px] overflow-hidden rounded-2xl border p-4 shadow-[0_18px_34px_-24px_rgba(16,24,40,0.45)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-[0_28px_48px_-20px_rgba(16,24,40,0.5)] sm:min-h-0 sm:grid-cols-[auto_1fr_auto] sm:items-center sm:gap-4 sm:p-5"
                   style={{
                     borderColor: `color-mix(in srgb, ${accent} 55%, rgba(255,255,255,0.14))`,
                     background: `linear-gradient(150deg, color-mix(in srgb, ${accent} 88%, white) 0%, color-mix(in srgb, ${accent} 72%, var(--sa-peri)) 58%, color-mix(in srgb, ${accent} 82%, white) 100%)`,
@@ -529,18 +529,16 @@ const HomePage = () => {
                   <span className="pointer-events-none absolute inset-x-0 top-0 h-1.5 opacity-95" style={{ background: `linear-gradient(90deg, ${accent} 0%, color-mix(in srgb, ${accent} 35%, transparent) 65%, transparent 100%)` }} />
                   <span className="pointer-events-none absolute -right-8 -top-10 size-28 rounded-full opacity-24 blur-2xl transition-all duration-300 group-hover:opacity-45 group-hover:scale-110" style={{ background: accent }} />
                   <span className="pointer-events-none absolute -bottom-12 -left-12 size-28 rounded-full opacity-0 blur-3xl transition-opacity duration-300 group-hover:opacity-30" style={{ background: accent }} />
-                  <span
-                    className="relative size-11 rounded-xl border border-white/20 bg-white/10 text-white flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300"
-                  >
+                  <span className="relative flex size-11 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-white transition-all duration-300 group-hover:-rotate-3 group-hover:scale-110">
                     <Icon className="size-5" strokeWidth={2} />
                   </span>
-                  <div className="relative min-w-0">
-                    <p className="font-semibold text-[1.08rem] text-white transition-colors leading-snug">{g.name}</p>
+                  <div className="relative mt-3 min-w-0 self-end sm:mt-0 sm:self-auto">
+                    <p className="max-w-full break-words pr-1 text-[1.08rem] font-semibold leading-tight text-white transition-colors sm:leading-snug">{g.name}</p>
                     <p className="mt-1.5 inline-flex w-fit items-center rounded-full border border-white/24 bg-white/10 px-2.5 py-0.5 text-[12px] font-semibold text-white/85 tabular-nums">
                       {g.subCount} services
                     </p>
                   </div>
-                  <span className="ml-auto text-white/45 transition-all duration-300 group-hover:text-white/80 group-hover:translate-x-0.5">→</span>
+                  <span className="absolute right-4 top-4 text-white/45 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-white/80 sm:static sm:ml-auto">→</span>
                 </Link>
               );
             })}
