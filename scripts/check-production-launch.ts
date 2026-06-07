@@ -57,6 +57,14 @@ async function main() {
     }))),
   });
 
+  checks.push({
+    name: "auth confirm route",
+    ...(await text(`${site}/auth/confirm?next=%2Fdashboard`).then((confirm) => ({
+      ok: confirm.status === 200 && confirm.contentType.includes("text/html"),
+      detail: `${confirm.status} ${confirm.contentType}`,
+    }))),
+  });
+
   const sitemap = await text(`${site}/sitemap.xml`);
   const requiredSitemapUrls = [
     "/acceptable-use",
@@ -96,6 +104,7 @@ async function main() {
     "Acceptable Use Policy",
     "Google and Apple sign-in are paused",
     "Fresh requests from real customers on Sjoh.",
+    "Confirming your email",
   ];
 
   for (const marker of requiredBundleMarkers) {
