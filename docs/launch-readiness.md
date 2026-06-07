@@ -151,6 +151,13 @@ Optional but useful before a bigger launch:
   - `https://sjoh.co.za/requests`
   - `https://sjoh.co.za/directory`
   - `https://sjoh.co.za/sitemap.xml`
+- Supabase Auth URL allow-list must include:
+  - `https://sjoh.co.za/auth/confirm`
+  - `https://www.sjoh.co.za/auth/confirm`
+  - `https://sjoh.co.za/auth/reset`
+  - `https://www.sjoh.co.za/auth/reset`
+  - `https://sjoh.co.za/reset-password`
+  - `https://www.sjoh.co.za/reset-password`
 
 ## QA Journeys
 

@@ -22,7 +22,7 @@ const EmailUnsubscribe = () => {
       try {
         const r = await fetch(`${FN_URL}?token=${encodeURIComponent(token)}`);
         const j = await r.json();
-        if (j.alreadyUnsubscribed) {
+        if (j.alreadyUnsubscribed || j.reason === "already_unsubscribed") {
           setEmail(j.email ?? null);
           setStatus("already");
         } else if (j.valid) {

@@ -35,6 +35,7 @@ import Dashboard from "./pages/Dashboard.tsx";
 import CategoryLocationPage from "./pages/CategoryLocationPage.tsx";
 import { Login, Register, ForgotPassword, ResetPassword } from "./pages/Auth.tsx";
 import AuthConfirm from "./pages/AuthConfirm.tsx";
+import AuthReset from "./pages/AuthReset.tsx";
 import PublicQuote from "./pages/PublicQuote.tsx";
 import PublicInvoice from "./pages/PublicInvoice.tsx";
 import VerifiedReviewPage from "./pages/VerifiedReviewPage.tsx";
@@ -93,6 +94,7 @@ const App = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/auth/confirm" element={<AuthConfirm />} />
+              <Route path="/auth/reset" element={<AuthReset />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               {/* Programmatic SEO routes — root-level: /:cat / :cat/:province / :cat/:province/:city */}

@@ -65,6 +65,25 @@ async function main() {
     }))),
   });
 
+  const requiredEmailRoutes = [
+    "/auth/reset",
+    "/reset-password",
+    "/unsubscribe?token=smoke-test-token",
+    "/email-preferences/unsubscribe?token=smoke-test-token",
+    "/quote/smoke-test-id",
+    "/quote/smoke-test-id/review",
+    "/invoice/smoke-test-token",
+  ];
+
+  for (const path of requiredEmailRoutes) {
+    const route = await text(`${site}${path}`);
+    checks.push({
+      name: `email route ${path}`,
+      ok: route.status === 200 && route.contentType.includes("text/html"),
+      detail: `${route.status} ${route.contentType}`,
+    });
+  }
+
   const sitemap = await text(`${site}/sitemap.xml`);
   const requiredSitemapUrls = [
     "/acceptable-use",
@@ -105,6 +124,8 @@ async function main() {
     "Google and Apple sign-in are paused",
     "Fresh requests from real customers on Sjoh.",
     "Confirming your email",
+    "Opening your reset link",
+    "Unsubscribe?",
   ];
 
   for (const marker of requiredBundleMarkers) {
