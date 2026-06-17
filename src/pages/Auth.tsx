@@ -135,6 +135,16 @@ export const Login = () => {
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("confirmed") === "1") {
+      toast({
+        title: "Email confirmed",
+        description: "Log in once to finish opening Sjoh on this device.",
+      });
+    }
+  }, [location.search]);
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);

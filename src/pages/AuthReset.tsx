@@ -11,6 +11,31 @@ const getAuthError = (search: URLSearchParams, hash: URLSearchParams) =>
   search.get("error") ||
   hash.get("error");
 
+const getParam = (search: URLSearchParams, hash: URLSearchParams, key: string) =>
+  search.get(key) || hash.get(key);
+
+const verifyResetTokenHash = async (tokenHash: string, rawType: string | null) => {
+  const type = rawType === "recovery" ? "recovery" : "recovery";
+  const { error } = await supabase.auth.verifyOtp({
+    token_hash: tokenHash,
+    type,
+  });
+  if (error) throw error;
+};
+
+const setSessionFromHash = async (search: URLSearchParams, hash: URLSearchParams) => {
+  const accessToken = getParam(search, hash, "access_token");
+  const refreshToken = getParam(search, hash, "refresh_token");
+  if (!accessToken || !refreshToken) return false;
+
+  const { error } = await supabase.auth.setSession({
+    access_token: accessToken,
+    refresh_token: refreshToken,
+  });
+  if (error) throw error;
+  return true;
+};
+
 const AuthReset = () => {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
@@ -30,12 +55,21 @@ const AuthReset = () => {
 
       try {
         const code = search.get("code");
+        const tokenHash = getParam(search, hash, "token_hash");
+        const type = getParam(search, hash, "type");
+
+        if (tokenHash) {
+          await verifyResetTokenHash(tokenHash, type);
+        }
+
         if (code) {
           const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
           if (exchangeError) throw exchangeError;
         }
 
-        await new Promise((resolve) => window.setTimeout(resolve, 250));
+        await setSessionFromHash(search, hash);
+
+        await new Promise((resolve) => window.setTimeout(resolve, 700));
         const { data, error: sessionError } = await supabase.auth.getSession();
         if (sessionError) throw sessionError;
 

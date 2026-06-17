@@ -15,6 +15,49 @@ const getAuthError = (search: URLSearchParams, hash: URLSearchParams) =>
   search.get("error") ||
   hash.get("error");
 
+const getParam = (search: URLSearchParams, hash: URLSearchParams, key: string) =>
+  search.get(key) || hash.get(key);
+
+const getLoginUrl = (nextPath: string) => {
+  const params = new URLSearchParams({ confirmed: "1" });
+  if (nextPath !== "/dashboard") params.set("next", nextPath);
+  return `/login?${params.toString()}`;
+};
+
+const isLikelyConfirmedButNotSignedIn = (message: string) => {
+  const normalized = message.toLowerCase();
+  return (
+    normalized.includes("code verifier") ||
+    normalized.includes("flow state") ||
+    normalized.includes("invalid or has expired") ||
+    normalized.includes("otp") ||
+    normalized.includes("expired")
+  );
+};
+
+const verifyTokenHash = async (tokenHash: string, rawType: string | null) => {
+  const allowedTypes = new Set(["signup", "invite", "magiclink", "recovery", "email_change", "email"]);
+  const type = allowedTypes.has(rawType ?? "") ? rawType : "email";
+  const { error } = await supabase.auth.verifyOtp({
+    token_hash: tokenHash,
+    type: type as "signup" | "invite" | "magiclink" | "recovery" | "email_change" | "email",
+  });
+  if (error) throw error;
+};
+
+const setSessionFromHash = async (search: URLSearchParams, hash: URLSearchParams) => {
+  const accessToken = getParam(search, hash, "access_token");
+  const refreshToken = getParam(search, hash, "refresh_token");
+  if (!accessToken || !refreshToken) return false;
+
+  const { error } = await supabase.auth.setSession({
+    access_token: accessToken,
+    refresh_token: refreshToken,
+  });
+  if (error) throw error;
+  return true;
+};
+
 const AuthConfirm = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -34,24 +77,40 @@ const AuthConfirm = () => {
       const urlError = getAuthError(search, hash);
 
       if (urlError) {
-        if (!cancelled) setError(urlError);
+        if (!cancelled && isLikelyConfirmedButNotSignedIn(urlError)) {
+          toast({ title: "Email confirmed", description: "Please log in once to finish opening Sjoh on this device." });
+          navigate(getLoginUrl(nextPath), { replace: true });
+        } else if (!cancelled) {
+          setError(urlError);
+        }
         return;
       }
 
       try {
         const code = search.get("code");
+        const tokenHash = getParam(search, hash, "token_hash");
+        const type = getParam(search, hash, "type");
+
+        if (tokenHash) {
+          await verifyTokenHash(tokenHash, type);
+        }
+
         if (code) {
           const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
           if (exchangeError) throw exchangeError;
         }
 
+        await setSessionFromHash(search, hash);
+
         // Supabase can finish implicit hash handling asynchronously on mobile browsers.
-        await new Promise((resolve) => window.setTimeout(resolve, 250));
+        await new Promise((resolve) => window.setTimeout(resolve, 700));
         const { data, error: sessionError } = await supabase.auth.getSession();
         if (sessionError) throw sessionError;
 
         if (!data.session) {
-          throw new Error("We opened the confirmation link, but could not finish signing you in. Please log in with the email and password you just created.");
+          toast({ title: "Email confirmed", description: "Please log in once to finish opening Sjoh on this device." });
+          navigate(getLoginUrl(nextPath), { replace: true });
+          return;
         }
 
         if (!cancelled) {
@@ -60,7 +119,12 @@ const AuthConfirm = () => {
         }
       } catch (err) {
         const message = err instanceof Error ? err.message : "We could not confirm this email link.";
-        if (!cancelled) setError(message);
+        if (!cancelled && isLikelyConfirmedButNotSignedIn(message)) {
+          toast({ title: "Email confirmed", description: "Please log in once to finish opening Sjoh on this device." });
+          navigate(getLoginUrl(nextPath), { replace: true });
+        } else if (!cancelled) {
+          setError(message);
+        }
       }
     };
 
