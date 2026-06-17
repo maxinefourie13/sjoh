@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, Star, ArrowRight, CheckCircle2, UsersRound } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
@@ -13,6 +13,7 @@ import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { useBusinesses, useOpportunities } from "@/hooks/useDirectory";
 import { getCategoryGroupIcon } from "@/lib/categoryIcons";
 import { useReveal } from "@/hooks/useReveal";
+import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import heroGroup1 from "@/assets/hero-group-1.jpg";
 import earlyAccessAbstractFrame from "@/assets/early-access-abstract-frame.png";
@@ -155,9 +156,25 @@ const CountingStat = ({ value, suffix = "", label, color, active }: CountingStat
 };
 
 const HomePage = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState("");
   const [province, setProvince] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("verified") !== "1") return;
+
+    const needsSignIn = params.get("signin") === "1";
+    toast({
+      title: "You're in",
+      description: needsSignIn
+        ? "Your email is confirmed. Log in once to finish opening Sjoh on this device."
+        : "Your email is confirmed. Welcome to Sjoh.",
+    });
+
+    navigate("/", { replace: true });
+  }, [location.search, navigate]);
 
   const onSearch = (e: React.FormEvent) => {
     e.preventDefault();

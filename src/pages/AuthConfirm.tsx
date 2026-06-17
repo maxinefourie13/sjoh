@@ -1,13 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Loader2, MailCheck, TriangleAlert } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
-
-const getSafeNextPath = (raw: string | null) =>
-  raw && raw.startsWith("/") && !raw.startsWith("//") ? raw : "/dashboard";
 
 const getAuthError = (search: URLSearchParams, hash: URLSearchParams) =>
   search.get("error_description") ||
@@ -18,10 +14,10 @@ const getAuthError = (search: URLSearchParams, hash: URLSearchParams) =>
 const getParam = (search: URLSearchParams, hash: URLSearchParams, key: string) =>
   search.get(key) || hash.get(key);
 
-const getLoginUrl = (nextPath: string) => {
-  const params = new URLSearchParams({ confirmed: "1" });
-  if (nextPath !== "/dashboard") params.set("next", nextPath);
-  return `/login?${params.toString()}`;
+const getVerifiedHomeUrl = (needsLogin = false) => {
+  const params = new URLSearchParams({ verified: "1" });
+  if (needsLogin) params.set("signin", "1");
+  return `/?${params.toString()}`;
 };
 
 const isLikelyConfirmedButNotSignedIn = (message: string) => {
@@ -59,14 +55,8 @@ const setSessionFromHash = async (search: URLSearchParams, hash: URLSearchParams
 };
 
 const AuthConfirm = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
-
-  const nextPath = useMemo(() => {
-    const params = new URLSearchParams(location.search);
-    return getSafeNextPath(params.get("next"));
-  }, [location.search]);
 
   useEffect(() => {
     let cancelled = false;
@@ -78,8 +68,7 @@ const AuthConfirm = () => {
 
       if (urlError) {
         if (!cancelled && isLikelyConfirmedButNotSignedIn(urlError)) {
-          toast({ title: "Email confirmed", description: "Please log in once to finish opening Sjoh on this device." });
-          navigate(getLoginUrl(nextPath), { replace: true });
+          navigate(getVerifiedHomeUrl(true), { replace: true });
         } else if (!cancelled) {
           setError(urlError);
         }
@@ -108,20 +97,17 @@ const AuthConfirm = () => {
         if (sessionError) throw sessionError;
 
         if (!data.session) {
-          toast({ title: "Email confirmed", description: "Please log in once to finish opening Sjoh on this device." });
-          navigate(getLoginUrl(nextPath), { replace: true });
+          navigate(getVerifiedHomeUrl(true), { replace: true });
           return;
         }
 
         if (!cancelled) {
-          toast({ title: "Email confirmed", description: "You're signed in. Let's get you sorted." });
-          navigate(nextPath, { replace: true });
+          navigate(getVerifiedHomeUrl(), { replace: true });
         }
       } catch (err) {
         const message = err instanceof Error ? err.message : "We could not confirm this email link.";
         if (!cancelled && isLikelyConfirmedButNotSignedIn(message)) {
-          toast({ title: "Email confirmed", description: "Please log in once to finish opening Sjoh on this device." });
-          navigate(getLoginUrl(nextPath), { replace: true });
+          navigate(getVerifiedHomeUrl(true), { replace: true });
         } else if (!cancelled) {
           setError(message);
         }
@@ -133,7 +119,7 @@ const AuthConfirm = () => {
     return () => {
       cancelled = true;
     };
-  }, [navigate, nextPath]);
+  }, [navigate]);
 
   return (
     <SiteLayout>
@@ -161,7 +147,7 @@ const AuthConfirm = () => {
                 <MailCheck className="size-7" />
               </div>
               <h1 className="font-display mt-6 text-3xl font-extrabold">Confirming your email...</h1>
-              <p className="mt-3 text-sm leading-6 text-white/65">Hold tight while Sjoh signs you in and sends you to the right place.</p>
+              <p className="mt-3 text-sm leading-6 text-white/65">Hold tight while Sjoh signs you in and sends you home.</p>
               <Loader2 className="mx-auto mt-7 size-6 animate-spin text-white/70" />
             </>
           )}
