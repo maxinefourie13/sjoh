@@ -1,5 +1,59 @@
 project_id = "omhjcalrfhswjmanriqv"
 
+[auth]
+enabled = true
+site_url = "https://sjoh.co.za"
+additional_redirect_urls = [
+  "https://www.sjoh.co.za",
+  "https://sjoh.co.za/auth/confirm",
+  "https://www.sjoh.co.za/auth/confirm",
+  "https://sjoh.co.za/auth/reset",
+  "https://www.sjoh.co.za/auth/reset",
+  "https://sjoh.co.za/reset-password",
+  "https://www.sjoh.co.za/reset-password",
+  "http://localhost:8081",
+  "http://127.0.0.1:8081",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173"
+]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true
+secure_password_change = false
+max_frequency = "1m0s"
+otp_length = 8
+otp_expiry = 3600
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+
+[auth.email.template.invite]
+subject = "You’re invited to Sjoh"
+content_path = "./supabase/templates/auth/invite.html"
+
+[auth.email.template.confirmation]
+subject = "Confirm your Sjoh email"
+content_path = "./supabase/templates/auth/confirm-email.html"
+
+[auth.email.template.recovery]
+subject = "Reset your Sjoh password"
+content_path = "./supabase/templates/auth/recovery.html"
+
+[auth.email.template.magic_link]
+subject = "Log in to Sjoh"
+content_path = "./supabase/templates/auth/magic-link.html"
+
+[auth.email.template.email_change]
+subject = "Confirm your new Sjoh email"
+content_path = "./supabase/templates/auth/email-change.html"
+
 [functions.payfast-checkout]
 verify_jwt = true
 
