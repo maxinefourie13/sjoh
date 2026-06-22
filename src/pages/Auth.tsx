@@ -263,16 +263,15 @@ export const Register = () => {
       title={isListingFlow ? "Create your pro account." : "Create your Sjoh account."}
       subtitle={
         isListingFlow
-          ? "Set up your account first, then we'll take you straight back to listing your business."
+          ? "Create your account, then list your business."
           : "Use one account to post jobs, accept quotes, save invoices, or list your business."
       }
       notice={
         isListingFlow ? (
-          <div className="flex items-start gap-3 rounded-2xl border border-sa-gold/30 bg-sa-gold/10 px-4 py-3 text-sm text-white/78">
-            <ShieldCheck className="mt-0.5 size-5 shrink-0 text-sa-gold" strokeWidth={2.4} />
+          <div className="flex items-center gap-3 rounded-2xl border border-sa-gold/30 bg-sa-gold/10 px-4 py-3 text-sm text-white/78">
+            <ShieldCheck className="size-5 shrink-0 text-sa-gold" strokeWidth={2.4} />
             <div>
-              <p className="font-black text-white">Next step: business profile</p>
-              <p className="mt-1 leading-5">After email confirmation, Sjoh returns you to the listing flow so you can add services, areas and proof of work.</p>
+              <p className="font-black text-white">Next: business profile</p>
             </div>
           </div>
         ) : null
@@ -292,10 +291,9 @@ export const Register = () => {
         <div className="space-y-1.5">
           <Label htmlFor="reg-name" className="text-white/85">What does your ma call you?</Label>
           <Input id="reg-name" required placeholder="First name + surname" value={displayName} onChange={(e) => setDisplayName(e.target.value)} className={authInputClass} />
-          <p className="text-xs text-white/45">Your real-ish name, please. Customers should know who they are dealing with.</p>
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="reg-email" className="text-white/85">How do we get hold of you?</Label>
+          <Label htmlFor="reg-email" className="text-white/85">Best email?</Label>
           <Input id="reg-email" type="email" required placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className={authInputClass} />
         </div>
         <div className="space-y-1.5">
@@ -311,14 +309,14 @@ export const Register = () => {
             className="mt-0.5 size-4 rounded border-white/20 bg-white/10 text-[color:var(--sa-green)] focus:ring-white/35 cursor-pointer shrink-0"
           />
           <span className="text-white/60 leading-relaxed">
-            I agree to the <Link to="/terms" className={authLinkClass}>Terms of Service</Link> and POPIA privacy policy, and confirm I will not offer or request illegal services.
+            I agree to the <Link to="/terms" className={authLinkClass}>Terms</Link> and <Link to="/privacy" className={authLinkClass}>Privacy Policy</Link>.
           </span>
         </label>
         <Button className={`w-full ${primaryAuthButtonClass}`} size="lg" disabled={submitting || !agreeTerms}>
           {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
           {isListingFlow ? "Create account and continue" : "Create account"}
         </Button>
-        <EmailOnlyNotice />
+        {!isListingFlow && <EmailOnlyNotice />}
       </form>
     </AuthShell>
   );
