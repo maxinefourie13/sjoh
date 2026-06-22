@@ -131,10 +131,8 @@ const ListBusiness = () => {
         .filter(Boolean)
         .slice(0, 20);
 
-      const { error } = await supabase.from("businesses").insert([{
-        owner_id: user.id,
+      const listingPayload = {
         name: name.trim(),
-        slug,
         category_slug: selectedCategory.slug,
         category_name: selectedCategory.name,
         province,
@@ -147,7 +145,25 @@ const ListBusiness = () => {
         image_url: logoUrl ?? coverUrl ?? null,
         listing_status: "workshop",
         pre_launch: true,
-      }]);
+      };
+
+      const { data: existingListing, error: existingErr } = await supabase
+        .from("businesses")
+        .select("id")
+        .eq("owner_id", user.id)
+        .eq("listing_status", "workshop")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (existingErr) throw existingErr;
+
+      const { error } = existingListing
+        ? await supabase
+            .from("businesses")
+            .update(listingPayload)
+            .eq("id", existingListing.id)
+        : await supabase.from("businesses").insert([{ ...listingPayload, owner_id: user.id, slug }]);
 
       if (error) throw error;
 
