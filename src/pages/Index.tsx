@@ -15,10 +15,10 @@ import { getCategoryGroupIcon } from "@/lib/categoryIcons";
 import { useReveal } from "@/hooks/useReveal";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import heroGroup1 from "@/assets/hero-group-1.jpg";
-import earlyAccessAbstractFrame from "@/assets/early-access-abstract-frame.png";
-import heroGroup3 from "@/assets/hero-group-3.jpg";
-import heroGroup4 from "@/assets/hero-group-4.jpg";
+import heroGroup1 from "@/assets/optimized/hero-group-1.webp";
+import earlyAccessAbstractFrame from "@/assets/optimized/early-access-abstract-frame.webp";
+import heroGroup3 from "@/assets/optimized/hero-group-3.webp";
+import heroGroup4 from "@/assets/optimized/hero-group-4.webp";
 
 const HERO_PHRASES = [
   "Sjoh! Your husband's DIY is a crime scene. Hire an actual professional.",
@@ -348,7 +348,7 @@ const HomePage = () => {
       {/* ========== MARQUEE STRIP ========== */}
       <div
         aria-hidden
-        className="relative overflow-hidden whitespace-nowrap border-y border-black/10 bg-white py-6 md:py-7"
+        className="relative max-w-full overflow-hidden whitespace-nowrap border-y border-black/10 bg-white py-6 md:py-7"
       >
         <div className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-24 bg-gradient-to-r from-white to-transparent" />
         <div className="pointer-events-none absolute inset-y-0 right-0 z-[1] w-24 bg-gradient-to-l from-white to-transparent" />
@@ -384,7 +384,13 @@ const HomePage = () => {
         }}
       >
           <div className="relative min-h-[620px] overflow-hidden border-y border-white/10">
-            <img src={heroGroup1} alt="South Africans using Sjoh" className="absolute inset-0 h-full w-full object-cover" />
+            <img
+              src={heroGroup1}
+              alt="South Africans using Sjoh"
+              className="absolute inset-0 h-full w-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
             <div
               className="absolute inset-0"
               style={{ background: "linear-gradient(90deg, rgba(0,0,0,0.84) 0%, rgba(0,0,0,0.54) 36%, rgba(0,0,0,0.16) 72%, rgba(0,0,0,0.06) 100%)" }}
@@ -461,7 +467,13 @@ const HomePage = () => {
           </div>
           <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
             <div className="relative min-h-[520px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.05]">
-              <img src={heroGroup4} alt="South Africans using Sjoh to find local services" className="absolute inset-0 h-full w-full object-cover" />
+              <img
+                src={heroGroup4}
+                alt="South Africans using Sjoh to find local services"
+                className="absolute inset-0 h-full w-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-black/86 via-black/42 to-black/10" />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -731,6 +743,8 @@ const HomePage = () => {
           src={heroGroup3}
           alt=""
           className="absolute inset-0 w-full h-full object-cover opacity-62 pointer-events-none contrast-110 brightness-85"
+          loading="lazy"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-black/70 pointer-events-none" />
         <div

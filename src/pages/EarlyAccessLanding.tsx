@@ -8,8 +8,7 @@ import { SeoHead } from "@/components/SeoHead";
 import { Typewriter } from "@/components/Typewriter";
 import { FoundingSpotsBanner } from "@/components/FoundingSpotsBanner";
 import { SjohWordmark } from "@/components/SjohWordmark";
-import { LAUNCH_TRIAL_CODE } from "@/components/TrialCodeRedeemer";
-import sjohMascot from "@/assets/sjoh-mascot-hoodie.png";
+import sjohMascot from "@/assets/optimized/sjoh-mascot-hoodie.webp";
 import { Award, Gift, Handshake, ShieldCheck, Hammer, Search, ArrowRight, CheckCircle2, Star, MapPin } from "lucide-react";
 
 type Mode = "pro" | "customer";
@@ -25,7 +24,7 @@ const HERO_PHRASES = [
 
 const PERKS = [
   { Icon: Award, title: "Founder badge", body: "First 500 pros get a permanent Founder badge on their profile." },
-  { Icon: Gift, title: "30 days free", body: `Use ${LAUNCH_TRIAL_CODE} once to unlock a no-card Verified Pro trial.` },
+  { Icon: Gift, title: "30 days free", body: "Start a PayFast-backed Verified Pro trial. R0 today, then R250/month after 30 days." },
   { Icon: Handshake, title: "Keep the whole quote", body: "No commission on jobs. Clients contact you directly." },
   { Icon: ShieldCheck, title: "Vetted marketplace", body: "Profiles, reviews, and trust signals help good pros stand out." },
 ];
@@ -89,7 +88,7 @@ const EarlyAccessLanding = () => {
     <div className="min-h-dvh w-full overflow-hidden bg-[#050505] text-white">
       <SeoHead
         title="Sjoh — Claim your founding spot"
-        description={`Join Sjoh as a founding member. South Africa's no-commission directory of vetted pros. First 500 get a Founder badge, and ${LAUNCH_TRIAL_CODE} unlocks 30 days free with no card.`}
+        description="Join Sjoh as a founding member. South Africa's no-commission directory of vetted pros. First 500 get a Founder badge and a 30-day PayFast-backed trial."
       />
 
       <div
@@ -146,7 +145,7 @@ const EarlyAccessLanding = () => {
             <FoundingSpotsBanner />
             <span className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/7 px-3.5 py-1.5 text-sm font-bold text-white/78">
               <CheckCircle2 className="size-4 text-sa-green" strokeWidth={2.5} />
-              {LAUNCH_TRIAL_CODE}: 30 days free
+              30-day PayFast-backed trial
             </span>
           </div>
 
@@ -200,6 +199,7 @@ const EarlyAccessLanding = () => {
                 src={sjohMascot}
                 alt="Sjoh mascot"
                 className="absolute bottom-[-38px] right-[-8px] w-[310px] max-w-[78%] select-none drop-shadow-2xl sm:w-[370px]"
+                decoding="async"
                 draggable={false}
               />
               <div className="absolute bottom-5 left-5 max-w-[270px] rounded-[1.2rem] border border-white/20 bg-white/82 p-4 text-sa-dark shadow-card backdrop-blur-xl">
@@ -281,7 +281,7 @@ const EarlyAccessLanding = () => {
                 <div>
                   <h2 className="font-display-bold text-2xl tracking-tight text-white">Claim your founding spot</h2>
                   <p className="mt-1 text-sm leading-relaxed text-white/65">
-                    Founder badge, {LAUNCH_TRIAL_CODE} 30-day trial, and 0% commission.
+                    Founder badge, 30-day trial, and 0% commission.
                   </p>
                 </div>
                 <span className="hidden rounded-full bg-sa-green px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-white sm:inline-flex">
@@ -293,7 +293,7 @@ const EarlyAccessLanding = () => {
                 {[
                   ["0%", "commission"],
                   ["500", "founders"],
-                  ["30d", "trial code"],
+                  ["30d", "trial"],
                 ].map(([value, label]) => (
                   <div key={label} className="rounded-2xl border border-white/10 bg-black/25 px-2 py-3">
                     <div className="font-display-bold text-2xl text-sa-gold">{value}</div>
@@ -358,7 +358,7 @@ const EarlyAccessLanding = () => {
                 </Button>
 
                 <p className="text-center text-[11px] text-white/55 leading-relaxed">
-                  Use {LAUNCH_TRIAL_CODE} after signup for 30 days free. No card needed for the code.
+                  Start your 30-day trial through PayFast after signup. R0 today, then R250/month unless you cancel.
                 </p>
 
                 <p className="text-center text-xs text-white/55">

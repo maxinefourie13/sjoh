@@ -26,14 +26,6 @@ export const CookieConsent = () => {
     } catch { /* ignore */ }
   }, []);
 
-  // Body scroll lock while open — makes it feel like a real prompt.
-  useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = prev; };
-  }, [open]);
-
   const handle = (choice: CookieChoice) => {
     recordChoice(choice);
     setOpen(false);
@@ -43,55 +35,46 @@ export const CookieConsent = () => {
 
   return (
     <div
-      role="dialog"
-      aria-modal="true"
+      role="region"
       aria-live="polite"
       aria-label="Cookie preferences"
-      className="fixed inset-0 z-[80] flex items-end sm:items-center justify-center p-0 sm:p-6"
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-[80] flex justify-center p-3 sm:justify-end sm:p-6"
     >
-      {/* Dimming overlay */}
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-black/75 backdrop-blur-[3px] animate-in fade-in duration-300"
-      />
-
       {/* Frosted glass premium card with South African navy/dark tint */}
       <div
-        className="relative w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl p-6 sm:p-7 border border-white/15 animate-in fade-in zoom-in-95 slide-in-from-bottom-4 duration-300"
+        className="pointer-events-auto relative w-full max-w-[24rem] rounded-3xl border border-white/15 p-5 shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-300 sm:max-w-md sm:p-6"
         style={{
           background:
-            "linear-gradient(135deg, rgba(26, 26, 26, 0.65) 0%, rgba(10, 36, 99, 0.5) 100%)",
+            "linear-gradient(135deg, rgba(18, 18, 20, 0.9) 0%, rgba(10, 36, 99, 0.82) 100%)",
           boxShadow:
-            "0 25px 60px -15px rgba(0, 0, 0, 0.45), 0 10px 30px -10px rgba(0, 0, 0, 0.3)",
+            "0 25px 60px -15px rgba(0, 0, 0, 0.55), 0 10px 30px -10px rgba(0, 0, 0, 0.35)",
           backdropFilter: "blur(20px) saturate(140%)",
           WebkitBackdropFilter: "blur(20px) saturate(140%)",
         }}
       >
         {/* Floating cookie chip with micro-animation */}
-        <div className="absolute -top-5 left-6 sm:left-7 size-12 rounded-full bg-sa-gold text-sa-dark flex items-center justify-center shadow-lg ring-2 ring-white/15 -rotate-12 animate-soft-bob">
-          <Cookie className="size-6" strokeWidth={2.25} aria-hidden />
+        <div className="absolute -top-4 left-5 flex size-10 items-center justify-center rounded-full bg-sa-gold text-sa-dark shadow-lg ring-2 ring-white/15 -rotate-12">
+          <Cookie className="size-5" strokeWidth={2.25} aria-hidden />
         </div>
 
-        <div className="pt-4">
-          <h2 className="font-display text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
+        <div className="pt-3">
+          <h2 className="font-display text-lg font-black tracking-tight text-white sm:text-xl">
             Sjoh! Another cookie policy, eish! 🍪
           </h2>
-          <p className="mt-2 text-sm sm:text-[15px] text-white/85 leading-relaxed">
-            We use digital cookies to make sure the site doesn't act like a mampara.
-            They help us remember your city and keep things secure—no crumbs, no mess.
-            Are you down to dunk them? ☕
+          <p className="mt-2 text-sm leading-relaxed text-white/80">
+            Cookies keep Sjoh secure, remember your preferences and help us improve the marketplace. Choose what works for you.
           </p>
 
-          <div className="mt-5 flex flex-col sm:flex-row sm:flex-wrap gap-2.5">
+          <div className="mt-4 grid gap-2.5 min-[390px]:grid-cols-2 sm:grid-cols-[auto_auto]">
             <button
               onClick={() => handle("all")}
-              className="inline-flex items-center justify-center rounded-full bg-sa-gold px-5 py-2.5 text-sm font-extrabold text-sa-dark shadow-md hover:bg-sa-gold/90 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
+              className="inline-flex min-h-11 items-center justify-center rounded-full bg-sa-gold px-5 py-2.5 text-sm font-extrabold text-sa-dark shadow-md transition-all duration-150 hover:-translate-y-0.5 hover:bg-sa-gold/90 hover:shadow-lg active:translate-y-0"
             >
               All cookies
             </button>
             <button
               onClick={() => handle("essential")}
-              className="inline-flex items-center justify-center rounded-full border border-white/30 px-5 py-2.5 text-sm font-bold text-white hover:bg-white/10 transition-all duration-150"
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/30 px-5 py-2.5 text-sm font-bold text-white transition-all duration-150 hover:bg-white/10"
             >
               Just the essentials
             </button>

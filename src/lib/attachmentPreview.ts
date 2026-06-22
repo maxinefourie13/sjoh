@@ -1,4 +1,4 @@
-import sjohPaintIcon from "@/assets/sjoh-icon-paint.png";
+import sjohPaintIcon from "@/assets/optimized/sjoh-icon-paint.webp";
 
 type AttachmentPreview = {
   url: string;

@@ -17,11 +17,11 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { SeoHead } from "@/components/SeoHead";
 import { LAUNCH_TRIAL_CODE, TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/business-landing-hero.jpg";
-import phoneImage from "@/assets/business-landing-phone.jpg";
-import moneyImage from "@/assets/business-landing-money.jpg";
-import workImage from "@/assets/business-landing-work.jpg";
-import cityImage from "@/assets/business-landing-city.jpg";
+import heroImage from "@/assets/optimized/business-landing-hero.webp";
+import phoneImage from "@/assets/optimized/business-landing-phone.webp";
+import moneyImage from "@/assets/optimized/business-landing-money.webp";
+import workImage from "@/assets/optimized/business-landing-work.webp";
+import cityImage from "@/assets/optimized/business-landing-city.webp";
 
 type AvatarLandingConfig = {
   slug: string;
@@ -432,7 +432,7 @@ const AvatarLanding = () => {
 
             <div className="relative">
               <div className="overflow-hidden rounded-[2rem] border border-white/15 bg-white/10 p-3 shadow-[0_30px_100px_rgba(0,0,0,0.45)]">
-                <img src={config.image} alt="" className="aspect-[4/3] w-full rounded-[1.45rem] object-cover" />
+                <img src={config.image} alt="" className="aspect-[4/3] w-full rounded-[1.45rem] object-cover" decoding="async" />
               </div>
               <div className="absolute -bottom-7 right-4 max-w-xs rounded-3xl border border-white/20 bg-[#111]/90 p-5 shadow-[0_20px_80px_rgba(0,0,0,0.55)] backdrop-blur md:right-8">
                 <div className="flex items-center gap-3">
@@ -452,8 +452,8 @@ const AvatarLanding = () => {
         <section className="border-b border-white/10 py-20">
           <div className="container grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr]">
             <div className="grid grid-cols-2 gap-4">
-              <img src={phoneImage} alt="" className="h-72 w-full rounded-3xl object-cover" />
-              <img src={moneyImage} alt="" className="mt-10 h-72 w-full rounded-3xl object-cover" />
+              <img src={phoneImage} alt="" className="h-72 w-full rounded-3xl object-cover" loading="lazy" decoding="async" />
+              <img src={moneyImage} alt="" className="mt-10 h-72 w-full rounded-3xl object-cover" loading="lazy" decoding="async" />
             </div>
             <div>
               <p className="text-xs font-black uppercase tracking-[0.22em]" style={{ color: config.accent }}>
@@ -513,7 +513,7 @@ const AvatarLanding = () => {
         </section>
 
         <section className="relative overflow-hidden border-b border-white/10 py-20">
-          <img src={cityImage} alt="" className="absolute inset-0 h-full w-full object-cover opacity-25" />
+          <img src={cityImage} alt="" className="absolute inset-0 h-full w-full object-cover opacity-25" loading="lazy" decoding="async" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/90 to-[#050505]/70" />
           <div className="container relative grid gap-8 lg:grid-cols-[1fr_26rem]">
             <div>

@@ -9,11 +9,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { Loader2, ShieldCheck, HandCoins, Handshake, Gift } from "lucide-react";
-import heroGroup from "@/assets/hero-group-3.jpg";
+import heroGroup from "@/assets/optimized/hero-group-3.webp";
 
 interface AuthShellProps {
   title: string;
   subtitle: string;
+  eyebrow?: string;
+  notice?: React.ReactNode;
   footer: React.ReactNode;
   children: React.ReactNode;
 }
@@ -41,7 +43,7 @@ const authLinkClass = "font-semibold text-[color:var(--sa-gold)] hover:underline
 
 const BrandPanel = () => (
   <aside className="relative hidden min-h-[620px] overflow-hidden rounded-[2rem] border border-white/15 bg-[#080808] p-10 text-white shadow-2xl lg:flex lg:flex-col lg:justify-between">
-    <img src={heroGroup} alt="" className="absolute inset-0 size-full object-cover opacity-75" />
+    <img src={heroGroup} alt="" className="absolute inset-0 size-full object-cover opacity-75" loading="lazy" decoding="async" />
     <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.12),rgba(0,0,0,0.82)),linear-gradient(90deg,rgba(0,0,0,0.86),rgba(0,0,0,0.15))]" />
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_18%,rgba(245,166,35,0.18),transparent_28%),radial-gradient(circle_at_20%_78%,rgba(232,62,140,0.14),transparent_30%),radial-gradient(circle_at_58%_62%,rgba(11,110,58,0.12),transparent_34%)]" />
 
@@ -78,7 +80,7 @@ const BrandPanel = () => (
   </aside>
 );
 
-const AuthShell = ({ title, subtitle, footer, children }: AuthShellProps) => (
+const AuthShell = ({ title, subtitle, eyebrow = "Sjoh account", notice, footer, children }: AuthShellProps) => (
   <SiteLayout>
     <div className="relative overflow-hidden bg-[#050505] text-white">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:64px_64px]" />
@@ -92,10 +94,11 @@ const AuthShell = ({ title, subtitle, footer, children }: AuthShellProps) => (
             <div className="rounded-[2rem] border border-white/15 bg-white/[0.07] p-6 shadow-2xl shadow-black/30 backdrop-blur-xl md:p-8 lg:mt-auto">
               <div className="mb-8 inline-flex rounded-full border border-white/15 bg-black/30 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white">
                 <span className="mr-2 text-[color:var(--sa-pink)]">●</span>
-                Sjoh account
+                {eyebrow}
               </div>
               <h1 className="font-display text-4xl font-extrabold tracking-tight text-white md:text-5xl">{title}</h1>
               <p className="mt-3 max-w-md text-base leading-7 text-white/70">{subtitle}</p>
+              {notice ? <div className="mt-5">{notice}</div> : null}
             </div>
             <div className="mt-5 rounded-[1.75rem] border border-white/15 bg-white/[0.08] p-5 shadow-2xl shadow-black/25 backdrop-blur-xl md:p-7">
               {children}
@@ -197,6 +200,7 @@ export const Register = () => {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [referralCode, setReferralCode] = useState<string>("");
+  const isListingFlow = nextPath === "/list";
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -255,8 +259,24 @@ export const Register = () => {
 
   return (
     <AuthShell
-      title="Create your Sjoh account."
-      subtitle="Use one account to post jobs, accept quotes, save invoices, or list your business."
+      eyebrow={isListingFlow ? "List your business" : "Sjoh account"}
+      title={isListingFlow ? "Create your pro account." : "Create your Sjoh account."}
+      subtitle={
+        isListingFlow
+          ? "Set up your account first, then we'll take you straight back to listing your business."
+          : "Use one account to post jobs, accept quotes, save invoices, or list your business."
+      }
+      notice={
+        isListingFlow ? (
+          <div className="flex items-start gap-3 rounded-2xl border border-sa-gold/30 bg-sa-gold/10 px-4 py-3 text-sm text-white/78">
+            <ShieldCheck className="mt-0.5 size-5 shrink-0 text-sa-gold" strokeWidth={2.4} />
+            <div>
+              <p className="font-black text-white">Next step: business profile</p>
+              <p className="mt-1 leading-5">After email confirmation, Sjoh returns you to the listing flow so you can add services, areas and proof of work.</p>
+            </div>
+          </div>
+        ) : null
+      }
       footer={<>Already have an account? <Link to={withNext("/login", nextPath)} className={authLinkClass}>Log in</Link></>}
     >
       <form className="space-y-4" onSubmit={onSubmit}>
@@ -270,11 +290,12 @@ export const Register = () => {
           </div>
         )}
         <div className="space-y-1.5">
-          <Label htmlFor="reg-name" className="text-white/85">Your name</Label>
+          <Label htmlFor="reg-name" className="text-white/85">What does your ma call you?</Label>
           <Input id="reg-name" required placeholder="First name + surname" value={displayName} onChange={(e) => setDisplayName(e.target.value)} className={authInputClass} />
+          <p className="text-xs text-white/45">Your real-ish name, please. Customers should know who they are dealing with.</p>
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="reg-email" className="text-white/85">Email</Label>
+          <Label htmlFor="reg-email" className="text-white/85">How do we get hold of you?</Label>
           <Input id="reg-email" type="email" required placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className={authInputClass} />
         </div>
         <div className="space-y-1.5">
@@ -295,7 +316,7 @@ export const Register = () => {
         </label>
         <Button className={`w-full ${primaryAuthButtonClass}`} size="lg" disabled={submitting || !agreeTerms}>
           {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
-          Create account
+          {isListingFlow ? "Create account and continue" : "Create account"}
         </Button>
         <EmailOnlyNotice />
       </form>

@@ -114,11 +114,15 @@
 
   html {
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-feature-settings: "ss01", "cv11";
+    overflow-x: hidden;
+    overflow-x: clip;
     background:
       radial-gradient(circle at 12% 8%, rgba(232, 62, 140, 0.08), transparent 28rem),
       radial-gradient(circle at 88% 18%, rgba(107, 124, 232, 0.1), transparent 30rem),
@@ -278,7 +282,11 @@
   animation: sa-caret-blink 1.05s steps(1) infinite;
 }
 .sa-sticker-spin { animation: sa-spin 22s linear infinite; }
-.sa-marquee-track { animation: sa-marquee 22s linear infinite; }
+.sa-marquee-track {
+  animation: sa-marquee 22s linear infinite;
+  max-width: max-content;
+  will-change: transform;
+}
 .sa-float-bob { animation: sa-float-bob 4s ease-in-out infinite; }
 .animate-sjoh-mark { animation: sjoh-mark-color 5s ease-in-out infinite; }
 .animate-sa-card-colors { animation: sa-card-colors 8s ease-in-out infinite; }
@@ -288,6 +296,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .sa-marquee-track {
+    animation: none;
+    transform: translateX(0);
+  }
+
   .animate-brand-flicker {
     animation: none;
     color: var(--sa-gold);

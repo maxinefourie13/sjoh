@@ -69,9 +69,9 @@ Optional but useful before a bigger launch:
 ## PayFast
 
 - Wait for PayFast account verification if the account is still under review.
-- Launch trial mechanic: `SORTED30` unlocks a one-time 30-day Verified Pro trial without a card. New accounts no longer receive an automatic 30-day Basic trial. After the code trial, the business chooses the R250/month subscription to continue.
+- Launch trial mechanic: new businesses should start a PayFast-backed 30-day Verified Pro trial. PayFast stores the card at R0 today, then the R250/month recurring charge starts after the trial unless the business cancels.
 - Private family/friends comp mechanic: `FRIENDS365` unlocks one year of Verified Pro access through the same code box. It is one redemption per user, does not create a PayFast subscription, and should not be published on the public site.
-- Paid checkout should be positioned as a normal R250/month subscription, not as a card-required free trial.
+- Public checkout should be positioned as a card-backed 30-day trial first, then a normal R250/month subscription.
 - The current checkout submits signed PayFast fields through a form POST. Keep the GET `redirect_url` only as a fallback for older clients.
 - The current webhook verifies PayFast's signature, merchant id, PayFast validation response, duplicate `pf_payment_id`, and expected amount for the selected tier/billing cycle.
 - Latest deployed PayFast functions:

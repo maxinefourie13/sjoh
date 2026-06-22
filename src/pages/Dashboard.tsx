@@ -23,7 +23,7 @@ import { requestPushPermission, disablePush, isPushConfigured } from "@/lib/push
 import { GoogleReviewsCard } from "@/components/dashboard/GoogleReviewsCard";
 import { SubscriptionGapBanner } from "@/components/SubscriptionGapBanner";
 import { ProfileVisibilityWarning } from "@/components/ProfileVisibilityWarning";
-import { LAUNCH_TRIAL_CODE, TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
+import { TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
 import { ReferAProCard } from "@/components/dashboard/ReferAProCard";
 import { SecondaryCategoriesCard } from "@/components/dashboard/SecondaryCategoriesCard";
 import { BusinessGalleryCard } from "@/components/dashboard/BusinessGalleryCard";
@@ -54,11 +54,15 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (params.get("paid") === "1") {
+      const trialStarted = params.get("trial_started") === "1";
       toast({
-        title: "Sharp! Plan sorted.",
-        description: "Your subscription is active. Back to work!",
+        title: trialStarted ? "Sharp! Trial sorted." : "Sharp! Plan sorted.",
+        description: trialStarted
+          ? "Your PayFast-backed trial is active. You will only be charged after the trial period."
+          : "Your subscription is active. Back to work!",
       });
       params.delete("paid");
+      params.delete("trial_started");
       setParams(params, { replace: true });
     }
     if (params.get("boost") === "success") {
@@ -882,12 +886,18 @@ const BillingSection = () => {
       ? `${access.trialDaysLeft} day${access.trialDaysLeft === 1 ? "" : "s"} left on trial`
       : access.isLocked
         ? "Subscribe to bring your profile back"
-        : `Use ${LAUNCH_TRIAL_CODE} for 30 days free, or subscribe for R250/month`;
+        : "Start a 30-day PayFast-backed trial. R0 today, then R250/month.";
 
   const switchToAnnual = async () => {
     if (!liveSub?.tier || (liveSub.tier !== "basic" && liveSub.tier !== "verified_pro")) return;
     setSwitching(true);
     await payments.startSubscription(liveSub.tier as "basic" | "verified_pro", "annual");
+    setSwitching(false);
+  };
+
+  const startTrial = async () => {
+    setSwitching(true);
+    await payments.startTrialSubscription("verified_pro", "monthly", 30);
     setSwitching(false);
   };
 
@@ -926,9 +936,15 @@ const BillingSection = () => {
           <p className="text-xs text-background/60 mt-1">Next renewal: {renewalLabel}</p>
         )}
         <div className="mt-5 flex flex-wrap gap-3">
-          <Button variant="default" className="bg-accent text-accent-foreground hover:bg-accent/90" asChild>
-            <Link to="/pricing">Change Plan</Link>
-          </Button>
+          {!isPaid && !access.isOnTrial ? (
+            <Button variant="default" className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={startTrial} disabled={switching}>
+              {switching ? "Opening PayFast…" : "Start 30-day trial"}
+            </Button>
+          ) : (
+            <Button variant="default" className="bg-accent text-accent-foreground hover:bg-accent/90" asChild>
+              <Link to="/pricing">Change Plan</Link>
+            </Button>
+          )}
           <Button variant="ghost" className="text-white hover:bg-white/10" asChild>
             <a href="mailto:hello@sjoh.co.za?subject=Cancel%20my%20Sjoh%20subscription">Cancel Plan</a>
           </Button>
@@ -959,7 +975,7 @@ const BillingSection = () => {
       <div className="bg-card border border-border rounded-xl p-6">
         <h3 className="font-display text-lg font-semibold mb-4">Payment method</h3>
         <p className="text-sm text-muted-foreground">
-          Your subscription is managed securely by PayFast. To change your plan, use the buttons above. To cancel during launch, email us and we’ll confirm once it is stopped.
+          Your subscription and trial card setup are managed securely by PayFast. To change your plan, use the buttons above. To cancel during launch, email us and we’ll confirm once it is stopped.
         </p>
       </div>
     </>

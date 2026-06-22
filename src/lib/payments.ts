@@ -12,6 +12,7 @@ export interface TrialCodeRedemption {
 async function startPayFastCheckout(
   tier: Tier,
   billing_cycle: BillingCycle = "monthly",
+  options: { trialDays?: number; callbackPath?: string } = {},
 ) {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) {
@@ -19,13 +20,19 @@ async function startPayFastCheckout(
     return null;
   }
 
-  toast({ title: "Taking you to PayFast", description: "Sorting the payment gateway…" });
+  toast({
+    title: "Taking you to PayFast",
+    description: options.trialDays
+      ? "Add your card securely. You will not be charged today."
+      : "Sorting the payment gateway…",
+  });
 
   const { data, error } = await supabase.functions.invoke("payfast-checkout", {
     body: {
       tier,
       billing_cycle,
-      callback_url: window.location.origin + "/dashboard?paid=1",
+      trial_days: options.trialDays,
+      callback_url: window.location.origin + (options.callbackPath ?? "/dashboard?paid=1"),
     },
   });
 
@@ -64,6 +71,11 @@ async function startPayFastCheckout(
 export const payments = {
   startSubscription: (tier: Tier, billing_cycle: BillingCycle = "monthly") =>
     startPayFastCheckout(tier, billing_cycle),
+  startTrialSubscription: (tier: Tier, billing_cycle: BillingCycle = "monthly", trialDays = 30) =>
+    startPayFastCheckout(tier, billing_cycle, {
+      trialDays,
+      callbackPath: "/dashboard?paid=1&trial_started=1",
+    }),
   redeemTrialCode: async (code: string): Promise<TrialCodeRedemption | null> => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {

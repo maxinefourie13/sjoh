@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles, UsersRound } from "lucide-react";
 import { cn } from "@/lib/utils";
-import boKaap from "@/assets/bo-kaap.jpg";
-import earlyAccessFlag from "@/assets/early-access-flag.jpg";
+import boKaap from "@/assets/optimized/bo-kaap.webp";
+import earlyAccessFlag from "@/assets/optimized/early-access-flag.webp";
 
 type EarlyAccessNoticeProps = {
   title?: string;
@@ -37,6 +37,7 @@ export const EarlyAccessNotice = ({
           aria-hidden
           className="absolute inset-0 h-full w-full object-cover object-[center_78%] opacity-58 transition-transform duration-500 group-hover:scale-[1.02]"
           loading="lazy"
+          decoding="async"
         />
         <div
           aria-hidden
@@ -91,6 +92,7 @@ export const EarlyAccessNotice = ({
         aria-hidden
         className="absolute inset-0 h-full w-full object-cover opacity-48 transition-transform duration-500 group-hover:scale-[1.03]"
         loading="lazy"
+        decoding="async"
       />
       <div
         aria-hidden

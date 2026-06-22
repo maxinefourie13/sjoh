@@ -27,7 +27,7 @@ export function TrialCodeRedeemer({
 }: TrialCodeRedeemerProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [code, setCode] = useState(LAUNCH_TRIAL_CODE);
+  const [code, setCode] = useState("");
   const [redeeming, setRedeeming] = useState(false);
 
   const isDark = tone === "dark";
@@ -38,7 +38,7 @@ export function TrialCodeRedeemer({
     if (!user) {
       toast({
         title: "Create your account first",
-        description: "Then SORTED30 unlocks your 30-day Verified Pro trial.",
+        description: "Then you can redeem a Sjoh launch code if the team gave you one.",
       });
       const next = `${window.location.pathname}${window.location.search}`;
       navigate(`/login?next=${encodeURIComponent(next)}`);
@@ -80,10 +80,10 @@ export function TrialCodeRedeemer({
         </span>
         <div className="min-w-0">
           <p className="font-display text-base font-extrabold tracking-tight">
-            Use {LAUNCH_TRIAL_CODE} for 30 days free.
+            Got a Sjoh launch code?
           </p>
           <p className={cn("mt-1 text-sm leading-relaxed", isDark ? "text-white/62" : "text-sa-dark/65")}>
-            No card needed for the code. One redemption per user, then choose R250/month to keep Verified Pro.
+            Redeem it here if the Sjoh team issued one to you. Otherwise, start your 30-day trial securely through PayFast.
           </p>
         </div>
       </div>

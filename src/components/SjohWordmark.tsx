@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import sjohLogo from "@/assets/sjoh-logo-new.png";
+import sjohLogo from "@/assets/optimized/sjoh-logo-new.webp";
 
 export const SjohWordmark = ({ className }: { className?: string }) => (
   <span className={cn("inline-flex items-center text-4xl leading-none", className)}>

@@ -47,7 +47,8 @@ function toSignatureString(data: Record<string, string>, passphrase: string): st
   return `${paramString}&passphrase=${encodePayFastValue(passphrase)}`;
 }
 
-function expectedAmountFor(tier: string, billingCycle: 'monthly' | 'annual'): number {
+function expectedAmountFor(tier: string, billingCycle: 'monthly' | 'annual', isTrialSetup = false): number {
+  if (isTrialSetup) return 0;
   if (tier === 'basic') {
     return billingCycle === 'annual' ? 540 : 50;
   }
@@ -145,6 +146,9 @@ Deno.serve(async (req) => {
   const rawTier = data.custom_str2 || 'verified_pro';
   const tier = rawTier === 'basic' ? 'basic' : 'verified_pro';
   const billingCycle: 'monthly' | 'annual' = (data.custom_str3 === 'annual' ? 'annual' : 'monthly');
+  const trialMatch = (data.custom_str4 || '').match(/^trial_(\d+)$/);
+  const trialDays = trialMatch ? Number.parseInt(trialMatch[1], 10) : 0;
+  const isTrialSetup = trialDays > 0 && trialDays <= 90;
   const amount = data.amount_gross || data.amount || '0';
   const token = data.token || ''; // subscription token (for recurring)
   const pfSubscriptionId = data.subscription_id || '';
@@ -164,7 +168,7 @@ Deno.serve(async (req) => {
   }
 
   if (kind === 'subscription_charge') {
-    const expectedAmount = expectedAmountFor(tier, billingCycle);
+    const expectedAmount = expectedAmountFor(tier, billingCycle, isTrialSetup);
     if (!amountsMatch(amount, expectedAmount)) {
       console.warn('PayFast amount mismatch', {
         pf_payment_id: pfPaymentId,
@@ -172,6 +176,7 @@ Deno.serve(async (req) => {
         expected: expectedAmount,
         tier,
         billingCycle,
+        isTrialSetup,
       });
       return new Response('Amount mismatch', { status: 403 });
     }
@@ -221,9 +226,10 @@ Deno.serve(async (req) => {
       const renewalMs = billingCycle === 'annual'
         ? 365 * 24 * 60 * 60 * 1000
         : 30  * 24 * 60 * 60 * 1000;
+      const trialMs = isTrialSetup ? trialDays * 24 * 60 * 60 * 1000 : 0;
 
       // If PayFast sent next billing date, use it; otherwise estimate
-      const nextBillingDate = data.billing_date || new Date(Date.now() + renewalMs).toISOString();
+      const nextBillingDate = data.billing_date || new Date(Date.now() + (trialMs || renewalMs)).toISOString();
 
       if (token) {
         // This is the initial or a recurring subscription charge with a token

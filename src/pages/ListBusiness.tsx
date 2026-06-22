@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Check, ArrowRight, ArrowLeft, CheckCircle2, Upload, Loader2, X } from "lucide-react";
+import { Check, ArrowRight, ArrowLeft, CheckCircle2, Upload, Loader2, X, CreditCard } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
-import { LAUNCH_TRIAL_CODE, TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
+import { TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { compressIfImage } from "@/lib/compressImage";
+import { payments } from "@/lib/payments";
 
 const STEPS = ["Basics", "Profile", "Founding Perks", "Review", "Done"] as const;
 
@@ -31,6 +32,12 @@ const slugify = (s: string) =>
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
     .slice(0, 60);
+
+const getTrialChargeDate = () => {
+  const date = new Date();
+  date.setDate(date.getDate() + 30);
+  return date.toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" });
+};
 
 const ListBusiness = () => {
   const [step, setStep] = useState(0);
@@ -103,16 +110,16 @@ const ListBusiness = () => {
     }
   };
 
-  const handleConfirm = async () => {
+  const saveWorkshopListing = async () => {
     if (!user) {
       toast({
         title: "Almost there",
-        description: "Sign in or create an account to save your listing.",
+        description: "Sign in or create an account before starting your trial.",
       });
       navigate(`/login?next=${encodeURIComponent("/list")}`);
-      return;
+      return false;
     }
-    if (!whatsappConsent || !selectedCategory || !basicsValid) return;
+    if (!whatsappConsent || !selectedCategory || !basicsValid) return false;
 
     setSubmitting(true);
     try {
@@ -145,10 +152,10 @@ const ListBusiness = () => {
       if (error) throw error;
 
       toast({
-        title: "You're on the founding-member list",
-        description: "We've saved your listing in workshop mode. Polish it from your dashboard anytime.",
+        title: "Listing saved",
+        description: "Now add your card on PayFast to start the trial.",
       });
-      next();
+      return true;
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : "Please try again in a moment.";
       toast({
@@ -156,14 +163,23 @@ const ListBusiness = () => {
         description: message,
         variant: "destructive",
       });
+      return false;
     } finally {
       setSubmitting(false);
     }
   };
 
+  const handleStartTrial = async () => {
+    const saved = await saveWorkshopListing();
+    if (!saved) return;
+    setSubmitting(true);
+    await payments.startTrialSubscription("verified_pro", "monthly", 30);
+    setSubmitting(false);
+  };
+
   const handlePrimaryClick = () => {
     if (step === 3) {
-      void handleConfirm();
+      void handleStartTrial();
     } else {
       next();
     }
@@ -371,7 +387,7 @@ const ListBusiness = () => {
             <div className="space-y-5">
               <div>
                 <h2 className="font-display text-2xl font-semibold">Founding-member perks</h2>
-                <p className="text-sm text-ink-2 mt-1">Get in early while Sjoh fills the marketplace. Build visibility, collect reviews, and look professional before the first call.</p>
+                <p className="text-sm text-ink-2 mt-1">Start with 30 days free, backed by PayFast. Your card is added now, and your first R250 charge is on {getTrialChargeDate()}.</p>
               </div>
               <div className="space-y-3">
                 {PLANS.map((p) => (
@@ -400,6 +416,12 @@ const ListBusiness = () => {
                   </button>
                 ))}
               </div>
+              <div className="rounded-xl border border-sa-gold/45 bg-sa-gold/10 p-4 text-sm text-ink-2">
+                <p className="font-bold text-foreground">Card required, charge later.</p>
+                <p className="mt-1 leading-relaxed">
+                  PayFast stores the card securely for the subscription. Today is R0. Your first Sjoh charge is R250 on {getTrialChargeDate()}, unless you cancel before then.
+                </p>
+              </div>
             </div>
           )}
 
@@ -408,7 +430,7 @@ const ListBusiness = () => {
               <div>
                 <h2 className="font-display text-2xl font-semibold">Review and confirm</h2>
                 <p className="text-sm text-ink-2 mt-1">
-                  Founding businesses can use {LAUNCH_TRIAL_CODE} once for a 30-day Verified Pro trial. No card needed for the code.
+                  Add your card securely with PayFast to start your 30-day Verified Pro trial. You will not be charged today.
                 </p>
               </div>
               <div className="rounded-xl border border-border p-5 bg-secondary/40 space-y-3">
@@ -425,18 +447,31 @@ const ListBusiness = () => {
                     {PLANS.find((p) => p.id === plan)?.name ?? "—"}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    R250/month when you are ready to keep Verified Pro. Build a public profile, respond to quote requests, generate invoices, and collect verified reviews.
+                    R0 today. R250/month starts on {getTrialChargeDate()} through PayFast, unless you cancel before then.
                   </p>
+                </div>
+              </div>
+              <div className="rounded-xl border border-sa-green/30 bg-sa-green/10 p-5">
+                <div className="flex items-start gap-3">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-sa-green text-white">
+                    <CreditCard className="size-5" strokeWidth={2.5} />
+                  </span>
+                  <div>
+                    <p className="font-display text-lg font-extrabold">30-day trial, PayFast-secured.</p>
+                    <p className="mt-1 text-sm leading-relaxed text-ink-2">
+                      You'll add your card on PayFast. Sjoh starts charging R250/month on {getTrialChargeDate()} if you keep Verified Pro.
+                    </p>
+                  </div>
                 </div>
               </div>
               <TrialCodeRedeemer tone="light" />
               <div className="rounded-xl border border-dashed border-sa-peri/60 bg-sa-peri/10 p-5 text-sm text-ink-2 leading-relaxed">
-                <strong className="text-foreground">Heads up — early access.</strong> We'll save your listing in workshop mode so you can keep editing it from your dashboard. The Sjoh team will reach out within 24 hours to verify details and switch it live.
+                <strong className="text-foreground">Heads up — early access.</strong> We'll save your listing in workshop mode while your PayFast setup and Sjoh verification are sorted. You can keep editing it from your dashboard.
               </div>
 
               {!user && (
                 <div className="rounded-xl border border-amber-300/60 bg-amber-50 p-4 text-sm text-amber-900">
-                  You'll be asked to sign in or create a free account when you tap Confirm — that's how we tie the listing to you.
+                  You'll be asked to sign in or create an account before PayFast opens — that's how we tie the listing and trial to you.
                 </div>
               )}
 
@@ -469,7 +504,7 @@ const ListBusiness = () => {
               <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
                 <Button onClick={() => navigate("/dashboard?section=profile")}>Polish my profile</Button>
                 <Button variant="secondary" asChild>
-                  <Link to="/pricing">Subscribe for R250/month</Link>
+                  <Link to="/pricing">Start 30-day trial</Link>
                 </Button>
                 <Button variant="outline" onClick={() => navigate("/leads")}>Browse Opportunities</Button>
               </div>
@@ -484,9 +519,9 @@ const ListBusiness = () => {
               <Button onClick={handlePrimaryClick} disabled={!canContinue}>
                 {step === 3 ? (
                   submitting ? (
-                    <><Loader2 className="size-4 animate-spin" /> Saving…</>
+                    <><Loader2 className="size-4 animate-spin" /> Opening PayFast…</>
                   ) : (
-                    <>Confirm — join the founding list</>
+                    <>Start 30-day trial <ArrowRight className="size-4" /></>
                   )
                 ) : (
                   <>Continue <ArrowRight className="size-4" /></>

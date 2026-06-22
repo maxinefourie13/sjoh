@@ -16,13 +16,13 @@ import {
 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { SeoHead } from "@/components/SeoHead";
-import { LAUNCH_TRIAL_CODE, TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
+import { TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/business-landing-hero.jpg";
-import phoneImage from "@/assets/business-landing-phone.jpg";
-import moneyImage from "@/assets/business-landing-money.jpg";
-import workImage from "@/assets/business-landing-work.jpg";
-import cityImage from "@/assets/business-landing-city.jpg";
+import heroImage from "@/assets/optimized/business-landing-hero.webp";
+import phoneImage from "@/assets/optimized/business-landing-phone.webp";
+import moneyImage from "@/assets/optimized/business-landing-money.webp";
+import workImage from "@/assets/optimized/business-landing-work.webp";
+import cityImage from "@/assets/optimized/business-landing-city.webp";
 
 const included = [
   {
@@ -109,14 +109,14 @@ const BusinessLanding = () => {
                 <Sparkles className="size-4" />
                 Founding business offer
               </div>
-              <h1 className="mt-7 max-w-4xl font-display text-5xl font-black leading-[0.92] tracking-normal text-balance md:text-7xl xl:text-8xl">
+              <h1 className="mt-7 max-w-4xl font-display text-4xl font-black leading-[0.98] tracking-normal text-balance sm:text-5xl md:text-7xl md:leading-[0.92] xl:text-8xl">
                 You do the hard work. We make sure local customers can actually find you.
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-white/70 md:text-xl">
                 Sjoh gives proper service businesses a professional online reputation without the
                 website building, Facebook posting, local SEO homework, or Google Ads confusion.
-                Get listed early for <strong className="text-white">R250/month</strong> and claim
-                visibility while your category is still opening up. Use <strong className="text-white">{LAUNCH_TRIAL_CODE}</strong> for 30 days free.
+                Get listed early with a <strong className="text-white">30-day PayFast-backed trial</strong> and claim
+                visibility while your category is still opening up. After that, Verified Pro is <strong className="text-white">R250/month</strong>.
               </p>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <Button size="xl" asChild className="rounded-full bg-sa-gold text-sa-dark hover:bg-sa-gold/90">
@@ -136,7 +136,7 @@ const BusinessLanding = () => {
               </div>
 
               <div className="mt-10 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-5">
-                {["R250/month", `${LAUNCH_TRIAL_CODE} trial`, "Quotes", "Invoices", "Reviews"].map((item, index) => (
+                {["R0 today", "30-day trial", "Quotes", "Invoices", "Reviews"].map((item, index) => (
                   <div
                     key={item}
                     className="rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-bold text-white/80"
@@ -163,6 +163,7 @@ const BusinessLanding = () => {
                   src={heroImage}
                   alt="A cheerful group representing the Sjoh South African community"
                   className="aspect-[4/3] w-full rounded-[1.45rem] object-cover"
+                  decoding="async"
                 />
               </div>
               <div className="absolute -bottom-7 right-4 max-w-xs rounded-3xl border border-white/20 bg-[#111]/90 p-5 shadow-[0_20px_80px_rgba(0,0,0,0.55)] backdrop-blur md:right-8">
@@ -183,8 +184,8 @@ const BusinessLanding = () => {
         <section className="border-b border-white/10 py-20">
           <div className="container grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr]">
             <div className="grid grid-cols-2 gap-4">
-              <img src={phoneImage} alt="" className="h-72 w-full rounded-3xl object-cover" />
-              <img src={moneyImage} alt="" className="mt-10 h-72 w-full rounded-3xl object-cover" />
+              <img src={phoneImage} alt="" className="h-72 w-full rounded-3xl object-cover" loading="lazy" decoding="async" />
+              <img src={moneyImage} alt="" className="mt-10 h-72 w-full rounded-3xl object-cover" loading="lazy" decoding="async" />
             </div>
             <div>
               <p className="text-xs font-black uppercase tracking-[0.22em] text-sa-pink">The shift</p>
@@ -237,7 +238,7 @@ const BusinessLanding = () => {
         <section className="border-b border-white/10 py-20">
           <div className="container grid gap-10 lg:grid-cols-[1fr_0.95fr]">
             <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04]">
-              <img src={workImage} alt="" className="h-[28rem] w-full object-cover" />
+              <img src={workImage} alt="" className="h-[28rem] w-full object-cover" loading="lazy" decoding="async" />
             </div>
             <div className="self-center">
               <p className="text-xs font-black uppercase tracking-[0.22em] text-sa-green">How it feels</p>
@@ -264,7 +265,7 @@ const BusinessLanding = () => {
         </section>
 
         <section className="relative overflow-hidden border-b border-white/10 py-20">
-          <img src={cityImage} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
+          <img src={cityImage} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" loading="lazy" decoding="async" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/88 to-[#050505]/65" />
           <div className="container relative grid gap-8 lg:grid-cols-[1fr_26rem]">
             <div>
@@ -342,7 +343,7 @@ const BusinessLanding = () => {
                   </Button>
                 </div>
                 <div className="relative min-h-[24rem] bg-sa-gold">
-                  <img src={phoneImage} alt="" className="absolute inset-0 h-full w-full object-cover mix-blend-multiply opacity-70" />
+                  <img src={phoneImage} alt="" className="absolute inset-0 h-full w-full object-cover mix-blend-multiply opacity-70" loading="lazy" decoding="async" />
                   <div className="absolute left-6 top-6 rounded-full bg-white px-4 py-2 text-sm font-black text-sa-dark">
                     <MapPin className="mr-2 inline size-4" />
                     All 9 provinces

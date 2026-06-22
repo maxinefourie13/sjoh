@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { SeoHead } from "@/components/SeoHead";
-import { LAUNCH_TRIAL_CODE, TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
+import { TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { SJOH_TIERS, formatRand } from "@/lib/mockData";
@@ -68,7 +68,7 @@ const included = [
 const proofPoints = [
   { label: "Monthly plan", value: "R250", color: "var(--sa-gold)" },
   { label: "Commission on jobs", value: "0%", color: "var(--sa-green)" },
-  { label: "Trial code", value: LAUNCH_TRIAL_CODE, color: "var(--sa-peri)" },
+  { label: "Card-backed trial", value: "30d", color: "var(--sa-peri)" },
   { label: "Founding spots", value: "500", color: "var(--sa-pink)" },
 ];
 
@@ -82,8 +82,8 @@ const faqs = [
     a: "No. That is the point. Sjoh gives your business a proper online presence without asking you to build a website, run Google Ads or become a social media person.",
   },
   {
-    q: "How does the launch trial code work?",
-    a: `Use ${LAUNCH_TRIAL_CODE} after signup to unlock a one-time 30-day Verified Pro trial. No card is needed for the code. After that, choose R250/month to keep Verified Pro access.`,
+    q: "How does the 30-day trial work?",
+    a: "Create your account, set up your card securely through PayFast, and pay R0 today. Sjoh starts charging R250/month after 30 days unless you cancel before then.",
   },
   {
     q: "Do you take commission on the work I do?",
@@ -114,7 +114,7 @@ const Pricing = () => {
       return;
     }
 
-    payments.startSubscription("verified_pro", "monthly");
+    payments.startTrialSubscription("verified_pro", "monthly", 30);
   };
 
   return (
@@ -144,7 +144,7 @@ const Pricing = () => {
                 Founding business pricing
               </div>
 
-              <h1 className="mt-7 max-w-5xl font-display text-5xl font-black leading-[0.92] tracking-normal text-balance md:text-7xl xl:text-8xl">
+              <h1 className="mt-7 max-w-5xl font-display text-4xl font-black leading-[0.98] tracking-normal text-balance sm:text-5xl md:text-7xl md:leading-[0.92] xl:text-8xl">
                 You do the work. We make sure local customers can find you.
               </h1>
 
@@ -155,7 +155,7 @@ const Pricing = () => {
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <Button size="xl" onClick={handleStart} className="rounded-full bg-sa-gold text-sa-dark hover:bg-sa-gold/90">
-                  Subscribe for R250/month
+                  Start 30-day trial
                   <ArrowRight className="size-5" />
                 </Button>
                 <Button
@@ -164,7 +164,7 @@ const Pricing = () => {
                   asChild
                   className="rounded-full border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white"
                 >
-                  <Link to="/list">Try {LAUNCH_TRIAL_CODE} first</Link>
+                  <Link to="/list">Create profile first</Link>
                 </Button>
               </div>
 
@@ -219,11 +219,11 @@ const Pricing = () => {
                   <TrialCodeRedeemer className="mt-7" compact />
 
                   <Button size="lg" className="mt-7 h-14 w-full rounded-full text-base font-black" onClick={handleStart}>
-                    Start with PayFast
+                    Start 30-day trial with PayFast
                   </Button>
 
                   <p className="mt-3 text-center text-xs text-white/45">
-                    Use {LAUNCH_TRIAL_CODE} once for 30 days free. No card needed for the code.
+                    R0 today. PayFast stores your card securely and starts R250/month after 30 days.
                   </p>
                 </div>
               </div>
@@ -382,8 +382,8 @@ const Pricing = () => {
                 Try it for 30 days. Then decide if you want to stay.
               </h2>
               <p className="mt-5 text-base leading-7 text-white/64">
-                Use the trial code once per user, build your profile, test the tools and see the flow.
-                The paid plan is R250/month through PayFast when you are ready to keep Verified Pro.
+                Add your card securely through PayFast, build your profile, test the tools and see the flow.
+                Sjoh only starts charging R250/month after the 30-day trial.
               </p>
               <div className="mt-7 rounded-3xl border border-white/10 bg-white/[0.045] p-5">
                 <div className="flex items-start gap-4">
@@ -391,9 +391,9 @@ const Pricing = () => {
                     <CreditCard className="size-6" strokeWidth={2.5} />
                   </span>
                   <div>
-                    <p className="font-display text-xl font-black">No card for the trial code.</p>
+                    <p className="font-display text-xl font-black">Card now. Charge later.</p>
                     <p className="mt-1 text-sm leading-6 text-white/62">
-                      {LAUNCH_TRIAL_CODE} is a no-card trial. PayFast is only used when you subscribe to keep Verified Pro.
+                      PayFast handles the card securely. Have a Sjoh-issued launch code? You can still redeem it after signup.
                     </p>
                   </div>
                 </div>
@@ -425,7 +425,7 @@ const Pricing = () => {
               </p>
               <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
                 <Button size="xl" onClick={handleStart} className="rounded-full bg-sa-gold text-sa-dark hover:bg-sa-gold/90">
-                  Subscribe for R250/month
+                  Start 30-day trial
                   <ArrowRight className="size-5" />
                 </Button>
                 <Button size="xl" variant="outline" asChild className="rounded-full border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white">

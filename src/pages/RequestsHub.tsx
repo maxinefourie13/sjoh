@@ -20,8 +20,8 @@ import { EarlyAccessNotice } from "@/components/EarlyAccessNotice";
 import { useOpportunities } from "@/hooks/useDirectory";
 import { CATEGORIES, PROVINCES } from "@/lib/mockData";
 import { SeoHead } from "@/components/SeoHead";
-import heroGroup2 from "@/assets/hero-group-2.jpg";
-import heroGroup3 from "@/assets/hero-group-3.jpg";
+import heroGroup2 from "@/assets/optimized/hero-group-2.webp";
+import heroGroup3 from "@/assets/optimized/hero-group-3.webp";
 
 type TabKey = "quote" | "pros";
 
@@ -54,7 +54,7 @@ const RequestsHub = () => {
       >
       <div className="container py-10 md:py-14">
         <header className="relative mb-8 overflow-hidden rounded-[2rem] border border-black/10 bg-[#f7f8fc] p-6 md:p-10 shadow-[0_24px_54px_-42px_rgba(16,24,40,0.35)]">
-          <img src={heroGroup3} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover opacity-10 grayscale" />
+          <img src={heroGroup3} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover opacity-10 grayscale" decoding="async" />
           <div
             aria-hidden
             className="absolute inset-0"
@@ -153,7 +153,7 @@ const GetQuotePanel = () => {
     <div className="space-y-12">
       {/* Hero CTA card */}
       <section className="rounded-[2rem] bg-[#101010] text-white p-8 md:p-12 shadow-pop relative overflow-hidden border border-white/10">
-        <img src={heroGroup2} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover opacity-24" />
+        <img src={heroGroup2} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover opacity-24" loading="lazy" decoding="async" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/88 via-black/72 to-black/34" />
         <div
           aria-hidden

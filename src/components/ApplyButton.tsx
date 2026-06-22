@@ -190,7 +190,7 @@ const PaywallDialog = ({ kind, onClose, onPickPlan, onRunKyc }: PaywallProps) =>
     "no-plan": {
       icon: <Lock className="size-5 text-accent" strokeWidth={2.5} />,
       title: "Verified Pro needed",
-      body: "Use SORTED30 once for a 30-day Verified Pro trial, or subscribe for R250/mo to keep sending quotes.",
+      body: "Start a 30-day PayFast-backed Verified Pro trial to send quotes. R0 today, then R250/mo unless you cancel.",
       cta: "See plans",
       onCta: onPickPlan,
     },

@@ -85,6 +85,7 @@ Deno.serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const rawTier = body.tier as Tier;
     const rawCycle = (body.billing_cycle ?? 'monthly') as BillingCycle;
+    const trialDays = Math.max(0, Math.min(90, Number.parseInt(String(body.trial_days ?? '0'), 10) || 0));
     const callbackUrl = String(body.callback_url ?? `${SITE_URL}/dashboard?paid=1`);
 
     if (!['basic', 'verified_pro', 'hustler', 'main-oke'].includes(rawTier)) {
@@ -102,7 +103,9 @@ Deno.serve(async (req) => {
       verified_pro: { monthly: '250.00', annual: '2700.00' },
     };
 
-    const amount = AMOUNTS[tier][rawCycle];
+    const recurringAmount = AMOUNTS[tier][rawCycle];
+    const amount = trialDays > 0 ? '0.00' : recurringAmount;
+    const trialLabel = trialDays > 0 ? ` - ${trialDays}-Day Trial` : '';
 
     // Build form fields for PayFast
     const fields = cleanPayload({
@@ -114,13 +117,16 @@ Deno.serve(async (req) => {
       email_address: userEmail,
       m_payment_id: `${userId}_${Date.now()}`,
       amount: amount,
-      item_name: `Sjoh ${tier === 'verified_pro' ? 'Verified Pro' : 'Basic Listing'} - ${rawCycle === 'annual' ? 'Yearly' : 'Monthly'}`,
-      item_description: `Sjoh service provider subscription - ${tier} (${rawCycle})`,
+      item_name: `Sjoh ${tier === 'verified_pro' ? 'Verified Pro' : 'Basic Listing'}${trialLabel} - ${rawCycle === 'annual' ? 'Yearly' : 'Monthly'}`,
+      item_description: trialDays > 0
+        ? `Sjoh service provider subscription - ${trialDays}-day trial, then ${tier} (${rawCycle})`
+        : `Sjoh service provider subscription - ${tier} (${rawCycle})`,
       custom_str1: userId,
       custom_str2: tier,
       custom_str3: rawCycle,
+      custom_str4: trialDays > 0 ? `trial_${trialDays}` : '',
       subscription_type: '1',
-      recurring_amount: amount,
+      recurring_amount: recurringAmount,
       frequency: rawCycle === 'annual' ? '6' : '3',
       cycles: '0',
     });
