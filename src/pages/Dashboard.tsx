@@ -480,12 +480,15 @@ const VerificationSection = () => {
 const ProfileSection = () => {
   const { user } = useAuth();
   const { business, refresh } = useMyBusiness();
+  const access = useProviderAccess();
   const [myBiz, setMyBiz] = useState<{ id: string; category_slug: string } | null>(null);
   const [form, setForm] = useState({ name: "", phone: "", email: "", website: "", description: "" });
   const [saving, setSaving] = useState(false);
+  const [reactivating, setReactivating] = useState(false);
   const [galleryCount, setGalleryCount] = useState(0);
   const hasContact = Boolean(form.phone.trim() || form.email.trim());
   const hasDescription = form.description.trim().length >= 40;
+  const profileLocked = !access.loading && !access.hasListingAccess;
 
   useEffect(() => {
     if (!user) return;
@@ -535,6 +538,16 @@ const ProfileSection = () => {
     refresh?.();
   };
 
+  const startProfileAccess = async () => {
+    setReactivating(true);
+    if (access.isLocked) {
+      await payments.startSubscription("verified_pro", "monthly");
+    } else {
+      await payments.startTrialSubscription("verified_pro", "monthly", 30);
+    }
+    setReactivating(false);
+  };
+
   if (!business) {
     return (
       <>
@@ -559,75 +572,100 @@ const ProfileSection = () => {
         <h1 className="font-display text-3xl font-medium tracking-tight">Profile & portfolio</h1>
         <p className="text-sm text-ink-2 mt-1">Make the page customers see after your quote feel trustworthy and ready to hire.</p>
       </header>
-      <div className="grid md:grid-cols-4 gap-3">
-        {[
-          { label: "Business basics", body: "Name, location and contact details.", done: Boolean(form.name.trim() && hasContact) },
-          { label: "Clear intro", body: "Tell customers what you do and where you work.", done: hasDescription },
-          { label: "Work photos", body: "Add finished jobs, team shots or before/after photos below.", done: galleryCount > 0 },
-          { label: "Trust proof", body: "Connect reviews and finish verification next.", done: Boolean(business.google_place_id) },
-        ].map((item) => (
-          <div
-            key={item.label}
-            className={cn(
-              "rounded-2xl border p-4",
-              item.done ? "border-sa-green/30 bg-sa-green/10" : "border-border bg-card",
-            )}
-          >
-            <div className="flex items-center gap-2">
-              <span className={cn("size-5 rounded-full flex items-center justify-center", item.done ? "bg-sa-green text-white" : "bg-secondary text-muted-foreground")}>
-                {item.done ? <CheckCircle2 className="size-3.5" /> : <span className="size-1.5 rounded-full bg-current" />}
+      {profileLocked && (
+        <div className="rounded-[1.5rem] border-2 border-sa-gold/45 bg-sa-gold/10 p-5 md:p-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-start gap-3">
+              <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-sa-dark text-white">
+                <Lock className="size-5" strokeWidth={2.5} />
               </span>
-              <p className="text-sm font-black">{item.label}</p>
+              <div>
+                <p className="font-display text-xl font-black tracking-tight">Reactivate to edit and publish this profile.</p>
+                <p className="mt-1 text-sm leading-relaxed text-sa-dark/65">
+                  Your profile work is saved, but customers cannot see it and quoting tools are locked until Verified Pro billing is active.
+                  {access.graceDaysLeft !== null && access.graceDaysLeft > 0
+                    ? ` You have ${access.graceDaysLeft} day${access.graceDaysLeft === 1 ? "" : "s"} before it moves to archive.`
+                    : ""}
+                </p>
+              </div>
             </div>
-            <p className="text-xs text-ink-2 mt-2 leading-relaxed">{item.body}</p>
+            <Button onClick={startProfileAccess} disabled={reactivating} className="shrink-0 rounded-full bg-sa-dark text-white hover:bg-sa-dark/90">
+              {reactivating ? "Opening PayFast…" : "Reactivate Verified Pro"}
+            </Button>
           </div>
-        ))}
-      </div>
-      <div className="bg-card border border-border rounded-xl p-6 space-y-5">
-        <div>
-          <h2 className="font-display text-xl font-black tracking-tight">Business details</h2>
-          <p className="text-sm text-ink-2 mt-1">This copy appears on your public profile and beside your quotes.</p>
         </div>
-        <div className="grid sm:grid-cols-2 gap-4">
-          <Field label="Business name">
-            <input className="db-input" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
-          </Field>
-          <Field label="Phone">
-            <input className="db-input" value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} />
-          </Field>
-          <Field label="Email">
-            <input className="db-input" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} />
-          </Field>
-          <Field label="Website">
-            <input className="db-input" value={form.website} onChange={(e) => setForm((f) => ({ ...f, website: e.target.value }))} />
-          </Field>
-        </div>
-        <Field label="Profile intro">
-          <textarea
-            rows={4}
-            className="db-input resize-none"
-            placeholder="Example: Family-run electrical team helping homes and small businesses across Sandton with COCs, fault finding, lighting and emergency repairs."
-            value={form.description}
-            onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-          />
-          <span className="block text-xs text-ink-2 mt-1.5">Aim for 2-3 plain-English sentences. Customers should know what you do, where you work, and why they can trust you.</span>
-        </Field>
-        <div className="flex justify-end gap-3 pt-3 border-t border-border">
-          <Button variant="outline" onClick={() => business && setForm({
-            name: business.name ?? "", phone: business.phone ?? "", email: business.email ?? "",
-            website: business.website ?? "", description: business.description ?? "",
-          })}>Cancel</Button>
-          <Button onClick={onSave} disabled={saving}>{saving ? "Saving…" : "Save Changes"}</Button>
-        </div>
-      </div>
-      <BusinessGalleryCard businessId={business.id} onCountChange={setGalleryCount} />
-      {myBiz && (
-        <SecondaryCategoriesCard
-          businessId={myBiz.id}
-          primaryCategorySlug={myBiz.category_slug}
-        />
       )}
-      <GoogleReviewsCard />
+      <div className={cn("space-y-5", profileLocked && "pointer-events-none select-none opacity-45 grayscale-[0.35]")}>
+        <div className="grid md:grid-cols-4 gap-3">
+          {[
+            { label: "Business basics", body: "Name, location and contact details.", done: Boolean(form.name.trim() && hasContact) },
+            { label: "Clear intro", body: "Tell customers what you do and where you work.", done: hasDescription },
+            { label: "Work photos", body: "Add finished jobs, team shots or before/after photos below.", done: galleryCount > 0 },
+            { label: "Trust proof", body: "Connect reviews and finish verification next.", done: Boolean(business.google_place_id) },
+          ].map((item) => (
+            <div
+              key={item.label}
+              className={cn(
+                "rounded-2xl border p-4",
+                item.done ? "border-sa-green/30 bg-sa-green/10" : "border-border bg-card",
+              )}
+            >
+              <div className="flex items-center gap-2">
+                <span className={cn("size-5 rounded-full flex items-center justify-center", item.done ? "bg-sa-green text-white" : "bg-secondary text-muted-foreground")}>
+                  {item.done ? <CheckCircle2 className="size-3.5" /> : <span className="size-1.5 rounded-full bg-current" />}
+                </span>
+                <p className="text-sm font-black">{item.label}</p>
+              </div>
+              <p className="text-xs text-ink-2 mt-2 leading-relaxed">{item.body}</p>
+            </div>
+          ))}
+        </div>
+        <div className="bg-card border border-border rounded-xl p-6 space-y-5">
+          <div>
+            <h2 className="font-display text-xl font-black tracking-tight">Business details</h2>
+            <p className="text-sm text-ink-2 mt-1">This copy appears on your public profile and beside your quotes.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <Field label="Business name">
+              <input className="db-input" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
+            </Field>
+            <Field label="Phone">
+              <input className="db-input" value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} />
+            </Field>
+            <Field label="Email">
+              <input className="db-input" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} />
+            </Field>
+            <Field label="Website">
+              <input className="db-input" value={form.website} onChange={(e) => setForm((f) => ({ ...f, website: e.target.value }))} />
+            </Field>
+          </div>
+          <Field label="Profile intro">
+            <textarea
+              rows={4}
+              className="db-input resize-none"
+              placeholder="Example: Family-run electrical team helping homes and small businesses across Sandton with COCs, fault finding, lighting and emergency repairs."
+              value={form.description}
+              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+            />
+            <span className="block text-xs text-ink-2 mt-1.5">Aim for 2-3 plain-English sentences. Customers should know what you do, where you work, and why they can trust you.</span>
+          </Field>
+          <div className="flex justify-end gap-3 pt-3 border-t border-border">
+            <Button variant="outline" onClick={() => business && setForm({
+              name: business.name ?? "", phone: business.phone ?? "", email: business.email ?? "",
+              website: business.website ?? "", description: business.description ?? "",
+            })}>Cancel</Button>
+            <Button onClick={onSave} disabled={saving}>{saving ? "Saving…" : "Save Changes"}</Button>
+          </div>
+        </div>
+        <BusinessGalleryCard businessId={business.id} onCountChange={setGalleryCount} />
+        {myBiz && (
+          <SecondaryCategoriesCard
+            businessId={myBiz.id}
+            primaryCategorySlug={myBiz.category_slug}
+          />
+        )}
+        <GoogleReviewsCard />
+      </div>
       <DbStyle />
     </>
   );
@@ -904,6 +942,10 @@ const BillingSection = () => {
   const renewalLabel = liveSub?.next_renewal_at
     ? new Date(liveSub.next_renewal_at).toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" })
     : null;
+  const renewalDaysLeft = access.nextRenewalAt
+    ? Math.ceil((new Date(access.nextRenewalAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+    : null;
+  const renewalSoon = isPaid && renewalDaysLeft !== null && renewalDaysLeft >= 0 && renewalDaysLeft <= 3;
 
   return (
     <>
@@ -911,6 +953,23 @@ const BillingSection = () => {
         <h1 className="font-display text-3xl font-medium tracking-tight">Billing</h1>
         <p className="text-sm text-ink-2 mt-1">Manage your plan and payment details.</p>
       </header>
+
+      {renewalSoon && renewalLabel && (
+        <div className="rounded-xl border-2 border-sa-gold/50 bg-sa-gold/10 p-5">
+          <div className="flex items-start gap-3">
+            <span className="size-10 rounded-lg bg-sa-gold text-sa-dark flex items-center justify-center shrink-0">
+              <Bell className="size-5" strokeWidth={2.5} />
+            </span>
+            <div>
+              <p className="font-display text-base font-extrabold tracking-tight">Heads up: your Sjoh membership renews soon.</p>
+              <p className="text-sm text-ink-2 mt-1">
+                PayFast will charge {currentPlanName.includes("Basic") ? "R50" : "R250"} on {renewalLabel}.
+                If you want to cancel or change anything, do it before the renewal date.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* No-commission promise — kills the "hidden costs" fear */}
       <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-5">

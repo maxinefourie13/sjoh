@@ -155,6 +155,8 @@ Deno.serve(async (req) => {
 
   // Determine event kind before any business-rule validation.
   let kind = 'other';
+  const failedStatuses = new Set(['FAILED', 'DECLINED', 'LOCKED', 'PAUSED']);
+
   if (paymentStatus === 'COMPLETE' && token) {
     kind = 'subscription_charge';
   } else if (paymentStatus === 'COMPLETE') {
@@ -162,6 +164,8 @@ Deno.serve(async (req) => {
     kind = 'subscription_charge';
   } else if (paymentStatus === 'CANCELLED') {
     kind = 'subscription_cancelled';
+  } else if (failedStatuses.has(paymentStatus)) {
+    kind = 'subscription_payment_failed';
   } else {
     // Log but don't fail — could be a new PayFast event type
     console.log('Unknown PayFast payment_status', { paymentStatus, pf_payment_id: pfPaymentId });
@@ -254,7 +258,7 @@ Deno.serve(async (req) => {
         });
         if (error) processError = error.message;
       }
-    } else if (kind === 'subscription_cancelled') {
+    } else if (kind === 'subscription_cancelled' || kind === 'subscription_payment_failed') {
       // Use token or subscription_id to lapse
       const subToken = token || pfSubscriptionId;
       if (subToken) {

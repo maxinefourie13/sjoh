@@ -12,6 +12,7 @@ export interface ProviderAccess {
   status: ProviderStatus;
   trialEndsAt: string | null;
   tierExpiresAt: string | null;
+  nextRenewalAt: string | null;
   /** Pro is on a paid plan or active trial → listed publicly. */
   hasListingAccess: boolean;
   /** Pro can apply for jobs (Verified Pro paid or trial, AND business is verified). */
@@ -22,6 +23,9 @@ export interface ProviderAccess {
   isLocked: boolean;
   /** Days left of trial (0 if not on trial / expired). */
   trialDaysLeft: number;
+  /** Days until archived after a payment lapse/cancellation, when known. */
+  graceDaysLeft: number | null;
+  archiveAt: string | null;
   /** True if this user owns at least one ID-verified business — required for Eish! Urgent jobs. */
   hasKycBusiness: boolean;
   /** Founding-member perk fields */
@@ -38,11 +42,14 @@ const DEFAULT: ProviderAccess = {
   status: "none",
   trialEndsAt: null,
   tierExpiresAt: null,
+  nextRenewalAt: null,
   hasListingAccess: false,
   hasVerifiedProAccess: false,
   isOnTrial: false,
   isLocked: false,
   trialDaysLeft: 0,
+  graceDaysLeft: null,
+  archiveAt: null,
   hasKycBusiness: false,
   isFoundingMember: false,
   foundingProposalAvailable: false,
@@ -66,11 +73,14 @@ const DEV_OVERRIDE_ACCESS: ProviderAccess = {
   status: "active",
   trialEndsAt: null,
   tierExpiresAt: null,
+  nextRenewalAt: null,
   hasListingAccess: true,
   hasVerifiedProAccess: true,
   isOnTrial: false,
   isLocked: false,
   trialDaysLeft: 0,
+  graceDaysLeft: null,
+  archiveAt: null,
   hasKycBusiness: true,
   isFoundingMember: false,
   foundingProposalAvailable: false,
@@ -91,7 +101,7 @@ export function useProviderAccess(): ProviderAccess {
       const [{ data: bal }, { data: foundingFlag }, kycRes] = await Promise.all([
         supabase
           .from("provider_balances")
-          .select("tier, trial_ends_at, tier_expires_at, founding_proposals_used_this_month, founding_proposals_period_start")
+          .select("tier, trial_ends_at, tier_expires_at, next_renewal_at, founding_proposals_used_this_month, founding_proposals_period_start")
           .eq("user_id", user.id)
           .maybeSingle(),
         supabase.rpc("is_founding_member", { _user_id: user.id }),
@@ -120,6 +130,7 @@ export function useProviderAccess(): ProviderAccess {
       const tier = (bal.tier ?? "none") as Tier;
       const trialEndsAt = bal.trial_ends_at ?? null;
       const tierExpiresAt = bal.tier_expires_at ?? null;
+      const nextRenewalAt = bal.next_renewal_at ?? null;
 
       const now = Date.now();
       const trialLive = !!trialEndsAt && new Date(trialEndsAt).getTime() > now;
@@ -134,6 +145,12 @@ export function useProviderAccess(): ProviderAccess {
       const trialDaysLeft = trialLive
         ? Math.max(0, Math.ceil((new Date(trialEndsAt!).getTime() - now) / (1000 * 60 * 60 * 24)))
         : 0;
+      const archiveAtDate = isLocked && tierExpiresAt
+        ? new Date(new Date(tierExpiresAt).getTime() + 30 * 24 * 60 * 60 * 1000)
+        : null;
+      const graceDaysLeft = archiveAtDate
+        ? Math.max(0, Math.ceil((archiveAtDate.getTime() - now) / (1000 * 60 * 60 * 24)))
+        : null;
 
       const status: ProviderStatus = isLocked
         ? "locked"
@@ -156,11 +173,14 @@ export function useProviderAccess(): ProviderAccess {
         status,
         trialEndsAt,
         tierExpiresAt,
+        nextRenewalAt,
         hasListingAccess: isPaidBasic || isPaidPro || isTrialBasic || isTrialPro,
         hasVerifiedProAccess: isPaidPro || isTrialPro,
         isOnTrial: isTrialBasic || isTrialPro,
         isLocked,
         trialDaysLeft,
+        graceDaysLeft,
+        archiveAt: archiveAtDate?.toISOString() ?? null,
         hasKycBusiness,
         isFoundingMember,
         foundingProposalAvailable,

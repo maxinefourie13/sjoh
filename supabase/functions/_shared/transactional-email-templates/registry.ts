@@ -16,6 +16,9 @@ import { template as earlyAccessCustomerWaitlist } from './early-access-customer
 import { template as verifiedReviewChaser } from './verified-review-chaser.tsx'
 import { template as staleLeadFallback } from './stale-lead-fallback.tsx'
 import { template as invoiceSent } from './invoice-sent.tsx'
+import { template as billingRenewalReminder } from './billing-renewal-reminder.tsx'
+import { template as billingProfileHidden } from './billing-profile-hidden.tsx'
+import { template as billingProfileArchived } from './billing-profile-archived.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'early-access-pro': earlyAccessPro,
@@ -25,4 +28,7 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'verified-review-chaser': verifiedReviewChaser,
   'stale-lead-fallback': staleLeadFallback,
   'invoice-sent': invoiceSent,
+  'billing-renewal-reminder': billingRenewalReminder,
+  'billing-profile-hidden': billingProfileHidden,
+  'billing-profile-archived': billingProfileArchived,
 }
