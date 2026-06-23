@@ -27,7 +27,9 @@ function md5(input: string): string {
 }
 
 function encodePayFastValue(value: string): string {
-  return encodeURIComponent(value.trim()).replace(/%20/g, '+');
+  return encodeURIComponent(value.trim())
+    .replace(/[!'()*~]/g, (char) => `%${char.charCodeAt(0).toString(16).toUpperCase()}`)
+    .replace(/%20/g, '+');
 }
 
 function cleanPayload(data: Record<string, string>): Record<string, string> {
@@ -36,8 +38,53 @@ function cleanPayload(data: Record<string, string>): Record<string, string> {
   );
 }
 
+const CHECKOUT_FIELD_ORDER = [
+  'merchant_id',
+  'merchant_key',
+  'return_url',
+  'cancel_url',
+  'notify_url',
+  'name_first',
+  'name_last',
+  'email_address',
+  'cell_number',
+  'm_payment_id',
+  'amount',
+  'item_name',
+  'item_description',
+  'custom_int1',
+  'custom_int2',
+  'custom_int3',
+  'custom_int4',
+  'custom_int5',
+  'custom_str1',
+  'custom_str2',
+  'custom_str3',
+  'custom_str4',
+  'custom_str5',
+  'email_confirmation',
+  'confirmation_address',
+  'payment_method',
+  'subscription_type',
+  'billing_date',
+  'recurring_amount',
+  'frequency',
+  'cycles',
+] as const;
+
+function orderedEntries(data: Record<string, string>): Array<[string, string]> {
+  const cleaned = cleanPayload(data);
+  const ordered = CHECKOUT_FIELD_ORDER
+    .filter((key) => Object.prototype.hasOwnProperty.call(cleaned, key))
+    .map((key) => [key, cleaned[key]] as [string, string]);
+
+  const known = new Set(CHECKOUT_FIELD_ORDER);
+  const extras = Object.entries(cleaned).filter(([key]) => !known.has(key as typeof CHECKOUT_FIELD_ORDER[number]));
+  return [...ordered, ...extras];
+}
+
 function toPayFastParamString(data: Record<string, string>, passphrase?: string): string {
-  const paramString = Object.entries(cleanPayload(data))
+  const paramString = orderedEntries(data)
     .map(([key, value]) => `${key}=${encodePayFastValue(value)}`)
     .join('&');
 
