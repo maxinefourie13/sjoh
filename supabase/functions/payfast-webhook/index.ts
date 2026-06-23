@@ -150,8 +150,8 @@ Deno.serve(async (req) => {
   const billingCycle: 'monthly' | 'annual' = (data.custom_str3 === 'annual' ? 'annual' : 'monthly');
   const trialMatch = (data.custom_str4 || '').match(/^trial_(\d+)$/);
   const trialDays = trialMatch ? Number.parseInt(trialMatch[1], 10) : 0;
-  const isTrialSetup = trialDays > 0 && trialDays <= 90;
   const amount = data.amount_gross || data.amount || '0';
+  const isTrialSetup = trialDays > 0 && trialDays <= 90 && amountsMatch(amount, 0);
   const token = data.token || ''; // subscription token (for recurring)
   const pfSubscriptionId = data.subscription_id || '';
 
