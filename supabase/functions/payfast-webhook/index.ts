@@ -27,7 +27,9 @@ function md5(input: string): string {
 }
 
 function encodePayFastValue(value: string): string {
-  return encodeURIComponent(value.trim()).replace(/%20/g, '+');
+  return encodeURIComponent(value.trim())
+    .replace(/[!'()*~]/g, (char) => `%${char.charCodeAt(0).toString(16).toUpperCase()}`)
+    .replace(/%20/g, '+');
 }
 
 function cleanPayload(data: Record<string, string>, includeSignature = false): Record<string, string> {

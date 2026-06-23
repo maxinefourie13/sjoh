@@ -97,6 +97,12 @@ function signPayload(data: Record<string, string>, passphrase: string): string {
   return md5(toPayFastParamString(data, passphrase));
 }
 
+function addDaysIsoDate(days: number): string {
+  const date = new Date();
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
@@ -152,6 +158,7 @@ Deno.serve(async (req) => {
     const recurringAmount = AMOUNTS[tier][rawCycle];
     const amount = trialDays > 0 ? '0.00' : recurringAmount;
     const trialLabel = trialDays > 0 ? ` - ${trialDays}-Day Trial` : '';
+    const billingDate = trialDays > 0 ? addDaysIsoDate(trialDays) : '';
 
     // Build form fields for PayFast
     const fields = cleanPayload({
@@ -171,7 +178,9 @@ Deno.serve(async (req) => {
       custom_str2: tier,
       custom_str3: rawCycle,
       custom_str4: trialDays > 0 ? `trial_${trialDays}` : '',
+      custom_str5: billingDate,
       subscription_type: '1',
+      billing_date: billingDate,
       recurring_amount: recurringAmount,
       frequency: rawCycle === 'annual' ? '6' : '3',
       cycles: '0',
