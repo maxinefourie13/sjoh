@@ -3,6 +3,7 @@ import {
   Body, Button, Container, Head, Heading, Html, Preview, Section, Text,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
+import { BrandHeader } from './brand.tsx'
 
 const SITE_NAME = 'Sjoh'
 const SITE_URL = 'https://sjoh.co.za'
@@ -23,11 +24,7 @@ const VerifiedReviewChaserEmail = ({
     <Preview>How did {proName} do? Drop a quick Verified Review.</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Section style={brandSection}>
-          <Text style={wordmark}>
-            sjoh<span style={dot}>.</span>co<span style={dot}>.</span>za
-          </Text>
-        </Section>
+        <BrandHeader />
 
         <Heading style={h1}>Job done — how did it go?</Heading>
 
@@ -88,9 +85,6 @@ const main = {
   padding: 0,
 }
 const container = { maxWidth: '560px', margin: '0 auto', padding: '32px 28px 40px' }
-const brandSection = { textAlign: 'center' as const, margin: '0 0 28px' }
-const wordmark = { fontSize: '24px', fontWeight: 800, letterSpacing: '-0.02em', color: '#0f0f10', margin: 0 }
-const dot = { color: '#e8665a' }
 const h1 = { fontSize: '30px', fontWeight: 800, letterSpacing: '-0.02em', color: '#0f0f10', lineHeight: 1.15, margin: '0 0 16px' }
 const lead = { fontSize: '16px', color: '#3a3a3d', lineHeight: 1.55, margin: '0 0 16px' }
 const text = { fontSize: '15px', color: '#3a3a3d', lineHeight: 1.6, margin: '0 0 24px' }

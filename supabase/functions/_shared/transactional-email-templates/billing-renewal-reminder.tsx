@@ -3,6 +3,7 @@ import {
   Body, Button, Container, Head, Heading, Hr, Html, Preview, Section, Text,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
+import { BrandHeader } from './brand.tsx'
 
 const SITE_URL = 'https://sjoh.co.za'
 
@@ -22,7 +23,7 @@ const BillingRenewalReminder = ({
     <Preview>Your Sjoh membership renews soon.</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={wordmark}>sjoh<span style={bang}>!</span></Text>
+        <BrandHeader />
         <Heading style={h1}>Your Sjoh membership renews soon.</Heading>
         <Text style={text}>
           Howzit. {businessName} is set to renew on <strong>{renewalDate}</strong>.
@@ -55,8 +56,6 @@ export const template = {
 
 const main = { backgroundColor: '#ffffff', fontFamily: '"Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif', margin: 0, padding: 0 }
 const container = { maxWidth: '560px', margin: '0 auto', padding: '32px 28px 40px' }
-const wordmark = { fontSize: '26px', fontWeight: 900, color: '#0f0f10', margin: '0 0 28px' }
-const bang = { color: '#F5A623' }
 const h1 = { fontSize: '30px', fontWeight: 900, color: '#0f0f10', lineHeight: 1.12, margin: '0 0 16px' }
 const text = { fontSize: '15px', color: '#3a3a3d', lineHeight: 1.65, margin: '0 0 16px' }
 const ctaSection = { textAlign: 'center' as const, margin: '26px 0' }

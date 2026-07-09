@@ -1,8 +1,9 @@
 import * as React from 'npm:react@18.3.1'
 import {
-  Body, Button, Container, Head, Heading, Hr, Html, Preview, Section, Text,
+  Body, Button, Container, Head, Heading, Hr, Html, Img, Preview, Section, Text,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
+import { LOGO_URL, SITE_NAME } from './brand.tsx'
 
 const SITE_URL = 'https://sjoh.co.za'
 
@@ -60,7 +61,7 @@ const InvoiceSentEmail = ({
         </Section>
 
         <Section style={brandSection}>
-          <Text style={wordmark}>sjoh<span style={bang}>!</span></Text>
+          <Img src={LOGO_URL} alt={SITE_NAME} width={110} style={logoImg} />
           <Text style={pill}>0% commission</Text>
         </Section>
 
@@ -184,8 +185,7 @@ const container = {
 const accentStrip = { display: 'flex', height: '7px', margin: '0 -24px 28px' }
 const stripBlock = { display: 'inline-block', width: '16.666%', height: '7px' }
 const brandSection = { textAlign: 'center' as const, margin: '0 0 26px' }
-const wordmark = { fontSize: '32px', fontWeight: 900, letterSpacing: '-0.03em', color: '#0F1117', margin: 0 }
-const bang = { color: '#F5A623' }
+const logoImg = { margin: '0 auto', display: 'block' as const }
 const pill = {
   display: 'inline-block',
   backgroundColor: '#F5A623',
