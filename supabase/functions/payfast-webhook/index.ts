@@ -16,8 +16,10 @@ import { createHash } from 'node:crypto';
 const PF_VALIDATE = 'https://www.payfast.co.za/eng/query/validate';
 const PF_SANDBOX_VALIDATE = 'https://sandbox.payfast.co.za/eng/query/validate';
 
+// PayFast validates the re-posted data against exactly what it sent,
+// so every field must be included — even empty ones.
 function formEncode(data: Record<string, string>): string {
-  return Object.entries(cleanPayload(data, true))
+  return Object.entries(data)
     .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
     .join('&');
 }
@@ -32,17 +34,13 @@ function encodePayFastValue(value: string): string {
     .replace(/%20/g, '+');
 }
 
-function cleanPayload(data: Record<string, string>, includeSignature = false): Record<string, string> {
-  return Object.fromEntries(
-    Object.entries(data).filter(([key, value]) => {
-      if (!includeSignature && key === 'signature') return false;
-      return value != null && String(value).trim() !== '';
-    })
-  );
-}
-
+// PayFast computes the ITN signature over every field as posted — in
+// received order, INCLUDING empty values — excluding only `signature`
+// itself. Filtering out empty fields here caused every real ITN to be
+// rejected with a signature mismatch.
 function toSignatureString(data: Record<string, string>, passphrase: string): string {
-  const paramString = Object.entries(cleanPayload(data))
+  const paramString = Object.entries(data)
+    .filter(([key]) => key !== 'signature')
     .map(([key, value]) => `${key}=${encodePayFastValue(value)}`)
     .join('&');
 
@@ -130,7 +128,10 @@ Deno.serve(async (req) => {
     }
     const computedSig = md5(toSignatureString(data, PASSPHRASE));
     if (computedSig.toLowerCase() !== receivedSig.toLowerCase()) {
-      console.warn('Signature mismatch in ITN');
+      console.warn('Signature mismatch in ITN', {
+        pf_payment_id: data.pf_payment_id,
+        fields: Object.keys(data).join(','),
+      });
       return new Response('Signature mismatch', { status: 403 });
     }
   }
