@@ -69,6 +69,29 @@ async function startPayFastCheckout(
 }
 
 export const payments = {
+  cancelSubscription: async (): Promise<boolean> => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast({ title: "Sign in first", description: "Log in to manage your subscription.", variant: "destructive" });
+      return false;
+    }
+
+    const { data, error } = await supabase.functions.invoke("payfast-cancel", { body: {} });
+    if (error || data?.error) {
+      toast({
+        title: "Could not cancel automatically",
+        description: data?.error || "Please email hello@sjoh.co.za and we'll stop it for you.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    toast({
+      title: "Subscription cancelled",
+      description: "No further charges will be made. Your access runs until the end of the paid period.",
+    });
+    return true;
+  },
   startSubscription: (tier: Tier, billing_cycle: BillingCycle = "monthly") =>
     startPayFastCheckout(tier, billing_cycle),
   startTrialSubscription: (tier: Tier, billing_cycle: BillingCycle = "monthly", trialDays = 30) =>

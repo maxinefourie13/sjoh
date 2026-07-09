@@ -60,6 +60,9 @@ verify_jwt = true
 [functions.payfast-webhook]
 verify_jwt = false
 
+[functions.payfast-cancel]
+verify_jwt = true
+
 [functions.sitemap-xml]
 verify_jwt = false
 

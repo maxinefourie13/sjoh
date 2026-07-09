@@ -53,16 +53,61 @@ const Dashboard = () => {
   const sectionParam = params.get("section");
 
   useEffect(() => {
+    // Landing back from PayFast: the ITN that actually activates the plan
+    // usually arrives a few seconds after the redirect, so poll until the
+    // database reflects it instead of claiming success immediately.
     if (params.get("paid") === "1") {
       const trialStarted = params.get("trial_started") === "1";
-      toast({
-        title: trialStarted ? "Sharp! Trial sorted." : "Sharp! Plan sorted.",
-        description: trialStarted
-          ? "Your PayFast-backed trial is active. You will only be charged after the trial period."
-          : "Your subscription is active. Back to work!",
-      });
       params.delete("paid");
       params.delete("trial_started");
+      setParams(params, { replace: true });
+
+      if (!user) return;
+      toast({
+        title: "Payment received",
+        description: "PayFast confirmed. Activating your plan — this takes a few seconds…",
+      });
+
+      let cancelled = false;
+      const startedAt = Date.now();
+      const poll = async () => {
+        if (cancelled) return;
+        const { data } = await supabase
+          .from("provider_balances")
+          .select("tier, trial_ends_at, tier_expires_at")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        const tier = data?.tier ?? "none";
+        const active = tier === "basic" || tier === "verified_pro"
+          || ((tier === "basic_trial" || tier === "verified_pro_trial")
+            && !!data?.trial_ends_at && new Date(data.trial_ends_at).getTime() > Date.now());
+        if (active) {
+          // Full reload so every part of the dashboard picks up the new plan.
+          window.location.replace(`/dashboard?activated=${trialStarted ? "trial" : "plan"}`);
+          return;
+        }
+        if (Date.now() - startedAt < 120_000) {
+          setTimeout(poll, 3_000);
+        } else {
+          toast({
+            title: "Activation is taking longer than usual",
+            description: "Your payment went through. Refresh in a minute — if your plan still isn't showing, email hello@sjoh.co.za and we'll sort it.",
+            variant: "destructive",
+          });
+        }
+      };
+      poll();
+      return () => { cancelled = true; };
+    }
+    if (params.get("activated")) {
+      const wasTrial = params.get("activated") === "trial";
+      toast({
+        title: wasTrial ? "Sharp! Trial active." : "Sharp! Plan active.",
+        description: wasTrial
+          ? "Your 30-day Verified Pro trial is live. You will only be charged after the trial ends."
+          : "Your subscription is live. Back to work!",
+      });
+      params.delete("activated");
       setParams(params, { replace: true });
     }
     if (params.get("boost") === "success") {
@@ -73,7 +118,7 @@ const Dashboard = () => {
       params.delete("boost");
       setParams(params, { replace: true });
     }
-  }, [params, setParams]);
+  }, [params, setParams, user]);
 
   useEffect(() => {
     if (sectionParam && SECTIONS.some((s) => s.key === sectionParam)) {
@@ -892,6 +937,8 @@ const BillingSection = () => {
     tier: string | null;
   } | null>(null);
   const [switching, setSwitching] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [confirmingCancel, setConfirmingCancel] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -904,6 +951,17 @@ const BillingSection = () => {
       if (data) setLiveSub(data as typeof liveSub);
     })();
   }, [user]);
+
+  const cancelPlan = async () => {
+    setCancelling(true);
+    const ok = await payments.cancelSubscription();
+    setCancelling(false);
+    setConfirmingCancel(false);
+    if (ok) {
+      // Reload so plan state everywhere reflects the cancellation.
+      setTimeout(() => window.location.reload(), 1_500);
+    }
+  };
 
   const isPaid = liveSub?.tier === "basic" || liveSub?.tier === "verified_pro";
   const isMonthlyPaid = isPaid && liveSub?.billing_cycle === "monthly";
@@ -1004,10 +1062,28 @@ const BillingSection = () => {
               <Link to="/pricing">Change Plan</Link>
             </Button>
           )}
-          <Button variant="ghost" className="text-white hover:bg-white/10" asChild>
-            <a href="mailto:hello@sjoh.co.za?subject=Cancel%20my%20Sjoh%20subscription">Cancel Plan</a>
-          </Button>
+          {(isPaid || access.isOnTrial) && !confirmingCancel && (
+            <Button variant="ghost" className="text-white hover:bg-white/10" onClick={() => setConfirmingCancel(true)}>
+              Cancel Plan
+            </Button>
+          )}
         </div>
+        {confirmingCancel && (
+          <div className="mt-4 rounded-xl border border-white/25 bg-white/10 p-4">
+            <p className="text-sm font-bold">Cancel your {currentPlanName} plan?</p>
+            <p className="text-xs text-background/70 mt-1">
+              PayFast stops all future charges immediately. You can re-subscribe any time.
+            </p>
+            <div className="mt-3 flex gap-2">
+              <Button size="sm" variant="destructive" onClick={cancelPlan} disabled={cancelling}>
+                {cancelling ? "Cancelling…" : "Yes, cancel my plan"}
+              </Button>
+              <Button size="sm" variant="ghost" className="text-white hover:bg-white/10" onClick={() => setConfirmingCancel(false)} disabled={cancelling}>
+                Keep my plan
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       {!isPaid && !access.isOnTrial && (
@@ -1034,7 +1110,9 @@ const BillingSection = () => {
       <div className="bg-card border border-border rounded-xl p-6">
         <h3 className="font-display text-lg font-semibold mb-4">Payment method</h3>
         <p className="text-sm text-muted-foreground">
-          Your subscription and trial card setup are managed securely by PayFast. To change your plan, use the buttons above. To cancel during launch, email us and we’ll confirm once it is stopped.
+          Your subscription and trial card setup are managed securely by PayFast. To change your plan, use the buttons
+          above. Cancelling stops all future charges immediately — and if anything looks off, email{" "}
+          <a className="underline" href="mailto:hello@sjoh.co.za">hello@sjoh.co.za</a> and we’ll sort it.
         </p>
       </div>
     </>
