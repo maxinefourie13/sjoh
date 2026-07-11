@@ -90,8 +90,9 @@ Deno.serve(async (req) => {
     return fail(admin, check, "The ID number must be a valid 13-digit South African ID number.");
   }
 
-  const openAiKey = Deno.env.get("OPENAI_API_KEY");
-  if (!openAiKey) {
+  // Prefer Gemini (free tier covers launch volume); fall back to OpenAI.
+  const visionKey = Deno.env.get("GEMINI_API_KEY") || Deno.env.get("OPENAI_API_KEY");
+  if (!visionKey) {
     return needsReview(admin, check, "Automated ID document reading is not configured yet.");
   }
 
@@ -105,7 +106,7 @@ Deno.serve(async (req) => {
 
   let extracted: ExtractionResult;
   try {
-    extracted = await extractIdText(openAiKey, signed.signedUrl);
+    extracted = await extractIdText(visionKey, signed.signedUrl);
   } catch (err) {
     console.error("ID extraction failed", err);
     return needsReview(admin, check, "We could not read the ID document. Please upload a clearer photo.");
@@ -167,12 +168,18 @@ Deno.serve(async (req) => {
   return json({ ok: true, verified: true, status: "verified", match_score: matchScore }, 200);
 });
 
-async function extractIdText(openAiKey: string, signedUrl: string): Promise<ExtractionResult> {
-  const model = Deno.env.get("OPENAI_VISION_MODEL") ?? "gpt-4o-mini";
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+async function extractIdText(visionKey: string, signedUrl: string): Promise<ExtractionResult> {
+  // Gemini exposes an OpenAI-compatible endpoint, so both providers share
+  // this request shape; GEMINI_API_KEY selects Gemini's endpoint and model.
+  const useGemini = Boolean(Deno.env.get("GEMINI_API_KEY"));
+  const endpoint = useGemini
+    ? "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+    : "https://api.openai.com/v1/chat/completions";
+  const model = Deno.env.get("OPENAI_VISION_MODEL") ?? (useGemini ? "gemini-flash-latest" : "gpt-4o-mini");
+  const response = await fetch(endpoint, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${openAiKey}`,
+      Authorization: `Bearer ${visionKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
