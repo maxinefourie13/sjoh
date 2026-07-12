@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { BUSINESS_VERIFICATION, formatRand } from "@/lib/mockData";
 import { VerificationBadges } from "@/components/VerificationBadges";
 import { ReportProfileButton } from "@/components/ReportProfileButton";
-import { GoogleReviewsList } from "@/components/GoogleReviewsList";
 import { PublicBusinessGallery } from "@/components/PublicBusinessGallery";
 import { SeoHead } from "@/components/SeoHead";
 import { useBusinessBySlug } from "@/hooks/useBusinessBySlug";
@@ -339,7 +338,7 @@ const BusinessProfile = () => {
 
                   {tab === "reviews" && (
                     <div className="space-y-4">
-                      {live && <GoogleReviewsList businessId={live.id} business={live} />}
+                      {/* Google Reviews display paused for launch — re-add <GoogleReviewsList /> to restore. */}
                       {business.reviews.map((r, i) => (
                         <div
                           key={r.id}
