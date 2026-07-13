@@ -39,6 +39,7 @@ import AuthReset from "./pages/AuthReset.tsx";
 import PublicQuote from "./pages/PublicQuote.tsx";
 import PublicInvoice from "./pages/PublicInvoice.tsx";
 import VerifiedReviewPage from "./pages/VerifiedReviewPage.tsx";
+import InvitedReviewPage from "./pages/InvitedReviewPage.tsx";
 import FoundingMembersAdmin from "./pages/admin/FoundingMembers.tsx";
 import ConciergeAdmin from "./pages/admin/Concierge.tsx";
 import DisputesAdmin from "./pages/admin/Disputes.tsx";
@@ -70,6 +71,7 @@ const App = () => {
               <Route path="/directory/g/:groupSlug" element={<GroupLanding />} />
               <Route path="/example-listing" element={<ExampleProfile />} />
               <Route path="/business/:slug" element={<BusinessProfile />} />
+              <Route path="/r/:slug" element={<InvitedReviewPage />} />
               {/* Customer-facing: Requests */}
               <Route path="/requests" element={<RequestsHub />} />
               <Route path="/requests/new" element={<ProtectedRoute><PostOpportunity /></ProtectedRoute>} />

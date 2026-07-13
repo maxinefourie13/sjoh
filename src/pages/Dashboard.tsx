@@ -24,6 +24,7 @@ import { SubscriptionGapBanner } from "@/components/SubscriptionGapBanner";
 import { ProfileVisibilityWarning } from "@/components/ProfileVisibilityWarning";
 import { TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
 import { ReferAProCard } from "@/components/dashboard/ReferAProCard";
+import { FoundingReviewLinkCard } from "@/components/dashboard/FoundingReviewLinkCard";
 import { SecondaryCategoriesCard } from "@/components/dashboard/SecondaryCategoriesCard";
 import { BusinessGalleryCard } from "@/components/dashboard/BusinessGalleryCard";
 import { PrivacySection } from "@/components/dashboard/PrivacySection";
@@ -709,6 +710,7 @@ const ProfileSection = () => {
           />
         )}
         {/* Google Reviews import paused for launch — re-add <GoogleReviewsCard /> to restore. */}
+        <FoundingReviewLinkCard />
       </div>
       <DbStyle />
     </>

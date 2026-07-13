@@ -53,6 +53,7 @@ export function mapReviewRow(row: any) {
     body: row.body,
     date: relativeDate(row.created_at),
     isVerifiedHire: !!row.is_verified_hire,
+    source: (row.source as string) ?? "standard",
   };
 }
 
