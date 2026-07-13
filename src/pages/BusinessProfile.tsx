@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { BUSINESS_VERIFICATION, formatRand } from "@/lib/mockData";
 import { VerificationBadges } from "@/components/VerificationBadges";
 import { ReportProfileButton } from "@/components/ReportProfileButton";
-import { GoogleReviewsList } from "@/components/GoogleReviewsList";
 import { PublicBusinessGallery } from "@/components/PublicBusinessGallery";
 import { SeoHead } from "@/components/SeoHead";
 import { useBusinessBySlug } from "@/hooks/useBusinessBySlug";
@@ -339,7 +338,7 @@ const BusinessProfile = () => {
 
                   {tab === "reviews" && (
                     <div className="space-y-4">
-                      {live && <GoogleReviewsList businessId={live.id} business={live} />}
+                      {/* Google Reviews display paused for launch — re-add <GoogleReviewsList /> to restore. */}
                       {business.reviews.map((r, i) => (
                         <div
                           key={r.id}
@@ -354,12 +353,16 @@ const BusinessProfile = () => {
                               )}
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
-                              {r.isVerifiedHire && (
+                              {r.isVerifiedHire ? (
                                 <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 border border-accent/30 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent">
                                   <ShieldCheck className="size-3" />
                                   Verified Hire
                                 </span>
-                              )}
+                              ) : r.source === "invited" ? (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-muted border border-border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                                  Invited review
+                                </span>
+                              ) : null}
                               <span className="font-semibold tabular-nums text-accent text-sm">{r.rating}.0 ★</span>
                             </div>
                           </div>

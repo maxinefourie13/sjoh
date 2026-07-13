@@ -20,11 +20,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { payments } from "@/lib/payments";
 import { requestPushPermission, disablePush, isPushConfigured } from "@/lib/push";
-import { GoogleReviewsCard } from "@/components/dashboard/GoogleReviewsCard";
 import { SubscriptionGapBanner } from "@/components/SubscriptionGapBanner";
 import { ProfileVisibilityWarning } from "@/components/ProfileVisibilityWarning";
 import { TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
 import { ReferAProCard } from "@/components/dashboard/ReferAProCard";
+import { FoundingReviewLinkCard } from "@/components/dashboard/FoundingReviewLinkCard";
 import { SecondaryCategoriesCard } from "@/components/dashboard/SecondaryCategoriesCard";
 import { BusinessGalleryCard } from "@/components/dashboard/BusinessGalleryCard";
 import { PrivacySection } from "@/components/dashboard/PrivacySection";
@@ -709,7 +709,8 @@ const ProfileSection = () => {
             primaryCategorySlug={myBiz.category_slug}
           />
         )}
-        <GoogleReviewsCard />
+        {/* Google Reviews import paused for launch — re-add <GoogleReviewsCard /> to restore. */}
+        <FoundingReviewLinkCard />
       </div>
       <DbStyle />
     </>
