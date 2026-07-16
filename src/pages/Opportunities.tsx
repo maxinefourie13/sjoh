@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, Construction, MapPin, Clock, Siren, ArrowRight, UserPlus } from "lucide-react";
+import { Search, MapPin, Clock, Siren, ArrowRight, UserPlus } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { SeoHead } from "@/components/SeoHead";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,6 @@ const Opportunities = () => {
   const isProView = location.pathname.startsWith("/leads");
   const { data: opportunities } = useOpportunities();
   const { business: myBiz } = useMyBusiness();
-  const isWorkshopMode = !!myBiz?.pre_launch;
   const [keyword, setKeyword] = useState("");
   const [category, setCategory] = useState("");
   const [province, setProvince] = useState("");
@@ -104,20 +103,6 @@ const Opportunities = () => {
             <Button asChild className="rounded-full bg-sa-dark text-white hover:bg-sa-dark/90">
               <Link to="/list">List your business <ArrowRight className="size-4" /></Link>
             </Button>
-          </div>
-        )}
-
-        {isWorkshopMode && isProView && (
-          <div className="rounded-2xl border-2 border-dashed border-primary/40 bg-primary/5 p-6 md:p-8 mb-10 flex items-start gap-4">
-            <span className="size-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
-              <Construction className="size-5" strokeWidth={2.5} />
-            </span>
-            <div>
-              <h2 className="font-display text-lg font-semibold">No job requests yet — we haven't opened the doors to customers.</h2>
-              <p className="text-sm text-ink-2 mt-1.5">
-                When we launch, this is where new customer requests in your area land. Until then, get your profile sharp so you're first in line. We'll holla the moment we open.
-              </p>
-            </div>
           </div>
         )}
 

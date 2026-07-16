@@ -18,7 +18,7 @@ const SITE_URL = 'https://sjoh.co.za'
 const EarlyAccessProEmail = () => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Founding Pro spot locked in — your profile is in Workshop Mode</Preview>
+    <Preview>Founding Pro spot locked in — your profile is live on Sjoh</Preview>
     <Body style={main}>
       <Container style={container}>
         <BrandHeader />
@@ -27,14 +27,14 @@ const EarlyAccessProEmail = () => (
 
         <Text style={lead}>
           Welkom — you're one of the first 500 Founding Members on Sjoh.
-          Your account's set up and your profile is in <strong>Workshop Mode</strong>:
-          you can polish it, add photos and services, and get it sharp before
-          we open the doors to customers.
+          Your account's set up and your profile is <strong>live</strong>:
+          customers can find you right now, so polish it, add photos and
+          services, and get it sharp.
         </Text>
 
         <Section style={perksBox}>
           <Text style={perkLine}>
-            <span style={tick}>✓</span> 3 months FREE on the R50 Basic Listing (kicks in at launch)
+            <span style={tick}>✓</span> 3 months FREE on the R50 Basic Listing
           </Text>
           <Text style={perkLine}>
             <span style={tick}>✓</span> Founding Member badge on your profile
@@ -47,14 +47,13 @@ const EarlyAccessProEmail = () => (
         <Heading as="h2" style={h2}>What happens next?</Heading>
         <Text style={text}>
           Log into your dashboard whenever you've got 5 minutes — upload a logo,
-          write your description, list your services, link your Google profile.
-          The more polished it is on launch day, the faster the leads come in.
+          write your description, and list your services.
+          The more polished your profile, the faster the leads come in.
         </Text>
 
         <Text style={text}>
-          We'll holla the moment Sjoh goes live. Until then, no jobs are posted
-          yet (we're filling up the pro side first) — your profile stays hidden
-          from the public until launch day, when everyone goes live at once.
+          Sjoh is live and customers are posting jobs. Keep an eye on your job
+          feed and email alerts — quick quotes win the work.
         </Text>
 
         <Text style={text}>

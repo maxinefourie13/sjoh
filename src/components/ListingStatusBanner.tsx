@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Construction, MoonStar, Archive, Loader2 } from "lucide-react";
+import { MoonStar, Archive, Loader2 } from "lucide-react";
 import { useMyBusiness } from "@/hooks/useMyBusiness";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -35,22 +35,9 @@ export const ListingStatusBanner = () => {
     await refresh();
   };
 
-  if (business.listing_status === "workshop") {
-    return (
-      <div className="w-full bg-primary text-primary-foreground">
-        <div className="container py-2.5 flex items-center gap-3 text-sm">
-          <Construction className="size-4 shrink-0" strokeWidth={2.5} />
-          <p className="font-semibold leading-tight">
-            Workshop Mode{" "}
-            <span className="font-normal opacity-90">
-              — Sjoh hasn't launched yet. Customers can't see your profile or
-              post jobs. We'll holla the moment we open the doors.
-            </span>
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // Sjoh is live — the pre-launch "workshop" state is retired. Any stray
+  // workshop rows behave like active (no banner).
+  if (business.listing_status === "workshop") return null;
 
   if (business.listing_status === "dormant") {
     return (

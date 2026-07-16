@@ -143,15 +143,14 @@ const ListBusiness = () => {
         description: description.trim() || null,
         tags,
         image_url: logoUrl ?? coverUrl ?? null,
-        listing_status: "workshop",
-        pre_launch: true,
+        listing_status: "active",
+        pre_launch: false,
       };
 
       const { data: existingListing, error: existingErr } = await supabase
         .from("businesses")
         .select("id")
         .eq("owner_id", user.id)
-        .eq("listing_status", "workshop")
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -482,7 +481,7 @@ const ListBusiness = () => {
               </div>
               <TrialCodeRedeemer tone="light" />
               <div className="rounded-xl border border-dashed border-sa-peri/60 bg-sa-peri/10 p-5 text-sm text-ink-2 leading-relaxed">
-                <strong className="text-foreground">Heads up — early access.</strong> We'll save your listing in workshop mode while your PayFast setup and Sjoh verification are sorted. You can keep editing it from your dashboard.
+                <strong className="text-foreground">Your listing goes live right away.</strong> Finish your PayFast setup and Sjoh ID Check from your dashboard to unlock quoting — and keep polishing your profile any time.
               </div>
 
               {!user && (
