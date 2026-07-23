@@ -288,6 +288,17 @@
   will-change: transform;
 }
 .sa-float-bob { animation: sa-float-bob 4s ease-in-out infinite; }
+
+/* Auto-scrolling business gallery on the home page. Cards are duplicated in
+   markup, so translateX(-50%) loops seamlessly. Pauses on hover so people
+   can read and click. */
+.biz-gallery-track {
+  animation: sa-marquee 60s linear infinite;
+  will-change: transform;
+}
+.biz-gallery-track:hover {
+  animation-play-state: paused;
+}
 .animate-sjoh-mark { animation: sjoh-mark-color 5s ease-in-out infinite; }
 .animate-sa-card-colors { animation: sa-card-colors 8s ease-in-out infinite; }
 .animate-brand-flicker {
@@ -304,5 +315,9 @@
   .animate-brand-flicker {
     animation: none;
     color: var(--sa-gold);
+  }
+
+  .biz-gallery-track {
+    animation: none;
   }
 }

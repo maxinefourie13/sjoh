@@ -186,10 +186,11 @@ const HomePage = () => {
 
   const { data: allBusinesses } = useBusinesses();
   const { data: allOpportunities } = useOpportunities();
-  const featuredRailRef = useRef<HTMLDivElement | null>(null);
-  const featured = allBusinesses
-    .sort((a, b) => (b.reviewCount - a.reviewCount) || (b.rating - a.rating))
-    .slice(0, 8);
+  // Showcase every business, newest first — the directory query already
+  // returns them verified-first then created_at desc, so brand-new signups
+  // appear right away. Becomes "top pros of the week" once there's enough
+  // activity to rank on.
+  const featured = allBusinesses.slice(0, 20);
   const latest = allOpportunities.slice(0, 3);
   const popularCatSlugs = ["plumbing", "electrical", "home-cleaning", "garden-services", "mechanics", "web-design"];
   const popularCats = popularCatSlugs
@@ -588,43 +589,22 @@ const HomePage = () => {
             <div className="mb-10 flex items-end justify-between gap-6">
               <div className="max-w-3xl">
                 <div className="text-[11px] font-bold tracking-[0.1em] uppercase mb-3 text-sa-gold">
-                  ● Pros of the month
+                  ● Just joined
                 </div>
                 <h2 className="font-display-bold text-4xl md:text-6xl leading-[1.02] text-white">
-                  Local pros people keep recommending.
+                  Fresh local pros on Sjoh.
                 </h2>
                 <p className="mt-3 max-w-xl text-white/58">
-                  Featured spots are picked from reviews, response rate, and profile quality.
+                  Every business that joins shows up here. Soon this becomes the top pros of the week — for now, meet everyone.
                 </p>
-              </div>
-              <div className="hidden md:flex items-center gap-2">
-                <button
-                  type="button"
-                  aria-label="Scroll featured pros left"
-                  onClick={() => featuredRailRef.current?.scrollBy({ left: -360, behavior: "smooth" })}
-                  className="grid size-10 place-items-center rounded-full bg-white text-sa-dark font-black transition hover:-translate-x-0.5 hover:bg-sa-peri"
-                >
-                  ←
-                </button>
-                <button
-                  type="button"
-                  aria-label="Scroll featured pros right"
-                  onClick={() => featuredRailRef.current?.scrollBy({ left: 360, behavior: "smooth" })}
-                  className="grid size-10 place-items-center rounded-full bg-sa-gold text-sa-dark font-black transition hover:translate-x-0.5 hover:bg-white"
-                >
-                  →
-                </button>
               </div>
             </div>
 
-            <div
-              ref={featuredRailRef}
-              className="-mx-4 overflow-x-auto scroll-smooth px-4 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            >
-              <div className="flex w-max gap-5">
-                {featured.map((b, index) => (
+            <div className="-mx-4 overflow-hidden px-4 pb-4">
+              <div className="flex w-max gap-5 biz-gallery-track">
+                {[...featured, ...featured].map((b, index) => (
                   <Link
-                    key={b.id}
+                    key={`${b.id}-${index}`}
                     to={`/business/${b.slug}`}
                     className="group w-[282px] shrink-0 overflow-hidden rounded-[1.7rem] border border-white/10 bg-white/[0.06] p-4 text-white shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-sa-gold hover:shadow-pop md:w-[330px]"
                   >
@@ -642,7 +622,7 @@ const HomePage = () => {
                     <div className="mb-4 flex items-center justify-between gap-2">
                       <div className="flex flex-wrap gap-1.5">
                         <span className="rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-sa-dark">
-                          #{index + 1}
+                          New
                         </span>
                         <span className="rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-sa-dark">
                           {b.category}
