@@ -44,6 +44,7 @@ import FoundingMembersAdmin from "./pages/admin/FoundingMembers.tsx";
 import ConciergeAdmin from "./pages/admin/Concierge.tsx";
 import DisputesAdmin from "./pages/admin/Disputes.tsx";
 import AdminPreview from "./pages/admin/Preview.tsx";
+import AdminOverview from "./pages/admin/Overview.tsx";
 import Terms from "./pages/Terms.tsx";
 import Privacy from "./pages/Privacy.tsx";
 import AcceptableUse from "./pages/AcceptableUse.tsx";
@@ -90,6 +91,7 @@ const App = () => {
               <Route path="/list" element={<ProtectedRoute><ListBusiness /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/admin/founding-members" element={<ProtectedRoute><FoundingMembersAdmin /></ProtectedRoute>} />
+              <Route path="/admin" element={<ProtectedRoute><AdminOverview /></ProtectedRoute>} />
               <Route path="/admin/preview" element={<ProtectedRoute><AdminPreview /></ProtectedRoute>} />
               <Route path="/admin/concierge" element={<ProtectedRoute><ConciergeAdmin /></ProtectedRoute>} />
               <Route path="/admin/disputes" element={<ProtectedRoute><DisputesAdmin /></ProtectedRoute>} />

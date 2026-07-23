@@ -111,6 +111,9 @@ export const SiteHeader = () => {
                   {isAdmin && (
                     <>
                       <DropdownMenuItem asChild>
+                        <Link to="/admin"><Shield className="size-4 mr-2" />Admin · Ops</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
                         <Link to="/admin/preview"><Shield className="size-4 mr-2" />Admin · Preview</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
