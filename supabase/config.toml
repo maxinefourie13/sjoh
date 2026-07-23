@@ -86,3 +86,6 @@ verify_jwt = false
 
 [functions.invoice-download]
 verify_jwt = false
+
+[functions.founder-daily-digest]
+verify_jwt = true
