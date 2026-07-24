@@ -363,7 +363,7 @@ const ListBusiness = () => {
                 {/* Logo upload */}
                 <div>
                   <span className="flex items-center gap-2 text-sm font-semibold mb-1.5">
-                    Logo <span className="text-[10px] font-bold uppercase tracking-wider text-sa-pink bg-sa-pink/10 px-1.5 py-0.5 rounded">Optional · recommended</span>
+                    Logo <span className="text-[10px] font-bold uppercase tracking-wider text-sa-pink bg-sa-pink/10 px-1.5 py-0.5 rounded">Needed to go live</span>
                   </span>
                   <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f && user) handleImageUpload(f, "logo", user.id); }} />
                   {logoUrl ? (
@@ -373,14 +373,14 @@ const ListBusiness = () => {
                     </div>
                   ) : (
                     <div onClick={() => logoInputRef.current?.click()} className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-sa-pink/60 cursor-pointer transition-colors">
-                      {uploadingLogo ? <Loader2 className="size-5 mx-auto animate-spin text-muted-foreground" /> : <><Upload className="size-5 mx-auto text-muted-foreground" /><p className="text-xs text-muted-foreground mt-2">Click to upload — or skip for now</p></>}
+                      {uploadingLogo ? <Loader2 className="size-5 mx-auto animate-spin text-muted-foreground" /> : <><Upload className="size-5 mx-auto text-muted-foreground" /><p className="text-xs text-muted-foreground mt-2">Click to upload — add later if you must</p></>}
                     </div>
                   )}
                 </div>
                 {/* Cover image upload */}
                 <div>
                   <span className="flex items-center gap-2 text-sm font-semibold mb-1.5">
-                    Cover image <span className="text-[10px] font-bold uppercase tracking-wider text-sa-peri bg-sa-peri/10 px-1.5 py-0.5 rounded">Optional · recommended</span>
+                    Cover image <span className="text-[10px] font-bold uppercase tracking-wider text-sa-peri bg-sa-peri/10 px-1.5 py-0.5 rounded">Needed to go live</span>
                   </span>
                   <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f && user) handleImageUpload(f, "cover", user.id); }} />
                   {coverUrl ? (
@@ -390,7 +390,7 @@ const ListBusiness = () => {
                     </div>
                   ) : (
                     <div onClick={() => coverInputRef.current?.click()} className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-sa-peri/60 cursor-pointer transition-colors">
-                      {uploadingCover ? <Loader2 className="size-5 mx-auto animate-spin text-muted-foreground" /> : <><Upload className="size-5 mx-auto text-muted-foreground" /><p className="text-xs text-muted-foreground mt-2">Click to upload — or skip for now</p></>}
+                      {uploadingCover ? <Loader2 className="size-5 mx-auto animate-spin text-muted-foreground" /> : <><Upload className="size-5 mx-auto text-muted-foreground" /><p className="text-xs text-muted-foreground mt-2">Click to upload — add later if you must</p></>}
                     </div>
                   )}
                 </div>
@@ -591,7 +591,7 @@ const UploadField = ({ label, optional = false }: { label: string; optional?: bo
     <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 cursor-pointer transition-colors">
       <Upload className="size-5 mx-auto text-muted-foreground" />
       <p className="text-xs text-muted-foreground mt-2">
-        {optional ? "Click to upload — or skip for now" : "Click to upload"}
+        {optional ? "Click to upload — add later if you must" : "Click to upload"}
       </p>
     </div>
   </label>
