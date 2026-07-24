@@ -1,6 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Check, ArrowRight, ArrowLeft, CheckCircle2, Upload, Loader2, X, CreditCard } from "lucide-react";
+import { Check, ArrowRight, ArrowLeft, CheckCircle2, Loader2, CreditCard, Sparkles } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
 import { Button } from "@/components/ui/button";
@@ -9,10 +9,20 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
-import { compressIfImage } from "@/lib/compressImage";
 import { payments } from "@/lib/payments";
+import { placeholderAvatar } from "@/lib/placeholderAvatar";
+import { BIO_TRAITS, composeBio } from "@/lib/listingDefaults";
 
-const STEPS = ["Basics", "Profile", "Founding Perks", "Review", "Done"] as const;
+/**
+ * Signup is deliberately one question per screen.
+ *
+ * Pros were abandoning a single seven-field form, most often because they had
+ * no logo ready. Photo upload is gone from signup entirely (a generated
+ * initials avatar stands in until they upload one from the dashboard), the bio
+ * is tap-to-build rather than a blank textarea, and no screen asks for more
+ * than two things at once.
+ */
+const STEPS = ["Trade", "Area", "Name", "About", "Go live"] as const;
 
 const PLANS = [
   {
@@ -53,21 +63,19 @@ const ListBusiness = () => {
   const [city, setCity] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [website, setWebsite] = useState("");
   const [description, setDescription] = useState("");
-  const [servicesText, setServicesText] = useState("");
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
-  const [coverUrl, setCoverUrl] = useState<string | null>(null);
-  const [uploadingLogo, setUploadingLogo] = useState(false);
-  const [uploadingCover, setUploadingCover] = useState(false);
-  const logoInputRef = useRef<HTMLInputElement>(null);
-  const coverInputRef = useRef<HTMLInputElement>(null);
+  const [traits, setTraits] = useState<string[]>([]);
+  const [useEmailInstead, setUseEmailInstead] = useState(false);
+
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const cityInputRef = useRef<HTMLInputElement>(null);
 
   const { user } = useAuth();
   const navigate = useNavigate();
 
   const subCats = groupSlug ? CATEGORIES.filter((c) => c.groupSlug === groupSlug) : [];
   const selectedCategory = CATEGORIES.find((c) => c.slug === categorySlug);
+  const selectedGroup = CATEGORY_GROUPS.find((g) => g.slug === groupSlug);
 
   const basicsValid =
     name.trim().length > 1 &&
@@ -78,41 +86,32 @@ const ListBusiness = () => {
     (phone.trim().length > 5 || email.trim().length > 5);
 
   const canContinue = (() => {
-    if (step === 0) return basicsValid;
-    // Must match the businesses_public view filter (char_length > 20), or a
-    // pro can finish signup, pay, and stay invisible in the directory.
-    if (step === 1) return description.trim().length > 20;
-    if (step === 3) return whatsappConsent && !submitting;
+    if (step === 0) return !!categorySlug;
+    if (step === 1) return !!province && city.trim().length > 1;
+    if (step === 2) return name.trim().length > 1 && (phone.trim().length > 5 || email.trim().length > 5);
+    if (step === 3) return true; // bio is always optional — we compose one if skipped
+    if (step === 4) return whatsappConsent && !submitting;
     return true;
   })();
 
-  const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1));
+  const next = () => setStep((s) => Math.min(s + 1, STEPS.length));
   const prev = () => setStep((s) => Math.max(s - 1, 0));
 
-  const handleImageUpload = async (
-    file: File,
-    type: "logo" | "cover",
-    userId: string,
-  ) => {
-    const setter = type === "logo" ? setLogoUrl : setCoverUrl;
-    const loadingSetter = type === "logo" ? setUploadingLogo : setUploadingCover;
-    loadingSetter(true);
-    try {
-      const compressed = await compressIfImage(file);
-      const ext = compressed.name.split(".").pop() ?? "jpg";
-      const path = `${userId}/${type}-${Date.now()}.${ext}`;
-      const { error } = await supabase.storage
-        .from("business-images")
-        .upload(path, compressed, { contentType: compressed.type, upsert: true });
-      if (error) { toast({ title: "Upload failed", description: error.message, variant: "destructive" }); return; }
-      const { data } = supabase.storage.from("business-images").getPublicUrl(path);
-      setter(data.publicUrl);
-    } finally {
-      loadingSetter(false);
-    }
-  };
+  // Autofocus the one field that matters on each screen — saves a tap on mobile.
+  useEffect(() => {
+    if (step === 1 && province) cityInputRef.current?.focus();
+    if (step === 2) nameInputRef.current?.focus();
+  }, [step, province]);
 
-  const saveWorkshopListing = async () => {
+  const toggleTrait = (t: string) =>
+    setTraits((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t].slice(0, 4)));
+
+  const previewBio =
+    description.trim().length > 20
+      ? description.trim()
+      : composeBio({ categoryName: selectedCategory?.name, city, province, traits });
+
+  const saveListing = async () => {
     if (!user) {
       toast({
         title: "Almost there",
@@ -127,11 +126,6 @@ const ListBusiness = () => {
     try {
       const baseSlug = slugify(name);
       const slug = `${baseSlug}-${Math.random().toString(36).slice(2, 7)}`;
-      const tags = servicesText
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean)
-        .slice(0, 20);
 
       const listingPayload = {
         name: name.trim(),
@@ -141,10 +135,14 @@ const ListBusiness = () => {
         city: city.trim(),
         phone: phone.trim() || null,
         email: email.trim() || null,
-        website: website.trim() || null,
-        description: description.trim() || null,
-        tags,
-        image_url: logoUrl ?? coverUrl ?? null,
+        website: null,
+        // Never null: composeBio guarantees the >20 char minimum the public
+        // directory view enforces, so the listing is visible immediately.
+        description: previewBio,
+        tags: traits,
+        // Stand-in until they upload a real logo. Without this the listing
+        // would be filtered out of the directory for having no image.
+        image_url: placeholderAvatar(name.trim()),
         listing_status: "active",
         pre_launch: false,
       };
@@ -160,26 +158,19 @@ const ListBusiness = () => {
       if (existingErr) throw existingErr;
 
       const { error } = existingListing
-        ? await supabase
-            .from("businesses")
-            .update(listingPayload)
-            .eq("id", existingListing.id)
+        ? await supabase.from("businesses").update(listingPayload).eq("id", existingListing.id)
         : await supabase.from("businesses").insert([{ ...listingPayload, owner_id: user.id, slug }]);
 
       if (error) throw error;
 
       toast({
-        title: "Listing saved",
+        title: "You're live on Sjoh",
         description: "Now add your card on PayFast to start the trial.",
       });
       return true;
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : "Please try again in a moment.";
-      toast({
-        title: "Couldn't save your listing",
-        description: message,
-        variant: "destructive",
-      });
+      toast({ title: "Couldn't save your listing", description: message, variant: "destructive" });
       return false;
     } finally {
       setSubmitting(false);
@@ -187,7 +178,7 @@ const ListBusiness = () => {
   };
 
   const handleStartTrial = async () => {
-    const saved = await saveWorkshopListing();
+    const saved = await saveListing();
     if (!saved) return;
     setSubmitting(true);
     await payments.startTrialSubscription("verified_pro", "monthly", 30);
@@ -195,113 +186,189 @@ const ListBusiness = () => {
   };
 
   const handlePrimaryClick = () => {
-    if (step === 3) {
-      void handleStartTrial();
-    } else {
-      next();
-    }
+    if (step === 4) void handleStartTrial();
+    else next();
   };
+
+  // Endowed progress: the bar never reads empty, so the first screen already
+  // feels like progress worth protecting rather than a blank commitment.
+  const progressPct = Math.round(((step + 0.7) / STEPS.length) * 100);
 
   return (
     <SiteLayout>
-      <div className="container py-12 max-w-3xl">
+      <div className="container py-10 max-w-2xl">
         <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="size-4" /> Back home
         </Link>
 
-        {/* Progress */}
-        <div className="mb-10">
-          <div className="flex items-center justify-between gap-1">
-            {STEPS.map((label, i) => (
-              <div key={label} className="flex items-center gap-3 flex-1 last:flex-none">
-                <div className="flex items-center gap-2.5">
-                  <span
-                    className={cn(
-                      "size-8 rounded-full flex items-center justify-center text-xs font-bold tabular-nums",
-                      i < step ? "bg-sa-green text-white" : i === step ? "bg-sa-navy text-white" : "bg-secondary text-muted-foreground",
-                    )}
-                  >
-                    {i < step ? <Check className="size-4" /> : i + 1}
-                  </span>
-                  <span className={cn("text-sm font-semibold hidden sm:inline", i === step ? "text-foreground" : "text-muted-foreground")}>
-                    {label}
-                  </span>
-                </div>
-                {i < STEPS.length - 1 && (
-                  <div className={cn("h-px flex-1 mx-1", i < step ? "bg-sa-green" : "bg-border")} />
-                )}
-              </div>
-            ))}
+        {step < STEPS.length && (
+          <div className="mb-8">
+            <div className="flex items-baseline justify-between mb-2">
+              <span className="text-sm font-bold">{STEPS[step]}</span>
+              <span className="text-xs text-ink-2 tabular-nums">
+                Step {step + 1} of {STEPS.length} · about {Math.max(1, STEPS.length - step) * 15}s left
+              </span>
+            </div>
+            <div className="h-2 rounded-full bg-secondary overflow-hidden">
+              <div
+                className="h-full rounded-full bg-sa-green transition-[width] duration-500 ease-out"
+                style={{ width: `${progressPct}%` }}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="bg-card border-2 border-sa-peri/25 rounded-2xl p-6 md:p-8 shadow-card">
+          {/* ---------------------------------------------------------- 0 · Trade */}
           {step === 0 && (
             <div className="space-y-5">
               <div>
-                <h2 className="font-display text-2xl font-semibold">Start your business profile</h2>
-                <p className="text-sm text-ink-2 mt-1">This creates your online reputation on Sjoh. Keep it simple now — you can polish the proof, photos, and services later.</p>
+                <h2 className="font-display text-2xl font-semibold">What do you do?</h2>
+                <p className="text-sm text-ink-2 mt-1">Tap your trade. Nothing to type.</p>
               </div>
-              <Field label="Business name">
-                <input
-                  className="input"
-                  placeholder="e.g. Your registered business name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </Field>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <Field label="Category group">
-                  <select
-                    className="input cursor-pointer"
-                    value={groupSlug}
-                    onChange={(e) => {
-                      setGroupSlug(e.target.value);
-                      setCategorySlug("");
-                    }}
+
+              {!groupSlug ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                  {CATEGORY_GROUPS.map((g) => (
+                    <button
+                      key={g.slug}
+                      type="button"
+                      onClick={() => setGroupSlug(g.slug)}
+                      className="border-2 border-border rounded-xl p-3 text-left hover:border-sa-green hover:bg-sa-green/5 transition-all active:scale-[0.97]"
+                    >
+                      <span className="text-2xl block">{g.emoji}</span>
+                      <span className="text-sm font-semibold leading-tight block mt-1.5">{g.name}</span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <button
+                    type="button"
+                    onClick={() => { setGroupSlug(""); setCategorySlug(""); }}
+                    className="text-sm text-sa-peri font-semibold hover:underline inline-flex items-center gap-1"
                   >
-                    <option value="">Select a group</option>
-                    {CATEGORY_GROUPS.map((g) => <option key={g.slug} value={g.slug}>{g.name}</option>)}
-                  </select>
-                </Field>
-                <Field label="Service">
-                  <select
-                    className="input cursor-pointer"
-                    value={categorySlug}
-                    onChange={(e) => setCategorySlug(e.target.value)}
-                    disabled={!groupSlug}
+                    <ArrowLeft className="size-3.5" /> {selectedGroup?.name}
+                  </button>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                    {subCats.map((c) => (
+                      <button
+                        key={c.slug}
+                        type="button"
+                        onClick={() => { setCategorySlug(c.slug); setTimeout(next, 180); }}
+                        className={cn(
+                          "border-2 rounded-xl p-3 text-left transition-all active:scale-[0.97]",
+                          categorySlug === c.slug
+                            ? "border-sa-green bg-sa-green/10"
+                            : "border-border hover:border-sa-green hover:bg-sa-green/5",
+                        )}
+                      >
+                        <span className="text-2xl block">{c.emoji}</span>
+                        <span className="text-sm font-semibold leading-tight block mt-1.5">{c.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ----------------------------------------------------------- 1 · Area */}
+          {step === 1 && (
+            <div className="space-y-5">
+              <div>
+                <h2 className="font-display text-2xl font-semibold">Where do you work?</h2>
+                <p className="text-sm text-ink-2 mt-1">So customers nearby find you first.</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {PROVINCES.map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setProvince(p)}
+                    className={cn(
+                      "px-3.5 py-2 rounded-full border-2 text-sm font-semibold transition-all active:scale-[0.97]",
+                      province === p
+                        ? "border-sa-green bg-sa-green text-white"
+                        : "border-border hover:border-sa-green",
+                    )}
                   >
-                    <option value="">{groupSlug ? "Select a service" : "Pick a group first"}</option>
-                    {subCats.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
-                  </select>
-                </Field>
-                <Field label="Province">
-                  <select
-                    className="input cursor-pointer"
-                    value={province}
-                    onChange={(e) => setProvince(e.target.value)}
-                  >
-                    <option value="">Select a province</option>
-                    {PROVINCES.map((p) => <option key={p} value={p}>{p}</option>)}
-                  </select>
-                </Field>
-                <Field label="City / Suburb">
+                    {p}
+                  </button>
+                ))}
+              </div>
+              {province && (
+                <label className="block">
+                  <span className="block text-sm font-semibold mb-1.5">Which city or suburb?</span>
                   <input
+                    ref={cityInputRef}
                     className="input"
                     placeholder="e.g. Sandton"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter" && canContinue) next(); }}
                   />
-                </Field>
-                <Field label="Phone">
-                  <input
-                    className="input"
-                    placeholder="+27 ..."
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
-                </Field>
-                <Field label="Email">
+                </label>
+              )}
+            </div>
+          )}
+
+          {/* ----------------------------------------------------------- 2 · Name */}
+          {step === 2 && (
+            <div className="space-y-5">
+              <div>
+                <h2 className="font-display text-2xl font-semibold">What's your business called?</h2>
+                <p className="text-sm text-ink-2 mt-1">This is the name customers will see.</p>
+              </div>
+
+              <input
+                ref={nameInputRef}
+                className="input text-lg"
+                placeholder="e.g. Sizwe Plumbing"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+
+              {/* Live payoff — their listing card assembling itself as they type. */}
+              {name.trim().length > 1 && (
+                <div className="rounded-xl border-2 border-sa-green/30 bg-sa-green/5 p-4">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-sa-green mb-2.5">
+                    Your listing so far
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={placeholderAvatar(name.trim())}
+                      alt=""
+                      className="size-14 rounded-xl shrink-0"
+                    />
+                    <div className="min-w-0">
+                      <p className="font-display font-bold truncate">{name.trim()}</p>
+                      <p className="text-xs text-ink-2 truncate">
+                        {selectedCategory?.name} · {city}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-ink-2 mt-3 leading-relaxed">
+                    We made you a profile picture from your initials so you can go live today.
+                    Swap it for your logo whenever you're ready.
+                  </p>
+                </div>
+              )}
+
+              <div>
+                <div className="flex items-baseline justify-between mb-1.5">
+                  <span className="text-sm font-semibold">
+                    {useEmailInstead ? "Your email" : "Your WhatsApp / phone number"}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setUseEmailInstead((v) => !v)}
+                    className="text-xs text-sa-peri font-semibold hover:underline"
+                  >
+                    {useEmailInstead ? "Use a phone number" : "Use email instead"}
+                  </button>
+                </div>
+                {useEmailInstead ? (
                   <input
                     type="email"
                     className="input"
@@ -309,189 +376,135 @@ const ListBusiness = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
-                </Field>
-                <Field label="Website (optional)">
+                ) : (
                   <input
+                    type="tel"
+                    inputMode="tel"
                     className="input"
-                    placeholder="yourbiz.co.za"
-                    value={website}
-                    onChange={(e) => setWebsite(e.target.value)}
+                    placeholder="082 123 4567"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
                   />
-                </Field>
+                )}
+                <p className="text-xs text-ink-2 mt-1.5">This is how customers reach you about jobs.</p>
               </div>
             </div>
           )}
 
-          {step === 1 && (
+          {/* ---------------------------------------------------------- 3 · About */}
+          {step === 3 && (
             <div className="space-y-5">
               <div>
-                <h2 className="font-display text-2xl font-semibold">Show why customers should trust you</h2>
-                <p className="text-sm text-ink-2 mt-1">Add enough detail so customers understand what you do, where you work, and why you are worth choosing before they call.</p>
+                <h2 className="font-display text-2xl font-semibold">What's true about you?</h2>
+                <p className="text-sm text-ink-2 mt-1">
+                  Tap any that apply — we'll write your profile blurb from them. Skip if you'd rather.
+                </p>
               </div>
-              <Field label="Description">
+
+              <div className="flex flex-wrap gap-2">
+                {BIO_TRAITS.map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => toggleTrait(t)}
+                    className={cn(
+                      "px-3.5 py-2 rounded-full border-2 text-sm font-semibold transition-all active:scale-[0.97]",
+                      traits.includes(t)
+                        ? "border-sa-green bg-sa-green text-white"
+                        : "border-border hover:border-sa-green",
+                    )}
+                  >
+                    {traits.includes(t) && <Check className="size-3.5 inline mr-1" strokeWidth={3} />}
+                    {t}
+                  </button>
+                ))}
+              </div>
+
+              <div className="rounded-xl border border-sa-peri/40 bg-sa-peri/5 p-4">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-sa-peri mb-1.5 flex items-center gap-1.5">
+                  <Sparkles className="size-3.5" /> Your profile blurb
+                </p>
+                <p className="text-sm leading-relaxed">{previewBio}</p>
+              </div>
+
+              <details className="group">
+                <summary className="text-sm font-semibold text-sa-peri cursor-pointer hover:underline list-none">
+                  Prefer to write it yourself?
+                </summary>
                 <textarea
                   rows={4}
-                  className="input resize-none"
+                  className="input resize-none mt-2.5"
                   placeholder="What you do, who you serve, what makes you good."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
-                <p className="text-xs text-ink-2 mt-1.5">
-                  {description.trim().length > 20
-                    ? "Looks good."
-                    : `A few more words — ${21 - description.trim().length} to go before your profile can go live.`}
-                </p>
-              </Field>
-
-              <div className="rounded-xl border border-dashed border-sa-gold/70 bg-sa-gold/10 p-4">
-                <p className="text-sm font-bold text-foreground">
-                  You need one photo to show up in search.
-                </p>
-                <p className="text-xs text-ink-2 mt-1 leading-relaxed">
-                  Add a logo <em>or</em> a cover photo — listings without either stay hidden from the
-                  directory until you add one. You can save now and upload it anytime from your
-                  dashboard; your profile goes live the moment you do. Gallery photos are optional.{" "}
-                  Don't have a logo yet?{" "}
-                  <Link to="/directory?category=graphic-design" className="text-sa-pink font-semibold hover:underline">
-                    Find a designer on Sjoh
-                  </Link>{" "}
-                  for that too.
-                </p>
-              </div>
-
-              <div className="grid sm:grid-cols-2 gap-4">
-                {/* Logo upload */}
-                <div>
-                  <span className="flex items-center gap-2 text-sm font-semibold mb-1.5">
-                    Logo <span className="text-[10px] font-bold uppercase tracking-wider text-sa-pink bg-sa-pink/10 px-1.5 py-0.5 rounded">Needed to go live</span>
-                  </span>
-                  <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f && user) handleImageUpload(f, "logo", user.id); }} />
-                  {logoUrl ? (
-                    <div className="relative rounded-lg overflow-hidden border border-border aspect-square">
-                      <img src={logoUrl} className="w-full h-full object-cover" alt="Logo" />
-                      <button onClick={() => setLogoUrl(null)} className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5"><X className="size-3" /></button>
-                    </div>
-                  ) : (
-                    <div onClick={() => logoInputRef.current?.click()} className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-sa-pink/60 cursor-pointer transition-colors">
-                      {uploadingLogo ? <Loader2 className="size-5 mx-auto animate-spin text-muted-foreground" /> : <><Upload className="size-5 mx-auto text-muted-foreground" /><p className="text-xs text-muted-foreground mt-2">Click to upload — add later if you must</p></>}
-                    </div>
-                  )}
-                </div>
-                {/* Cover image upload */}
-                <div>
-                  <span className="flex items-center gap-2 text-sm font-semibold mb-1.5">
-                    Cover image <span className="text-[10px] font-bold uppercase tracking-wider text-sa-peri bg-sa-peri/10 px-1.5 py-0.5 rounded">Needed to go live</span>
-                  </span>
-                  <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f && user) handleImageUpload(f, "cover", user.id); }} />
-                  {coverUrl ? (
-                    <div className="relative rounded-lg overflow-hidden border border-border aspect-video">
-                      <img src={coverUrl} className="w-full h-full object-cover" alt="Cover" />
-                      <button onClick={() => setCoverUrl(null)} className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5"><X className="size-3" /></button>
-                    </div>
-                  ) : (
-                    <div onClick={() => coverInputRef.current?.click()} className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-sa-peri/60 cursor-pointer transition-colors">
-                      {uploadingCover ? <Loader2 className="size-5 mx-auto animate-spin text-muted-foreground" /> : <><Upload className="size-5 mx-auto text-muted-foreground" /><p className="text-xs text-muted-foreground mt-2">Click to upload — add later if you must</p></>}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <Field label="Services offered (comma separated)">
-                <input
-                  className="input"
-                  placeholder="e.g. COC inspections, solar PV, emergency callouts"
-                  value={servicesText}
-                  onChange={(e) => setServicesText(e.target.value)}
-                />
-                <span className="block text-xs text-ink-2 mt-1.5">You can refine this list later from your dashboard.</span>
-              </Field>
+              </details>
             </div>
           )}
 
-          {step === 2 && (
+          {/* -------------------------------------------------------- 4 · Go live */}
+          {step === 4 && (
             <div className="space-y-5">
               <div>
-                <h2 className="font-display text-2xl font-semibold">Founding-member perks</h2>
-                <p className="text-sm text-ink-2 mt-1">Start with 30 days free, backed by PayFast. Your card is added now, and your first R250 charge is on {getTrialChargeDate()}.</p>
-              </div>
-              <div className="space-y-3">
-                {PLANS.map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => setPlan(p.id)}
-                    className={cn(
-                      "w-full text-left border rounded-xl p-4 flex items-center gap-4 transition-all",
-                      plan === p.id ? "border-sa-green bg-sa-green/10 shadow-soft" : "border-border hover:border-sa-green/40",
-                    )}
-                  >
-                    <span className={cn("size-5 rounded-full border-2 shrink-0 flex items-center justify-center", plan === p.id ? "border-sa-green bg-sa-green" : "border-border")}>
-                      {plan === p.id && <Check className="size-3 text-white" strokeWidth={3} />}
-                    </span>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold">{p.name}</span>
-                        {p.recommended && (
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-sa-dark bg-sa-gold px-2 py-0.5 rounded">Recommended</span>
-                        )}
-                      </div>
-                      <p className="text-xs text-ink-2 mt-0.5">{p.desc}</p>
-                    </div>
-                    <span className="font-display font-semibold whitespace-nowrap">{p.price}</span>
-                  </button>
-                ))}
-              </div>
-              <div className="rounded-xl border border-sa-gold/45 bg-sa-gold/10 p-4 text-sm text-ink-2">
-                <p className="font-bold text-foreground">Card required, charge later.</p>
-                <p className="mt-1 leading-relaxed">
-                  PayFast stores the card securely for the subscription. Today is R0. Your first Sjoh charge is R250 on {getTrialChargeDate()}, unless you cancel before then.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="space-y-5">
-              <div>
-                <h2 className="font-display text-2xl font-semibold">Review and confirm</h2>
+                <h2 className="font-display text-2xl font-semibold">Last step — go live</h2>
                 <p className="text-sm text-ink-2 mt-1">
-                  Add your card securely with PayFast to start your 30-day Verified Pro trial. You will not be charged today.
+                  30 days free, backed by PayFast. R0 today; your first R250 is on {getTrialChargeDate()}.
                 </p>
               </div>
-              <div className="rounded-xl border border-border p-5 bg-secondary/40 space-y-3">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Listing</p>
-                  <p className="font-display text-lg font-semibold">{name || "—"}</p>
-                  <p className="text-xs text-ink-2">
-                    {selectedCategory?.name ?? "—"} · {city || "—"}{province ? `, ${province}` : ""}
-                  </p>
-                </div>
-                <div className="border-t border-border pt-3">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Plan</p>
-                  <p className="font-display text-lg font-semibold">
-                    {PLANS.find((p) => p.id === plan)?.name ?? "—"}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    R0 today. R250/month starts on {getTrialChargeDate()} through PayFast, unless you cancel before then.
-                  </p>
+
+              <div className="rounded-xl border-2 border-sa-green/30 bg-sa-green/5 p-4">
+                <div className="flex items-center gap-3">
+                  <img src={placeholderAvatar(name.trim())} alt="" className="size-14 rounded-xl shrink-0" />
+                  <div className="min-w-0">
+                    <p className="font-display font-bold truncate">{name.trim() || "—"}</p>
+                    <p className="text-xs text-ink-2 truncate">
+                      {selectedCategory?.name ?? "—"} · {city}{province ? `, ${province}` : ""}
+                    </p>
+                  </div>
                 </div>
               </div>
-              <div className="rounded-xl border border-sa-green/30 bg-sa-green/10 p-5">
+
+              {PLANS.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setPlan(p.id)}
+                  className={cn(
+                    "w-full text-left border rounded-xl p-4 flex items-center gap-4 transition-all",
+                    plan === p.id ? "border-sa-green bg-sa-green/10 shadow-soft" : "border-border hover:border-sa-green/40",
+                  )}
+                >
+                  <span className={cn("size-5 rounded-full border-2 shrink-0 flex items-center justify-center", plan === p.id ? "border-sa-green bg-sa-green" : "border-border")}>
+                    {plan === p.id && <Check className="size-3 text-white" strokeWidth={3} />}
+                  </span>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold">{p.name}</span>
+                      {p.recommended && (
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-sa-dark bg-sa-gold px-2 py-0.5 rounded">Recommended</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-ink-2 mt-0.5">{p.desc}</p>
+                  </div>
+                  <span className="font-display font-semibold whitespace-nowrap">{p.price}</span>
+                </button>
+              ))}
+
+              <div className="rounded-xl border border-sa-green/30 bg-sa-green/10 p-4">
                 <div className="flex items-start gap-3">
                   <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-sa-green text-white">
                     <CreditCard className="size-5" strokeWidth={2.5} />
                   </span>
                   <div>
-                    <p className="font-display text-lg font-extrabold">30-day trial, PayFast-secured.</p>
+                    <p className="font-display text-base font-extrabold">Card required, charge later.</p>
                     <p className="mt-1 text-sm leading-relaxed text-ink-2">
-                      You'll add your card on PayFast. Sjoh starts charging R250/month on {getTrialChargeDate()} if you keep Verified Pro.
+                      PayFast stores the card securely. Today is R0. Sjoh starts charging R250/month on {getTrialChargeDate()}, unless you cancel first.
                     </p>
                   </div>
                 </div>
               </div>
+
               <TrialCodeRedeemer tone="light" />
-              <div className="rounded-xl border border-dashed border-sa-peri/60 bg-sa-peri/10 p-5 text-sm text-ink-2 leading-relaxed">
-                <strong className="text-foreground">Your listing goes live right away.</strong> Finish your PayFast setup and Sjoh ID Check from your dashboard to unlock quoting — and keep polishing your profile any time.
-              </div>
 
               {!user && (
                 <div className="rounded-xl border border-amber-300/60 bg-amber-50 p-4 text-sm text-amber-900">
@@ -509,48 +522,51 @@ const ListBusiness = () => {
                 />
                 <span className="text-sm text-ink-2 leading-relaxed">
                   <strong className="text-foreground">I explicitly consent</strong> to receive lead alerts via WhatsApp from Sjoh,
-                  and I understand I can opt out at any time from my dashboard. Standard
-                  message rates may apply.
+                  and I understand I can opt out at any time from my dashboard. Standard message rates may apply.
                 </span>
               </label>
             </div>
           )}
 
-          {step === 4 && (
+          {/* ----------------------------------------------------------- 5 · Done */}
+          {step === STEPS.length && (
             <div className="text-center py-8">
               <div className="size-16 rounded-full bg-sa-green/10 text-sa-green mx-auto flex items-center justify-center mb-6">
                 <CheckCircle2 className="size-8" />
               </div>
-              <h2 className="font-display text-3xl font-medium tracking-tight">Your business profile is saved.</h2>
+              <h2 className="font-display text-3xl font-medium tracking-tight">You're live on Sjoh.</h2>
               <p className="mt-3 text-ink-2 max-w-md mx-auto">
-                Sharp! Next, add a few portfolio photos and trust signals so customers feel confident before they contact you. We'll verify your details before switching the listing live.
+                Customers can find you right now. Swap your placeholder picture for a real logo and add
+                a few job photos whenever you have a minute — profiles with photos get contacted more.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-                <Button onClick={() => navigate("/dashboard?section=profile")}>Polish my profile</Button>
-                <Button variant="secondary" asChild>
-                  <Link to="/pricing">Start 30-day trial</Link>
-                </Button>
+                <Button onClick={() => navigate("/dashboard?section=profile")}>Add my photos</Button>
                 <Button variant="outline" onClick={() => navigate("/leads")}>Browse Opportunities</Button>
               </div>
             </div>
           )}
 
-          {step < 4 && (
+          {step < STEPS.length && (
             <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
               <Button variant="ghost" onClick={prev} disabled={step === 0 || submitting}>
                 <ArrowLeft className="size-4" /> Back
               </Button>
-              <Button onClick={handlePrimaryClick} disabled={!canContinue}>
-                {step === 3 ? (
-                  submitting ? (
-                    <><Loader2 className="size-4 animate-spin" /> Opening PayFast…</>
-                  ) : (
-                    <>Start 30-day trial <ArrowRight className="size-4" /></>
-                  )
-                ) : (
-                  <>Continue <ArrowRight className="size-4" /></>
+              <div className="flex items-center gap-2">
+                {step === 3 && traits.length === 0 && !description.trim() && (
+                  <Button variant="ghost" onClick={next}>Skip</Button>
                 )}
-              </Button>
+                <Button onClick={handlePrimaryClick} disabled={!canContinue}>
+                  {step === 4 ? (
+                    submitting ? (
+                      <><Loader2 className="size-4 animate-spin" /> Opening PayFast…</>
+                    ) : (
+                      <>Go live <ArrowRight className="size-4" /></>
+                    )
+                  ) : (
+                    <>Continue <ArrowRight className="size-4" /></>
+                  )}
+                </Button>
+              </div>
             </div>
           )}
         </div>
@@ -570,31 +586,5 @@ const ListBusiness = () => {
     </SiteLayout>
   );
 };
-
-const Field = ({ label, children }: { label: string; children: React.ReactNode }) => (
-  <label className="block">
-    <span className="block text-sm font-semibold mb-1.5">{label}</span>
-    {children}
-  </label>
-);
-
-const UploadField = ({ label, optional = false }: { label: string; optional?: boolean }) => (
-  <label className="block">
-    <span className="flex items-center gap-2 text-sm font-semibold mb-1.5">
-      {label}
-      {optional && (
-        <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary-light px-1.5 py-0.5 rounded">
-          Optional · recommended
-        </span>
-      )}
-    </span>
-    <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 cursor-pointer transition-colors">
-      <Upload className="size-5 mx-auto text-muted-foreground" />
-      <p className="text-xs text-muted-foreground mt-2">
-        {optional ? "Click to upload — add later if you must" : "Click to upload"}
-      </p>
-    </div>
-  </label>
-);
 
 export default ListBusiness;
