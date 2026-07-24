@@ -79,7 +79,9 @@ const ListBusiness = () => {
 
   const canContinue = (() => {
     if (step === 0) return basicsValid;
-    if (step === 1) return description.trim().length > 10;
+    // Must match the businesses_public view filter (char_length > 20), or a
+    // pro can finish signup, pay, and stay invisible in the directory.
+    if (step === 1) return description.trim().length > 20;
     if (step === 3) return whatsappConsent && !submitting;
     return true;
   })();
@@ -334,14 +336,21 @@ const ListBusiness = () => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
+                <p className="text-xs text-ink-2 mt-1.5">
+                  {description.trim().length > 20
+                    ? "Looks good."
+                    : `A few more words — ${21 - description.trim().length} to go before your profile can go live.`}
+                </p>
               </Field>
 
               <div className="rounded-xl border border-dashed border-sa-gold/70 bg-sa-gold/10 p-4">
                 <p className="text-sm font-bold text-foreground">
-                  Make it look the part — when you're ready.
+                  You need one photo to show up in search.
                 </p>
                 <p className="text-xs text-ink-2 mt-1 leading-relaxed">
-                  Logo, cover and gallery are <strong>optional</strong>. Skip them now and add them anytime from your dashboard.{" "}
+                  Add a logo <em>or</em> a cover photo — listings without either stay hidden from the
+                  directory until you add one. You can save now and upload it anytime from your
+                  dashboard; your profile goes live the moment you do. Gallery photos are optional.{" "}
                   Don't have a logo yet?{" "}
                   <Link to="/directory?category=graphic-design" className="text-sa-pink font-semibold hover:underline">
                     Find a designer on Sjoh
