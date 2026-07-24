@@ -19,11 +19,19 @@ export function useUserRoles(): UserRolesState {
   useEffect(() => {
     if (!user) { setState({ ...DEFAULT, loading: false }); return; }
     (async () => {
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id);
-      const roles = (data ?? []).map((r) => r.role as AppRole);
+      // Read roles through a SECURITY DEFINER RPC. Selecting user_roles
+      // directly is blocked by a RESTRICTIVE "admins only" policy that
+      // covers SELECT as well as writes, so the table read comes back
+      // empty and silently strips a real admin of their role.
+      const { data, error } = await supabase.rpc("current_user_roles");
+      if (error) {
+        console.error("Could not load user roles", error);
+        setState({ ...DEFAULT, loading: false });
+        return;
+      }
+      const roles = ((data ?? []) as unknown[]).map((r) =>
+        (typeof r === "string" ? r : (r as { role?: string })?.role) as AppRole,
+      ).filter(Boolean);
       setState({
         loading: false,
         roles,
