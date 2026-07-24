@@ -49,23 +49,53 @@ const getTrialChargeDate = () => {
   return date.toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" });
 };
 
+/**
+ * The flow is public, so a pro can answer everything before they have an
+ * account. They're sent to login only at the final step — this keeps their
+ * answers safe across that round-trip so they never retype anything.
+ */
+const DRAFT_KEY = "sjoh_listing_draft";
+
+type Draft = {
+  step: number;
+  groupSlug: string;
+  categorySlug: string;
+  name: string;
+  province: string;
+  city: string;
+  phone: string;
+  email: string;
+  description: string;
+  traits: string[];
+  useEmailInstead: boolean;
+};
+
+const loadDraft = (): Partial<Draft> => {
+  try {
+    return JSON.parse(sessionStorage.getItem(DRAFT_KEY) ?? "{}") as Partial<Draft>;
+  } catch {
+    return {};
+  }
+};
+
 const ListBusiness = () => {
-  const [step, setStep] = useState(0);
+  const draft = useRef<Partial<Draft>>(loadDraft()).current;
+  const [step, setStep] = useState(draft.step ?? 0);
   const [plan, setPlan] = useState("verified_pro");
-  const [groupSlug, setGroupSlug] = useState("");
-  const [categorySlug, setCategorySlug] = useState("");
+  const [groupSlug, setGroupSlug] = useState(draft.groupSlug ?? "");
+  const [categorySlug, setCategorySlug] = useState(draft.categorySlug ?? "");
   const [whatsappConsent, setWhatsappConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   // Form fields
-  const [name, setName] = useState("");
-  const [province, setProvince] = useState("");
-  const [city, setCity] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [description, setDescription] = useState("");
-  const [traits, setTraits] = useState<string[]>([]);
-  const [useEmailInstead, setUseEmailInstead] = useState(false);
+  const [name, setName] = useState(draft.name ?? "");
+  const [province, setProvince] = useState(draft.province ?? "");
+  const [city, setCity] = useState(draft.city ?? "");
+  const [phone, setPhone] = useState(draft.phone ?? "");
+  const [email, setEmail] = useState(draft.email ?? "");
+  const [description, setDescription] = useState(draft.description ?? "");
+  const [traits, setTraits] = useState<string[]>(draft.traits ?? []);
+  const [useEmailInstead, setUseEmailInstead] = useState(draft.useEmailInstead ?? false);
 
   const nameInputRef = useRef<HTMLInputElement>(null);
   const cityInputRef = useRef<HTMLInputElement>(null);
@@ -103,6 +133,17 @@ const ListBusiness = () => {
     if (step === 2) nameInputRef.current?.focus();
   }, [step, province]);
 
+  // Keep a draft so signing in at the last step never costs them their answers.
+  useEffect(() => {
+    if (step >= STEPS.length) return;
+    try {
+      sessionStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ step, groupSlug, categorySlug, name, province, city, phone, email, description, traits, useEmailInstead }),
+      );
+    } catch { /* private browsing — the flow still works, just without recovery */ }
+  }, [step, groupSlug, categorySlug, name, province, city, phone, email, description, traits, useEmailInstead]);
+
   const toggleTrait = (t: string) =>
     setTraits((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t].slice(0, 4)));
 
@@ -113,9 +154,11 @@ const ListBusiness = () => {
 
   const saveListing = async () => {
     if (!user) {
+      // The draft is already in sessionStorage, so they come straight back to
+      // this step with every answer intact.
       toast({
-        title: "Almost there",
-        description: "Sign in or create an account before starting your trial.",
+        title: "One quick account",
+        description: "Your answers are saved — you'll come right back here.",
       });
       navigate(`/login?next=${encodeURIComponent("/list")}`);
       return false;
@@ -163,6 +206,7 @@ const ListBusiness = () => {
 
       if (error) throw error;
 
+      try { sessionStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
       toast({
         title: "You're live on Sjoh",
         description: "Now add your card on PayFast to start the trial.",
