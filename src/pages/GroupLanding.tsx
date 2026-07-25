@@ -163,7 +163,7 @@ const GroupLanding = () => {
           </div>
           <div className="grid lg:grid-cols-3 gap-5">
             {jobs.map((o) => (
-              <JobCard key={o.id} job={o} />
+              <JobCard key={o.id} job={o} mixedColors />
             ))}
           </div>
         </section>
