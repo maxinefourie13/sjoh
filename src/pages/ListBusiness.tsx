@@ -334,6 +334,16 @@ const ListBusiness = () => {
                       <span className="text-sm font-semibold leading-tight block mt-1.5">{g.name}</span>
                     </button>
                   ))}
+                  {/* Catch-all so a pro who doesn't fit any group can still sail
+                      through. Maps to the generic "other" service and advances. */}
+                  <button
+                    type="button"
+                    onClick={() => { setGroupSlug("specialist-ondemand"); setCategorySlug("other"); setTimeout(next, 180); }}
+                    className="border-2 border-dashed border-border rounded-xl p-3 text-left hover:border-sa-green hover:bg-sa-green/5 transition-all active:scale-[0.97]"
+                  >
+                    <span className="text-2xl block">🤔</span>
+                    <span className="text-sm font-semibold leading-tight block mt-1.5">Other / Not sure</span>
+                  </button>
                 </div>
               ) : (
                 <div className="space-y-3">
