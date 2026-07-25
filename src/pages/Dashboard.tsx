@@ -3,9 +3,10 @@ import { Link, useSearchParams } from "react-router-dom";
 import {
   LayoutGrid, User, Sparkles, Briefcase, Users, CreditCard, Plus,
   ShieldCheck, Bell, Mail, FileText, MessageCircle, Lock, ArrowUpRight,
-  Search, CheckCircle2, Upload, Loader2, AlertCircle,
+  Search, CheckCircle2, Upload, Loader2, AlertCircle, ReceiptText,
 } from "lucide-react";
 import { QuotesSection } from "@/components/dashboard/QuotesSection";
+import { DocumentsSection } from "@/components/dashboard/DocumentsSection";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,10 +32,11 @@ import { PrivacySection } from "@/components/dashboard/PrivacySection";
 import { useProviderAccess } from "@/hooks/useProviderAccess";
 import { cn } from "@/lib/utils";
 
-type SectionKey = "overview" | "quotes" | "verification" | "profile" | "promotions" | "opportunities" | "followers" | "billing" | "privacy";
+type SectionKey = "overview" | "documents" | "quotes" | "verification" | "profile" | "promotions" | "opportunities" | "followers" | "billing" | "privacy";
 const SECTIONS: { key: SectionKey; label: string; icon: typeof LayoutGrid }[] = [
   { key: "overview", label: "Overview", icon: LayoutGrid },
-  { key: "quotes", label: "Quotes I sent", icon: FileText },
+  { key: "documents", label: "Quotes & Invoices", icon: ReceiptText },
+  { key: "quotes", label: "Job log", icon: FileText },
   { key: "verification", label: "Verification", icon: ShieldCheck },
   { key: "profile", label: "My Profile", icon: User },
   { key: "promotions", label: "Promotions", icon: Sparkles },
@@ -186,6 +188,7 @@ const Dashboard = () => {
           {/* Content */}
           <div className="space-y-6">
             {section === "overview" && <OverviewSection onJump={jumpToSection} />}
+            {section === "documents" && <DocumentsSection />}
             {section === "quotes" && <QuotesSection />}
             {section === "verification" && <VerificationSection />}
             {section === "profile" && <ProfileSection />}

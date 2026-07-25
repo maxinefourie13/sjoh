@@ -32,9 +32,11 @@ export const QuotesSection = () => {
     <>
       <header className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="font-display text-3xl font-extrabold tracking-tight">My Quotes</h1>
+          <h1 className="font-display text-3xl font-extrabold tracking-tight">Job log</h1>
           <p className="text-sm text-ink-2 mt-1">
             Log a job, share the link, get a Verified Hire badge when it's done.
+            To send a quote or invoice document, use{" "}
+            <Link to="/dashboard?section=documents" className="text-primary font-semibold hover:underline">Quotes &amp; Invoices</Link>.
           </p>
         </div>
         <Button onClick={() => setCreateOpen(true)} disabled={!business}>
