@@ -24,6 +24,7 @@ import LeadDetail from "./pages/LeadDetail.tsx";
 import Pricing from "./pages/Pricing.tsx";
 import { EarlyAccessGate } from "@/components/EarlyAccessGate";
 import { CookieConsent } from "@/components/CookieConsent";
+import { WelcomeIntentModal } from "@/components/WelcomeIntentModal";
 
 // Redirect helper for legacy /opportunities/:id → /requests/:id
 const RedirectRequestById = () => {
@@ -66,6 +67,7 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <EarlyAccessGate>
+            <WelcomeIntentModal />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/directory" element={<Directory />} />
