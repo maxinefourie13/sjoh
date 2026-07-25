@@ -101,8 +101,8 @@ export const ProfileVisibilityWarning = () => {
             Want more leads? Polish your profile.
           </p>
           <p className="text-sm text-ink-2 mt-1 leading-relaxed">
-            A logo, cover photo and a few gallery shots make people way more likely to message you.
-            No designer?{" "}
+            A logo, cover photo, a few gallery shots and your exact service area make people
+            way more likely to message you. No designer?{" "}
             <Link to="/directory?category=graphic-design" className="text-primary font-semibold hover:underline">
               Find a designer on Sjoh →
             </Link>

@@ -51,10 +51,14 @@ const getTrialChargeDate = () => {
 
 /**
  * The flow is public, so a pro can answer everything before they have an
- * account. They're sent to login only at the final step — this keeps their
- * answers safe across that round-trip so they never retype anything.
+ * account. We persist their answers in localStorage for 30 days, so if they
+ * stop mid-signup — or drop off at PayFast before paying — everything is still
+ * here when they come back, on this device, with nothing to retype. The draft
+ * is cleared only once their plan/trial is actually active (see the mount
+ * effect below).
  */
 const DRAFT_KEY = "sjoh_listing_draft";
+const DRAFT_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 type Draft = {
   step: number;
@@ -70,12 +74,26 @@ type Draft = {
   useEmailInstead: boolean;
 };
 
+type StoredDraft = Draft & { savedAt: number };
+
 const loadDraft = (): Partial<Draft> => {
   try {
-    return JSON.parse(sessionStorage.getItem(DRAFT_KEY) ?? "{}") as Partial<Draft>;
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as Partial<StoredDraft>;
+    // Expire anything older than 30 days rather than resurrecting stale answers.
+    if (!parsed.savedAt || Date.now() - parsed.savedAt > DRAFT_TTL_MS) {
+      localStorage.removeItem(DRAFT_KEY);
+      return {};
+    }
+    return parsed;
   } catch {
     return {};
   }
+};
+
+const clearDraft = () => {
+  try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
 };
 
 const ListBusiness = () => {
@@ -107,17 +125,19 @@ const ListBusiness = () => {
   const selectedCategory = CATEGORIES.find((c) => c.slug === categorySlug);
   const selectedGroup = CATEGORY_GROUPS.find((g) => g.slug === groupSlug);
 
+  // City/suburb is optional — plenty of pros work across a whole province
+  // (photographers, movers, remote services). They add an exact area later
+  // from the dashboard. Province is the only location we insist on.
   const basicsValid =
     name.trim().length > 1 &&
     !!groupSlug &&
     !!categorySlug &&
     !!province &&
-    city.trim().length > 1 &&
     (phone.trim().length > 5 || email.trim().length > 5);
 
   const canContinue = (() => {
     if (step === 0) return !!categorySlug;
-    if (step === 1) return !!province && city.trim().length > 1;
+    if (step === 1) return !!province;
     if (step === 2) return name.trim().length > 1 && (phone.trim().length > 5 || email.trim().length > 5);
     if (step === 3) return true; // bio is always optional — we compose one if skipped
     if (step === 4) return whatsappConsent && !submitting;
@@ -133,16 +153,40 @@ const ListBusiness = () => {
     if (step === 2) nameInputRef.current?.focus();
   }, [step, province]);
 
-  // Keep a draft so signing in at the last step never costs them their answers.
+  // Persist a 30-day draft so stopping mid-signup — or dropping off at PayFast
+  // before paying — never costs them their answers on this device.
   useEffect(() => {
     if (step >= STEPS.length) return;
     try {
-      sessionStorage.setItem(
+      localStorage.setItem(
         DRAFT_KEY,
-        JSON.stringify({ step, groupSlug, categorySlug, name, province, city, phone, email, description, traits, useEmailInstead }),
+        JSON.stringify({ savedAt: Date.now(), step, groupSlug, categorySlug, name, province, city, phone, email, description, traits, useEmailInstead }),
       );
     } catch { /* private browsing — the flow still works, just without recovery */ }
   }, [step, groupSlug, categorySlug, name, province, city, phone, email, description, traits, useEmailInstead]);
+
+  // Once their plan or trial is actually active, the draft has served its
+  // purpose — drop it so a returning paid pro doesn't land back in signup.
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("provider_balances")
+        .select("tier, trial_ends_at")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      const tier = data?.tier ?? "none";
+      const paid =
+        tier === "basic" ||
+        tier === "verified_pro" ||
+        ((tier === "basic_trial" || tier === "verified_pro_trial") &&
+          !!data?.trial_ends_at &&
+          new Date(data.trial_ends_at).getTime() > Date.now());
+      if (paid && !cancelled) clearDraft();
+    })();
+    return () => { cancelled = true; };
+  }, [user]);
 
   const toggleTrait = (t: string) =>
     setTraits((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t].slice(0, 4)));
@@ -151,6 +195,10 @@ const ListBusiness = () => {
     description.trim().length > 20
       ? description.trim()
       : composeBio({ categoryName: selectedCategory?.name, city, province, traits });
+
+  // City is optional, so fall back to the province rather than showing a
+  // trailing "· " with nothing after it.
+  const locationLabel = city.trim() ? `${city.trim()}, ${province}` : province;
 
   const saveListing = async () => {
     if (!user) {
@@ -206,7 +254,9 @@ const ListBusiness = () => {
 
       if (error) throw error;
 
-      try { sessionStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
+      // Deliberately NOT clearing the draft here: the pro is about to be sent
+      // to PayFast and may bail before paying. The draft is cleared only once
+      // their plan/trial actually goes active (see the mount effect above).
       toast({
         title: "You're live on Sjoh",
         description: "Now add your card on PayFast to start the trial.",
@@ -343,15 +393,21 @@ const ListBusiness = () => {
               </div>
               {province && (
                 <label className="block">
-                  <span className="block text-sm font-semibold mb-1.5">Which city or suburb?</span>
+                  <span className="flex items-center gap-2 text-sm font-semibold mb-1.5">
+                    City or suburb
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-ink-2 bg-secondary px-1.5 py-0.5 rounded">Optional</span>
+                  </span>
                   <input
                     ref={cityInputRef}
                     className="input"
-                    placeholder="e.g. Sandton"
+                    placeholder={province === "Remote (South Africa)" ? "e.g. work anywhere in SA" : "e.g. Sandton"}
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     onKeyDown={(e) => { if (e.key === "Enter" && canContinue) next(); }}
                   />
+                  <span className="block text-xs text-ink-2 mt-1.5">
+                    Work across the whole province? Leave this blank — you can pin an exact area later.
+                  </span>
                 </label>
               )}
             </div>
@@ -388,7 +444,7 @@ const ListBusiness = () => {
                     <div className="min-w-0">
                       <p className="font-display font-bold truncate">{name.trim()}</p>
                       <p className="text-xs text-ink-2 truncate">
-                        {selectedCategory?.name} · {city}
+                        {selectedCategory?.name} · {locationLabel}
                       </p>
                     </div>
                   </div>
@@ -502,7 +558,7 @@ const ListBusiness = () => {
                   <div className="min-w-0">
                     <p className="font-display font-bold truncate">{name.trim() || "—"}</p>
                     <p className="text-xs text-ink-2 truncate">
-                      {selectedCategory?.name ?? "—"} · {city}{province ? `, ${province}` : ""}
+                      {selectedCategory?.name ?? "—"} · {locationLabel || "—"}
                     </p>
                   </div>
                 </div>
