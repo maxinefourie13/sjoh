@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 type InvoiceResponse = {
   invoice: {
     invoice_number: string;
+    doc_type?: "invoice" | "quote";
     customer_name: string;
     line_items: Array<{ description: string; qty: number; unit_price: number }>;
     subtotal_zar: number;
@@ -72,12 +73,17 @@ const PublicInvoice = () => {
               </Button>
             </div>
           ) : data ? (
+            (() => {
+            const isQuote = data.invoice.doc_type === "quote";
+            const docWord = isQuote ? "quote" : "invoice";
+            const totalLabel = isQuote ? "Quoted total" : "Total due";
+            return (
             <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white text-sa-dark shadow-pop">
               <div className="h-2 bg-gradient-to-r from-[#F5A623] via-[#DC2828] via-[#0A2463] via-[#0B6E3A] via-[#6B7CE8] to-[#E83E8C]" />
               <div className="bg-[#101010] p-7 text-white">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
-                    <p className="text-xs font-black uppercase tracking-[0.22em] text-sa-gold">Secure Sjoh invoice</p>
+                    <p className="text-xs font-black uppercase tracking-[0.22em] text-sa-gold">Secure Sjoh {docWord}</p>
                     <h1 className="mt-2 font-display text-3xl font-black">{data.invoice.invoice_number}</h1>
                     <p className="mt-1 text-white/60">From {data.invoice.business?.name ?? "your Sjoh pro"}</p>
                   </div>
@@ -91,17 +97,17 @@ const PublicInvoice = () => {
 
               <div className="space-y-6 p-7">
                 <div className="rounded-2xl bg-[#FBFAF6] p-5">
-                  <p className="text-xs font-black uppercase tracking-widest text-sa-dark/45">Total due</p>
+                  <p className="text-xs font-black uppercase tracking-widest text-sa-dark/45">{totalLabel}</p>
                   <p className="mt-2 font-display text-4xl font-black text-sa-green">
                     {fmtZar(data.invoice.total_zar)}
                   </p>
                   <p className="mt-1 text-sm text-sa-dark/55">
-                    Issued {new Date(data.invoice.issued_at).toLocaleDateString("en-ZA", { day: "2-digit", month: "short", year: "numeric" })}
+                    {isQuote ? "Sent" : "Issued"} {new Date(data.invoice.issued_at).toLocaleDateString("en-ZA", { day: "2-digit", month: "short", year: "numeric" })}
                   </p>
                 </div>
 
                 <div>
-                  <h2 className="font-display text-xl font-black">Invoice details</h2>
+                  <h2 className="font-display text-xl font-black">{isQuote ? "Quote" : "Invoice"} details</h2>
                   <div className="mt-3 divide-y divide-border rounded-2xl border border-border">
                     {data.invoice.line_items.map((item, idx) => (
                       <div key={`${item.description}-${idx}`} className="flex items-start justify-between gap-4 p-4">
@@ -118,7 +124,7 @@ const PublicInvoice = () => {
                 <div className="ml-auto max-w-sm rounded-2xl bg-[#FBFAF6] p-5 text-sm">
                   <div className="flex justify-between"><span>Subtotal</span><strong>{fmtZar(data.invoice.subtotal_zar)}</strong></div>
                   <div className="mt-2 flex justify-between"><span>{data.invoice.vat_included ? "VAT (15%)" : "VAT"}</span><strong>{data.invoice.vat_included ? fmtZar(data.invoice.vat_zar) : "Not applicable"}</strong></div>
-                  <div className="mt-3 flex justify-between border-t border-border pt-3 text-base font-black"><span>Total due</span><span className="text-sa-green">{fmtZar(data.invoice.total_zar)}</span></div>
+                  <div className="mt-3 flex justify-between border-t border-border pt-3 text-base font-black"><span>{totalLabel}</span><span className="text-sa-green">{fmtZar(data.invoice.total_zar)}</span></div>
                 </div>
 
                 {data.invoice.notes && (
@@ -137,6 +143,8 @@ const PublicInvoice = () => {
                 </div>
               </div>
             </div>
+            );
+            })()
           ) : null}
         </div>
       </main>

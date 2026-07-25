@@ -46,7 +46,7 @@ Deno.serve(async (req) => {
 
   const { data: invoice, error } = await supabase
     .from('invoices')
-    .select('invoice_number, customer_name, customer_email, line_items, subtotal_zar, vat_zar, total_zar, vat_included, notes, issued_at, sent_at, pdf_path, access_token_expires_at, business:businesses(name, email, phone, city, province)')
+    .select('invoice_number, doc_type, customer_name, customer_email, line_items, subtotal_zar, vat_zar, total_zar, vat_included, notes, issued_at, sent_at, pdf_path, access_token_expires_at, business:businesses(name, email, phone, city, province)')
     .eq('access_token', token)
     .maybeSingle()
 
@@ -93,6 +93,7 @@ Deno.serve(async (req) => {
     JSON.stringify({
       invoice: {
         invoice_number: invoice.invoice_number,
+        doc_type: invoice.doc_type ?? 'invoice',
         customer_name: invoice.customer_name,
         customer_email: invoice.customer_email,
         line_items: invoice.line_items,

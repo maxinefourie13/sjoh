@@ -17,6 +17,7 @@ import { template as verifiedReviewChaser } from './verified-review-chaser.tsx'
 import { template as newJobInArea } from './new-job-in-area.tsx'
 import { template as staleLeadFallback } from './stale-lead-fallback.tsx'
 import { template as invoiceSent } from './invoice-sent.tsx'
+import { template as quoteSent } from './quote-sent.tsx'
 import { template as billingRenewalReminder } from './billing-renewal-reminder.tsx'
 import { template as billingProfileHidden } from './billing-profile-hidden.tsx'
 import { template as billingProfileArchived } from './billing-profile-archived.tsx'
@@ -30,6 +31,7 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'new-job-in-area': newJobInArea,
   'stale-lead-fallback': staleLeadFallback,
   'invoice-sent': invoiceSent,
+  'quote-sent': quoteSent,
   'billing-renewal-reminder': billingRenewalReminder,
   'billing-profile-hidden': billingProfileHidden,
   'billing-profile-archived': billingProfileArchived,

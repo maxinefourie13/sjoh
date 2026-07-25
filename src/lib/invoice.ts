@@ -7,9 +7,13 @@ export type InvoiceLineItem = {
   unit_price: number;
 };
 
+export type DocType = "invoice" | "quote";
+
 export type InvoiceData = {
   invoice_number: string;
   issued_at: Date;
+  /** "invoice" (default) prints a TAX INVOICE; "quote" prints a QUOTE / estimate. */
+  doc_type?: DocType;
   business: {
     name: string;
     email?: string | null;
@@ -120,6 +124,19 @@ export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
   const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 40;
 
+  // A quote and an invoice share this layout; only the labels differ. A quote
+  // is an estimate (no "amount due"), an invoice is a tax document.
+  const isQuote = data.doc_type === "quote";
+  const L = {
+    docTitle: isQuote ? "QUOTE" : "TAX INVOICE",
+    numberLabel: isQuote ? "Quote #" : "Invoice #",
+    party: isQuote ? "QUOTE FOR" : "BILL TO",
+    totalLabel: isQuote ? "QUOTED TOTAL" : "TOTAL DUE",
+    footerRight: isQuote
+      ? "Estimate only — not a tax invoice."
+      : "Payment stays between customer and provider.",
+  };
+
   // Background canvas.
   setFill(doc, COLORS.paper);
   doc.rect(0, 0, pageWidth, pageHeight, "F");
@@ -171,12 +188,12 @@ export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
   setText(doc, COLORS.white);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(26);
-  doc.text("TAX INVOICE", pageWidth - margin, 50, { align: "right" });
+  doc.text(L.docTitle, pageWidth - margin, 50, { align: "right" });
   drawPill(doc, "0% COMMISSION", pageWidth - margin - 104, 62, 104, COLORS.gold);
   setText(doc, COLORS.white);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
-  doc.text(`Invoice # ${data.invoice_number}`, pageWidth - margin, 96, { align: "right" });
+  doc.text(`${L.numberLabel} ${data.invoice_number}`, pageWidth - margin, 96, { align: "right" });
   doc.text(`Issued ${fmtDate(data.issued_at)}`, pageWidth - margin, 110, { align: "right" });
 
   // ── Main white sheet ──────────────────────────────────────────────────────
@@ -192,7 +209,7 @@ export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
   doc.setFontSize(10);
   setText(doc, COLORS.muted);
   doc.text("FROM", margin, y);
-  doc.text("BILL TO", pageWidth / 2, y);
+  doc.text(L.party, pageWidth / 2, y);
 
   y += 18;
   setText(doc, COLORS.ink);
@@ -285,7 +302,7 @@ export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(13);
   setText(doc, COLORS.ink);
-  doc.text("TOTAL DUE", totalsX, afterTableY + 8);
+  doc.text(L.totalLabel, totalsX, afterTableY + 8);
   setText(doc, COLORS.green);
   doc.setFontSize(15);
   doc.text(fmtZAR(totals.total), valX, afterTableY + 8, { align: "right" });
@@ -315,7 +332,7 @@ export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
   doc.setFontSize(9);
   setText(doc, COLORS.muted);
   doc.text("Generated via Sjoh — sjoh.co.za", margin, footerY);
-  doc.text("Payment stays between customer and provider.", pageWidth - margin, footerY, { align: "right" });
+  doc.text(L.footerRight, pageWidth - margin, footerY, { align: "right" });
 
   return doc;
 };
