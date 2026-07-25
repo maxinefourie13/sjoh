@@ -4,6 +4,7 @@ import { AlertTriangle, Sparkles, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { isPlaceholderAvatar } from "@/lib/placeholderAvatar";
 
 const POLISH_DISMISS_KEY = "sjoh_profile_polish_dismissed_at";
 const POLISH_REMIND_AFTER_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
@@ -32,6 +33,8 @@ export const ProfileVisibilityWarning = () => {
         .maybeSingle();
       if (cancelled || !data) return;
 
+      // A generated placeholder still satisfies the directory view, so it is a
+      // polish nudge (below), never a "you are hidden" alarm.
       const noPhoto = !data.image_url || data.image_url.trim() === "";
       const shortBio = (data.description ?? "").trim().length <= 20;
       if (noPhoto || shortBio) {
@@ -40,14 +43,15 @@ export const ProfileVisibilityWarning = () => {
       }
       setHardIssues(null);
 
-      // Profile is visible — check polish-level gaps (gallery count).
+      // Profile is visible — check polish-level gaps (gallery count, and
+      // whether they're still on the generated initials avatar from signup).
       const { count } = await supabase
         .from("business_images")
         .select("id", { count: "exact", head: true })
         .eq("business_id", data.id);
 
       const fewGalleryPhotos = (count ?? 0) < 3;
-      if (!fewGalleryPhotos) return;
+      if (!fewGalleryPhotos && !isPlaceholderAvatar(data.image_url)) return;
 
       // Respect the user's "remind me later" timer.
       try {
@@ -97,8 +101,8 @@ export const ProfileVisibilityWarning = () => {
             Want more leads? Polish your profile.
           </p>
           <p className="text-sm text-ink-2 mt-1 leading-relaxed">
-            A logo, cover photo and a few gallery shots make people way more likely to message you.
-            No designer?{" "}
+            A logo, cover photo, a few gallery shots and your exact service area make people
+            way more likely to message you. No designer?{" "}
             <Link to="/directory?category=graphic-design" className="text-primary font-semibold hover:underline">
               Find a designer on Sjoh →
             </Link>

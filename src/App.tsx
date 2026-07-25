@@ -88,7 +88,11 @@ const App = () => {
               <Route path="/opportunities/new" element={<Navigate to="/requests/new" replace />} />
               <Route path="/opportunities/:id" element={<RedirectRequestById />} />
               <Route path="/pricing" element={<Pricing />} />
-              <Route path="/list" element={<ProtectedRoute><ListBusiness /></ProtectedRoute>} />
+              {/* Deliberately public. Forcing an account before a pro could even
+                  see the questions was a drop-off point; the flow now asks for
+                  one at the final step and carries answers across the login
+                  round-trip via sessionStorage. */}
+              <Route path="/list" element={<ListBusiness />} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/admin/founding-members" element={<ProtectedRoute><FoundingMembersAdmin /></ProtectedRoute>} />
               <Route path="/admin" element={<ProtectedRoute><AdminOverview /></ProtectedRoute>} />
