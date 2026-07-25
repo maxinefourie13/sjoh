@@ -56,7 +56,10 @@ export const JobCard = ({ job, className, isProView, proCity, mixedColors = fals
           "group relative h-full overflow-hidden rounded-[1.35rem] border transition-all duration-300 hover:-translate-y-1",
           mixedColors
             ? "border-[#e1e5f0] bg-[#f9faff] text-[#111827] shadow-[0_18px_34px_-28px_rgba(13,24,43,0.34)] hover:shadow-[0_24px_44px_-28px_rgba(13,24,43,0.44)]"
-            : "text-white border-white/12 hover:border-white/28 bg-white/[0.06] hover:shadow-[0_22px_40px_-26px_rgba(0,0,0,0.8)] p-5",
+            // Solid dark card. Previously bg-white/[0.06] (6% white) which was
+            // invisible white-on-white when this variant landed on the app's
+            // light page background — the reported unreadable-listings bug.
+            : "text-white border-white/12 hover:border-white/28 bg-[#141726] hover:shadow-[0_22px_40px_-26px_rgba(0,0,0,0.8)] p-5",
           isBoosted && "border-sa-gold/70 ring-1 ring-sa-gold/25",
         )}
         style={undefined}

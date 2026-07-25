@@ -348,7 +348,9 @@ const QuoteOnJobsPanel = () => {
 
   return (
     <div className="space-y-6">
-      <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.06] p-6 md:p-7">
+      {/* Solid dark hero so its white text is readable on the light page bg
+          (was bg-white/[0.06] — near-invisible white-on-white). */}
+      <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#101010] p-6 md:p-7">
         <div className="absolute right-0 top-0 h-full w-1/3 bg-sa-green/20 blur-3xl" />
         <div className="flex items-start gap-4">
           <span className="size-11 rounded-xl bg-sa-gold text-sa-dark flex items-center justify-center shrink-0">
@@ -402,7 +404,7 @@ const QuoteOnJobsPanel = () => {
         </select>
       </div>
 
-      <div className="text-sm text-white/50 tabular-nums">
+      <div className="text-sm text-ink-2 tabular-nums">
         {filtered.length} live job {filtered.length === 1 ? "request" : "requests"}
       </div>
 
