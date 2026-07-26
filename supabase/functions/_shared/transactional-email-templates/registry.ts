@@ -21,6 +21,7 @@ import { template as quoteSent } from './quote-sent.tsx'
 import { template as billingRenewalReminder } from './billing-renewal-reminder.tsx'
 import { template as billingProfileHidden } from './billing-profile-hidden.tsx'
 import { template as billingProfileArchived } from './billing-profile-archived.tsx'
+import { template as profileCompletion } from './profile-completion.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'early-access-pro': earlyAccessPro,
@@ -35,4 +36,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'billing-renewal-reminder': billingRenewalReminder,
   'billing-profile-hidden': billingProfileHidden,
   'billing-profile-archived': billingProfileArchived,
+  'profile-completion': profileCompletion,
 }

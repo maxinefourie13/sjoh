@@ -46,7 +46,7 @@ async function getUserEmail(admin: ReturnType<typeof createClient>, userId: stri
 async function markNotification(
   admin: ReturnType<typeof createClient>,
   userId: string,
-  kind: 'renewal_3d' | 'lapsed_10d' | 'archived_30d',
+  kind: 'renewal_3d' | 'lapsed_10d' | 'archived_30d' | 'profile_incomplete_3d',
   anchorDate: string,
   metadata: Record<string, unknown>,
 ): Promise<boolean> {
@@ -199,6 +199,47 @@ Deno.serve(async (req) => {
       if (sent) archivedReminders++;
     }
 
+    // Profile-completion nudge: a pro who listed 3+ days ago but is still on
+    // the generated placeholder picture (never uploaded a real logo/cover).
+    // Bounded to the last 14 days so a first run doesn't blast the whole
+    // historical backlog; the UNIQUE(user_id, kind, anchor_date) row makes it
+    // once-per-pro (anchor = signup date).
+    let profileNudges = 0;
+    const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
+    const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+    const { data: recentRows } = await admin
+      .from('businesses')
+      .select('owner_id, name, image_url, created_at')
+      .eq('listing_status', 'active')
+      .lte('created_at', threeDaysAgo.toISOString())
+      .gt('created_at', fourteenDaysAgo.toISOString());
+
+    // "No real photo" = null or still the generated placeholder (a data: URI).
+    // A real upload is an https storage URL. Filtered in JS to avoid a fragile
+    // PostgREST like-pattern over a value full of :/+ characters.
+    const incompleteRows = (recentRows ?? []).filter((row: { image_url?: string | null }) => {
+      const url = (row.image_url ?? '').trim();
+      return url === '' || !url.startsWith('http');
+    });
+
+    for (const row of incompleteRows) {
+      const userId = String(row.owner_id);
+      const anchorDate = dateOnly(String(row.created_at));
+      const shouldSend = await markNotification(admin, userId, 'profile_incomplete_3d', anchorDate, {
+        business_name: row.name,
+      });
+      if (!shouldSend) continue;
+      const email = await getUserEmail(admin, userId);
+      if (!email) continue;
+      const sent = await sendBillingEmail(supabaseUrl, serviceKey, 'profile-completion', email, {
+        anchorDate,
+        businessName: row.name ?? 'your business',
+        dashboardUrl: `${SITE_URL}/dashboard?section=profile`,
+      });
+      if (sent) profileNudges++;
+    }
+
     console.log('lifecycle-tick result', data);
     return new Response(JSON.stringify({
       ok: true,
@@ -207,6 +248,7 @@ Deno.serve(async (req) => {
         renewal_3d: renewalReminders,
         lapsed_10d: lapsedReminders,
         archived_30d: archivedReminders,
+        profile_incomplete_3d: profileNudges,
       },
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
