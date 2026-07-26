@@ -32,6 +32,7 @@ export function mapBusinessRow(row: any, idx = 0): Business {
     services: [],
     reviews: [],
     preLaunch: !!row.pre_launch,
+    createdAt: row.created_at ?? undefined,
   };
 }
 

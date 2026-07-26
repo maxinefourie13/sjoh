@@ -200,6 +200,8 @@ export interface Business {
   reviews: Review[];
   /** True while the business is in pre-launch (Workshop Mode) and hidden from the public directory. */
   preLaunch?: boolean;
+  /** ISO timestamp the listing was created — used to sort the "newly listed" rail. */
+  createdAt?: string;
 }
 
 export interface Opportunity {

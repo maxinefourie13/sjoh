@@ -186,11 +186,12 @@ const HomePage = () => {
 
   const { data: allBusinesses } = useBusinesses();
   const { data: allOpportunities } = useOpportunities();
-  // Showcase every business, newest first — the directory query already
-  // returns them verified-first then created_at desc, so brand-new signups
-  // appear right away. Becomes "top pros of the week" once there's enough
-  // activity to rank on.
-  const featured = allBusinesses.slice(0, 20);
+  // "Newly listed" rail: strictly newest-first (the directory query sorts
+  // verified-first, so re-sort by created_at here), capped at 25. As new
+  // businesses join they take the top spot and the 26th-oldest drops off.
+  const featured = [...allBusinesses]
+    .sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""))
+    .slice(0, 25);
   const latest = allOpportunities.slice(0, 3);
   const popularCatSlugs = ["plumbing", "electrical", "home-cleaning", "garden-services", "mechanics", "web-design"];
   const popularCats = popularCatSlugs
@@ -589,13 +590,13 @@ const HomePage = () => {
             <div className="mb-10 flex items-end justify-between gap-6">
               <div className="max-w-3xl">
                 <div className="text-[11px] font-bold tracking-[0.1em] uppercase mb-3 text-sa-gold">
-                  ● Just joined
+                  ● Newly listed
                 </div>
                 <h2 className="font-display-bold text-4xl md:text-6xl leading-[1.02] text-white">
                   Fresh local pros on Sjoh.
                 </h2>
                 <p className="mt-3 max-w-xl text-white/58">
-                  Every business that joins shows up here. Soon this becomes the top pros of the week — for now, meet everyone.
+                  The newest businesses to join Sjoh. Every new pro lands here first — the 25 most recent, with the newest always up top.
                 </p>
               </div>
             </div>
@@ -653,7 +654,9 @@ const HomePage = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
                     <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-3">
                       <div className="rounded-full border border-white/20 bg-black/35 px-3 py-1.5 text-xs font-bold text-white backdrop-blur-md">
-                        {b.rating.toFixed(1)} rating · {b.reviewCount} reviews
+                        {b.reviewCount > 0
+                          ? `${b.rating.toFixed(1)} rating · ${b.reviewCount} review${b.reviewCount === 1 ? "" : "s"}`
+                          : "New on Sjoh"}
                       </div>
                       <div className="grid size-12 place-items-center rounded-full border-[7px] border-[#050505] bg-sa-gold text-sa-dark">
                         <ArrowRight className="size-4" strokeWidth={3} />
