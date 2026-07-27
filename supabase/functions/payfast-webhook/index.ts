@@ -15,6 +15,7 @@ import { createHash } from 'node:crypto';
 
 const PF_VALIDATE = 'https://www.payfast.co.za/eng/query/validate';
 const PF_SANDBOX_VALIDATE = 'https://sandbox.payfast.co.za/eng/query/validate';
+const TRIAL_CARD_VERIFY_AMOUNT = 5;
 
 // PayFast validates the re-posted data against exactly what it sent,
 // so every field must be included — even empty ones.
@@ -48,7 +49,7 @@ function toSignatureString(data: Record<string, string>, passphrase: string): st
 }
 
 function expectedAmountFor(tier: string, billingCycle: 'monthly' | 'annual', isTrialSetup = false): number {
-  if (isTrialSetup) return 0;
+  if (isTrialSetup) return TRIAL_CARD_VERIFY_AMOUNT;
   if (tier === 'basic') {
     return billingCycle === 'annual' ? 540 : 50;
   }
@@ -152,7 +153,12 @@ Deno.serve(async (req) => {
   const trialMatch = (data.custom_str4 || '').match(/^trial_(\d+)$/);
   const trialDays = trialMatch ? Number.parseInt(trialMatch[1], 10) : 0;
   const amount = data.amount_gross || data.amount || '0';
-  const isTrialSetup = trialDays > 0 && trialDays <= 90 && amountsMatch(amount, 0);
+  // The initial trial ITN is the R5 card-verification charge. Later recurring
+  // ITNs keep custom_str4 but carry the normal tier amount, so they must not be
+  // treated as trial setup events.
+  const isTrialSetup = trialDays > 0
+    && trialDays <= 90
+    && amountsMatch(amount, TRIAL_CARD_VERIFY_AMOUNT);
   const token = data.token || ''; // subscription token (for recurring)
   const pfSubscriptionId = data.subscription_id || '';
 
