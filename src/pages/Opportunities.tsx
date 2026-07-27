@@ -68,7 +68,7 @@ const Opportunities = () => {
         description={
           isProView
             ? "Browse fresh customer jobs across South Africa. Filter by category, province, and urgency — quote directly, no commission."
-            : "Tell us what you need and get quotes from vetted South African pros. Posting is always free."
+            : "Tell us what you need and get quotes from available South African pros. Posting is always free."
         }
         canonical={`https://sjoh.co.za${isProView ? "/leads" : "/requests"}`}
       />

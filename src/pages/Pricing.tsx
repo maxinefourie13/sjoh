@@ -57,7 +57,6 @@ const stack = [
 const included = [
   "Public business profile customers can actually find",
   "Service categories, work areas and portfolio photos",
-  "Sjoh ID Check and trust badge flow",
   "Customer job requests and opportunity browsing",
   "Professional quotes and invoices",
   "Review collection and reputation signals",
@@ -92,10 +91,6 @@ const faqs = [
   {
     q: "Why is this limited to founding businesses?",
     a: "Sjoh is opening category by category and area by area. We are limiting the first wave so early businesses have room to stand out while customer demand grows.",
-  },
-  {
-    q: "What does the Sjoh ID Check mean?",
-    a: "It means Sjoh has checked the uploaded ID document against the name and SA ID number submitted. It is a platform trust check, not a government-certified identity verification or trade licence.",
   },
   {
     q: "Can I cancel any time?",
@@ -292,7 +287,7 @@ const Pricing = () => {
                 { icon: BriefcaseBusiness, title: "For established pros", body: "You already do good work. Sjoh helps people find it and trust it before they call.", color: "var(--sa-green)" },
                 { icon: Images, title: "For visual work", body: "Show before-and-after photos, event galleries, project images and packages in one place.", color: "var(--sa-pink)" },
                 { icon: MapPin, title: "For local demand", body: "Tie your profile to the areas you actually serve, instead of shouting into the whole internet.", color: "var(--sa-peri)" },
-                { icon: ShieldCheck, title: "For trust", body: "Sjoh ID Check, reviews and profile details help serious pros separate from fly-by-night operators.", color: "var(--sa-gold)" },
+                { icon: ShieldCheck, title: "For trust", body: "Reviews, portfolio photos and profile details help serious pros separate from fly-by-night operators.", color: "var(--sa-gold)" },
               ].map((item) => {
                 const Icon = item.icon;
 

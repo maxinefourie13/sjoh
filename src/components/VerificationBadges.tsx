@@ -1,4 +1,4 @@
-import { BadgeCheck, ShieldCheck } from "lucide-react";
+import { BadgeCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -10,7 +10,6 @@ interface Props {
 }
 
 export const VerificationBadges = ({
-  idVerified,
   certifiedPro,
   certifications = [],
   size = "md",
@@ -21,15 +20,7 @@ export const VerificationBadges = ({
 
   return (
     <div className={cn("flex flex-wrap items-center gap-1.5", className)}>
-      {idVerified && (
-        <span
-          title="ID document checked by Sjoh"
-          className={cn("inline-flex items-center gap-1 font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-0.5 rounded", text)}
-        >
-          <ShieldCheck className={icon} strokeWidth={2.5} />
-          Verified
-        </span>
-      )}
+      {/* ID verification removed — the ID badge no longer renders. */}
       {certifiedPro && (
         <span
           title="Certified Pro — trade certificate uploaded and approved"

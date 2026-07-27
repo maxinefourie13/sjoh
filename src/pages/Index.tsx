@@ -22,7 +22,7 @@ import heroGroup4 from "@/assets/optimized/hero-group-4.webp";
 
 const HERO_PHRASES = [
   "Sjoh! Your husband's DIY is a crime scene. Hire an actual professional.",
-  "Sjoh! Cousin's wiring giving you static shocks? Get a vetted sparky.",
+  "Sjoh! Cousin's wiring giving you static shocks? Get a real sparky.",
   "Sjoh! Kitchen looking like a swimming pool? Dala a plumber.",
   "Sjoh! Don't let a mampara tile your bathroom. Get a tiler.",
   "Sjoh! Locked out in your old PJs? Find a locksmith.",
@@ -39,7 +39,7 @@ const HERO_PHRASES = [
 
 const MARQUEE_ITEMS = [
   "Get found",
-  "Vetted pros",
+  "Available pros",
   "All 9 provinces",
   "240+ categories",
   "Real South Africans",
@@ -62,7 +62,7 @@ const HOW_STEPS = [
     n: "02",
     Icon: UsersRound,
     title: "Get real quotes",
-    body: "Vetted local businesses send quotes to your dashboard.",
+    body: "Available local businesses send quotes to your dashboard.",
     bg: "linear-gradient(150deg, #ef3340 0%, #d9202d 100%)",
     glow: "rgba(239, 51, 64, 0.34)",
     color: "#fff",
@@ -425,7 +425,7 @@ const HomePage = () => {
               <div className="grid gap-3 md:grid-cols-3">
                 {[
                   { title: "Post a request", body: "Share the job once and let interested pros come back to you.", cta: "Start here", to: "/requests/new" },
-                  { title: "Browse vetted pros", body: "Compare profiles, reviews, work areas, and services across SA.", cta: "Open directory", to: "/directory" },
+                  { title: "Browse available pros", body: "Compare profiles, reviews, work areas, and services across SA.", cta: "Open directory", to: "/directory" },
                   { title: "List your business", body: "Look legitimate online without building a website or running ads.", cta: "List your business", to: "/list" },
                 ].map((card) => (
                   <Link

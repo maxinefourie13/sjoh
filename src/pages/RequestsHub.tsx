@@ -41,8 +41,8 @@ const RequestsHub = () => {
   return (
     <SiteLayout>
       <SeoHead
-        title="Get Quotes from Vetted SA Pros — Free | Sjoh"
-        description="Tell us the job — vetted South African pros come back with quotes. Free for customers. No commission. No middleman."
+        title="Get Quotes from Available SA Pros — Free | Sjoh"
+        description="Tell us the job — available South African pros come back with quotes. Free for customers. No commission. No middleman."
         canonical="https://sjoh.co.za/requests"
       />
       <div
@@ -68,7 +68,7 @@ const RequestsHub = () => {
               Need someone who can do it properly?
             </h1>
             <p className="mt-3 text-sa-dark/72 text-lg">
-              Tell us what you need once. Vetted SA pros send quotes back to your Sjoh dashboard, then you choose who to contact.
+              Tell us what you need once. Available SA pros send quotes back to your Sjoh dashboard, then you choose who to contact.
             </p>
           </div>
         </header>
@@ -121,7 +121,7 @@ const STEPS = [
   },
   {
     icon: Send,
-    title: "2. Vetted pros quote you",
+    title: "2. Available pros quote you",
     body: "Real SA businesses in your area send quotes to your Sjoh dashboard. Your contact details stay private until you accept.",
   },
   {
@@ -140,9 +140,9 @@ const CHECKLIST = [
 ];
 
 const PROMISES = [
-  { icon: CheckCircle2, text: "Quotes from verified pros" },
+  { icon: CheckCircle2, text: "Quotes from real SA pros" },
   { icon: HeartHandshake, text: "Free for you, always — no obligation" },
-  { icon: ShieldCheck, text: "We vet every pro before they can quote" },
+  { icon: ShieldCheck, text: "No commission — pros keep 100%" },
 ];
 
 const GetQuotePanel = () => {
@@ -173,7 +173,7 @@ const GetQuotePanel = () => {
             Tell us what you need. Pros come to you.
           </h2>
           <p className="mt-3 text-white/90 text-base md:text-lg">
-            Post your job in under 2 minutes. Vetted pros in your area will quote you back — free, no obligation.
+            Post your job in under 2 minutes. Available pros in your area will quote you back — free, no obligation.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Button size="lg" asChild className="rounded-full bg-sa-gold font-bold text-sa-dark hover:bg-sa-gold/90">
@@ -243,7 +243,7 @@ const GetQuotePanel = () => {
             What you get back
           </span>
           <h4 className="font-display text-xl md:text-2xl font-extrabold tracking-tight mt-2">
-            Quotes from vetted pros, in your dashboard
+            Quotes from available pros, in your dashboard
           </h4>
           <p className="text-ink-2 text-sm mt-2">
             We keep the quote trail tidy, then you pay the business directly. Sjoh never takes commission.

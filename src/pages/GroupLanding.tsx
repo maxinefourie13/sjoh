@@ -53,7 +53,7 @@ const GroupLanding = () => {
                 {group.name}
               </h1>
               <p className="mt-2 text-ink-2 max-w-2xl">
-                {subs.length} services from verified pros ready to graft.
+                {subs.length} services from available pros ready to graft.
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
                 <Button asChild>
@@ -77,8 +77,8 @@ const GroupLanding = () => {
                 <ShieldCheck className="size-4" />
               </span>
               <div>
-                <p className="font-semibold">Verified IDs</p>
-                <p className="text-xs text-muted-foreground">ID document checked before quoting.</p>
+                <p className="font-semibold">Real businesses</p>
+                <p className="text-xs text-muted-foreground">Actual SA pros, no bots or bulk spam.</p>
               </div>
             </div>
             <div className="flex items-center gap-3">

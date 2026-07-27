@@ -268,7 +268,7 @@ export const AVATAR_LANDING_PAGES: Record<string, AvatarLandingConfig> = {
   customer: {
     slug: "customer",
     audience: "Customers",
-    seoTitle: "Find verified local pros on Sjoh — get the job sorted",
+    seoTitle: "Find available local pros on Sjoh — get the job sorted",
     seoDescription:
       "Find South African plumbers, cleaners, builders, creatives and local service pros. Compare profiles, reviews and quotes in one place.",
     eyebrow: "For customers",

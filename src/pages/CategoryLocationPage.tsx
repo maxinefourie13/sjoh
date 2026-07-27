@@ -119,7 +119,7 @@ const CategoryLocationPage = () => {
 
   const heading = `Need a ${keyword.toLowerCase()} in ${locationLabel}? Let's help you find one.`;
   const title = `${keyword}s in ${locationLabel} | Find a Verified Pro | Sjoh`;
-  const description = `Looking for a professional ${keyword.toLowerCase()} in ${locationLabel}? Sjoh connects you directly with vetted South African pros — the possibilities are endless. No commission, no ghosters, just someone who can do it properly.`;
+  const description = `Looking for a professional ${keyword.toLowerCase()} in ${locationLabel}? Sjoh connects you directly with available South African pros — the possibilities are endless. No commission, no ghosters, just someone who can do it properly.`;
   const canonical = buildLocationCanonical(categorySlug ?? "", provinceSlug, citySlug);
 
   const jsonLd = useMemo<BusinessForJsonLd[]>(

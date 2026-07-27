@@ -75,7 +75,7 @@ const DirectoryPage = () => {
     <SiteLayout>
       <SeoHead
         title="Browse the Sjoh directory of South African pros"
-        description="Search vetted South African service providers by category and province. Plumbers, electricians, designers, tutors and more — verified, contactable, no commission."
+        description="Search available South African service providers by category and province. Plumbers, electricians, designers, tutors and more — available, contactable, no commission."
         canonical="https://sjoh.co.za/directory"
       />
       <div className="bg-[#050505] text-white">
@@ -108,7 +108,7 @@ const DirectoryPage = () => {
         <EarlyAccessNotice
           className="mb-8"
           title="Some categories are still filling up."
-          body="You’re seeing Sjoh in early access. We’re onboarding vetted South African pros now, so if your area looks quiet today, it won’t stay that way for long."
+          body="You’re seeing Sjoh in early access. We’re onboarding available South African pros now, so if your area looks quiet today, it won’t stay that way for long."
           ctaLabel="Know a good pro? Send them here"
           ctaTo="/list"
         />

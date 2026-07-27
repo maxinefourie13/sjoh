@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Send, Sparkles, ExternalLink, Siren, Lock, ShieldCheck } from "lucide-react";
+import { Send, Sparkles, ExternalLink, Siren, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -57,7 +57,6 @@ export const ApplyButton = ({
     status,
     tier,
     hasVerifiedProAccess,
-    hasKycBusiness,
     foundingProposalAvailable,
     isFoundingMember,
     foundingProposalsResetAt,
@@ -65,7 +64,7 @@ export const ApplyButton = ({
 
   const [proposalOpen, setProposalOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [paywall, setPaywall] = useState<null | "locked" | "no-plan" | "basic" | "trial-urgent" | "kyc-needed">(null);
+  const [paywall, setPaywall] = useState<null | "locked" | "no-plan" | "basic" | "trial-urgent">(null);
 
   const showFoundingPill = !hasVerifiedProAccess && foundingProposalAvailable;
   const foundingExhausted = !hasVerifiedProAccess && isFoundingMember && !foundingProposalAvailable;
@@ -110,7 +109,6 @@ export const ApplyButton = ({
 
     if (isUrgent) {
       if (!hasVerifiedProAccess) return setPaywall("trial-urgent");
-      if (!hasKycBusiness) return setPaywall("kyc-needed");
     }
 
     setProposalOpen(true);
@@ -163,20 +161,18 @@ export const ApplyButton = ({
         kind={paywall}
         onClose={() => setPaywall(null)}
         onPickPlan={() => { setPaywall(null); navigate("/pricing"); }}
-        onRunKyc={() => { setPaywall(null); navigate("/dashboard?section=verification"); }}
       />
     </>
   );
 };
 
 interface PaywallProps {
-  kind: null | "locked" | "no-plan" | "basic" | "trial-urgent" | "kyc-needed";
+  kind: null | "locked" | "no-plan" | "basic" | "trial-urgent";
   onClose: () => void;
   onPickPlan: () => void;
-  onRunKyc: () => void;
 }
 
-const PaywallDialog = ({ kind, onClose, onPickPlan, onRunKyc }: PaywallProps) => {
+const PaywallDialog = ({ kind, onClose, onPickPlan }: PaywallProps) => {
   if (!kind) return null;
 
   const copy = {
@@ -204,16 +200,9 @@ const PaywallDialog = ({ kind, onClose, onPickPlan, onRunKyc }: PaywallProps) =>
     "trial-urgent": {
       icon: <Siren className="size-5 text-accent" strokeWidth={2.5} />,
       title: "Urgent jobs need Verified Pro",
-      body: "Urgent customer requests are reserved for Verified Pros with a verified ID. Upgrade to R250/mo and complete the ID check to quote emergency jobs.",
-      cta: "Upgrade & verify",
+      body: "Urgent customer requests are reserved for Verified Pro businesses. Upgrade to R250/mo to quote emergency jobs.",
+      cta: "Upgrade to Verified Pro",
       onCta: onPickPlan,
-    },
-    "kyc-needed": {
-      icon: <ShieldCheck className="size-5 text-accent" strokeWidth={2.5} />,
-      title: "Verify your ID first",
-      body: "Urgent job requests are only sent to pros with a verified SA ID. Complete the quick ID check on your profile and you're in.",
-      cta: "Verify my ID",
-      onCta: onRunKyc,
     },
   }[kind];
 

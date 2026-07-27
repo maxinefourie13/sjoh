@@ -17,7 +17,7 @@ const HERO_PHRASES = [
   "Find the right pro fast.",
   "Post the job. Compare properly.",
   "No commission. No middleman.",
-  "Vetted local businesses.",
+  "Available local businesses.",
   "Real reviews. Real work.",
   "Get found by better-fit clients.",
 ];
@@ -26,7 +26,7 @@ const PERKS = [
   { Icon: Award, title: "Founder badge", body: "First 500 pros get a permanent Founder badge on their profile." },
   { Icon: Gift, title: "30 days free", body: "Start a PayFast-backed Verified Pro trial. R0 today, then R250/month after 30 days." },
   { Icon: Handshake, title: "Keep the whole quote", body: "No commission on jobs. Clients contact you directly." },
-  { Icon: ShieldCheck, title: "Vetted marketplace", body: "Profiles, reviews, and trust signals help good pros stand out." },
+  { Icon: ShieldCheck, title: "Available marketplace", body: "Profiles, reviews, and trust signals help good pros stand out." },
 ];
 
 const EarlyAccessLanding = () => {
@@ -88,7 +88,7 @@ const EarlyAccessLanding = () => {
     <div className="min-h-dvh w-full overflow-hidden bg-[#050505] text-white">
       <SeoHead
         title="Sjoh — Claim your founding spot"
-        description="Join Sjoh as a founding member. South Africa's no-commission directory of vetted pros. First 500 get a Founder badge and a 30-day PayFast-backed trial."
+        description="Join Sjoh as a founding member. South Africa's no-commission directory of available pros. First 500 get a Founder badge and a 30-day PayFast-backed trial."
       />
 
       <div
@@ -138,7 +138,7 @@ const EarlyAccessLanding = () => {
             <span className="text-sa-gold">right pro.</span>
           </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/72">
-            Search, post a job, or list your business. Sjoh connects people with vetted local service pros, without taking a cut of the work.
+            Search, post a job, or list your business. Sjoh connects people with available local service pros, without taking a cut of the work.
           </p>
 
           <div className="mt-5 flex flex-wrap items-center gap-3">
@@ -217,7 +217,7 @@ const EarlyAccessLanding = () => {
                     <Star className="mx-auto mb-1 size-3 fill-sa-gold text-sa-gold" /> 4.8
                   </span>
                   <span className="rounded-xl bg-sa-green px-2 py-2 text-white">
-                    <ShieldCheck className="mx-auto mb-1 size-3" /> Vetted
+                    <ShieldCheck className="mx-auto mb-1 size-3" /> Available
                   </span>
                   <span className="rounded-xl bg-sa-peri px-2 py-2 text-white">
                     <MapPin className="mx-auto mb-1 size-3" /> SA
@@ -270,7 +270,7 @@ const EarlyAccessLanding = () => {
                 <span className={`text-sm font-black ${mode === "customer" ? "text-sa-dark" : "text-white"}`}>I need a Pro</span>
               </div>
               <p className={`mt-1.5 text-[11px] leading-snug ${mode === "customer" ? "text-sa-dark/72" : "text-white/60"}`}>
-                Find someone vetted. No middleman.
+                Find someone available. No middleman.
               </p>
             </button>
           </div>
@@ -378,7 +378,7 @@ const EarlyAccessLanding = () => {
                   Tell us what you need. The right pros come to you.
                 </h2>
                 <p className="mt-2 text-sm leading-relaxed text-white/68">
-                  Browse now, or post a job and let vetted local businesses quote through Sjoh. Free for customers.
+                  Browse now, or post a job and let available local businesses quote through Sjoh. Free for customers.
                 </p>
               </div>
 

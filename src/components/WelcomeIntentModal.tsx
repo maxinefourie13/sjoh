@@ -92,7 +92,7 @@ export const WelcomeIntentModal = () => {
             <span className="flex-1">
               <span className="block font-display font-extrabold text-base">I need something done</span>
               <span className="block text-sm text-ink-2 mt-0.5">
-                Get free quotes from vetted professionals near you.
+                Get free quotes from available professionals near you.
               </span>
             </span>
           </button>
