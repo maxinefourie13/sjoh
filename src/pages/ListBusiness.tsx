@@ -558,7 +558,7 @@ const ListBusiness = () => {
               <div>
                 <h2 className="font-display text-2xl font-semibold">Last step — go live</h2>
                 <p className="text-sm text-ink-2 mt-1">
-                  30 days free, backed by PayFast. R0 today; your first R250 is on {getTrialChargeDate()}.
+                  30 days free, backed by PayFast. Just R5 today to check your card; your first R250 is on {getTrialChargeDate()}.
                 </p>
               </div>
 
@@ -606,9 +606,9 @@ const ListBusiness = () => {
                     <CreditCard className="size-5" strokeWidth={2.5} />
                   </span>
                   <div>
-                    <p className="font-display text-base font-extrabold">Card required, charge later.</p>
+                    <p className="font-display text-base font-extrabold">R5 card check today.</p>
                     <p className="mt-1 text-sm leading-relaxed text-ink-2">
-                      PayFast stores the card securely. Today is R0. Sjoh starts charging R250/month on {getTrialChargeDate()}, unless you cancel first.
+                      We charge R5 today just to make sure your card works — PayFast stores it securely. Sjoh starts charging R250/month on {getTrialChargeDate()}, unless you cancel first.
                     </p>
                   </div>
                 </div>

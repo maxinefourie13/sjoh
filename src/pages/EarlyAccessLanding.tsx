@@ -24,7 +24,7 @@ const HERO_PHRASES = [
 
 const PERKS = [
   { Icon: Award, title: "Founder badge", body: "First 500 pros get a permanent Founder badge on their profile." },
-  { Icon: Gift, title: "30 days free", body: "Start a PayFast-backed Verified Pro trial. R0 today, then R250/month after 30 days." },
+  { Icon: Gift, title: "30 days free", body: "Start a PayFast-backed Verified Pro trial. Just R5 today to check your card, then R250/month after 30 days." },
   { Icon: Handshake, title: "Keep the whole quote", body: "No commission on jobs. Clients contact you directly." },
   { Icon: ShieldCheck, title: "Available marketplace", body: "Profiles, reviews, and trust signals help good pros stand out." },
 ];
@@ -358,7 +358,7 @@ const EarlyAccessLanding = () => {
                 </Button>
 
                 <p className="text-center text-[11px] text-white/55 leading-relaxed">
-                  Start your 30-day trial through PayFast after signup. R0 today, then R250/month unless you cancel.
+                  Start your 30-day trial through PayFast after signup. Just R5 today to check your card, then R250/month unless you cancel.
                 </p>
 
                 <p className="text-center text-xs text-white/55">

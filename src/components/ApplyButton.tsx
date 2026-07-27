@@ -35,8 +35,7 @@ interface Props {
  *  - Not signed in → /auth
  *  - Locked tier → choose a plan
  *  - Basic tier → upgrade to Verified Pro
- *  - Trial / no plan, urgent job → upgrade to R250 + ID check
- *  - Verified Pro, urgent job, no KYC → run ID check
+ *  - Trial / no plan, urgent job → upgrade to Verified Pro
  *  - Otherwise → open proposal modal (server has final say).
  */
 export const ApplyButton = ({
@@ -186,7 +185,7 @@ const PaywallDialog = ({ kind, onClose, onPickPlan }: PaywallProps) => {
     "no-plan": {
       icon: <Lock className="size-5 text-accent" strokeWidth={2.5} />,
       title: "Verified Pro needed",
-      body: "Start a 30-day PayFast-backed Verified Pro trial to send quotes. R0 today, then R250/mo unless you cancel.",
+      body: "Start a 30-day PayFast-backed Verified Pro trial to send quotes. Just R5 today to check your card, then R250/mo unless you cancel.",
       cta: "See plans",
       onCta: onPickPlan,
     },

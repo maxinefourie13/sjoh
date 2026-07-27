@@ -136,7 +136,7 @@ const BusinessLanding = () => {
               </div>
 
               <div className="mt-10 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-5">
-                {["R0 today", "30-day trial", "Quotes", "Invoices", "Reviews"].map((item, index) => (
+                {["R5 card check", "30-day trial", "Quotes", "Invoices", "Reviews"].map((item, index) => (
                   <div
                     key={item}
                     className="rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-bold text-white/80"

@@ -82,7 +82,7 @@ const faqs = [
   },
   {
     q: "How does the 30-day trial work?",
-    a: "Create your account, set up your card securely through PayFast, and pay R0 today. Sjoh starts charging R250/month after 30 days unless you cancel before then.",
+    a: "Create your account and set up your card securely through PayFast. We charge just R5 today to confirm your card works. Sjoh starts charging R250/month after 30 days unless you cancel before then.",
   },
   {
     q: "Do you take commission on the work I do?",
@@ -218,7 +218,7 @@ const Pricing = () => {
                   </Button>
 
                   <p className="mt-3 text-center text-xs text-white/45">
-                    R0 today. PayFast stores your card securely and starts R250/month after 30 days.
+                    R5 today to check your card. PayFast stores it securely and starts R250/month after 30 days.
                   </p>
                 </div>
               </div>

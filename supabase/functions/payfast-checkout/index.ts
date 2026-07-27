@@ -155,8 +155,13 @@ Deno.serve(async (req) => {
       verified_pro: { monthly: '250.00', annual: '2700.00' },
     };
 
+    // PayFast's minimum transaction is R5.00 and a R0.00 initial payment is
+    // unreliable — many banks decline a zero-amount card authorization. So a
+    // trial charges a small R5 card-verification fee today to reliably tokenise
+    // the card, then the real recurring amount starts on billing_date.
+    const CARD_VERIFY_AMOUNT = '5.00';
     const recurringAmount = AMOUNTS[tier][rawCycle];
-    const amount = trialDays > 0 ? '0.00' : recurringAmount;
+    const amount = trialDays > 0 ? CARD_VERIFY_AMOUNT : recurringAmount;
     const trialLabel = trialDays > 0 ? ` - ${trialDays}-Day Trial` : '';
     const billingDate = trialDays > 0 ? addDaysIsoDate(trialDays) : '';
 
@@ -172,7 +177,7 @@ Deno.serve(async (req) => {
       amount: amount,
       item_name: `Sjoh ${tier === 'verified_pro' ? 'Verified Pro' : 'Basic Listing'}${trialLabel} - ${rawCycle === 'annual' ? 'Yearly' : 'Monthly'}`,
       item_description: trialDays > 0
-        ? `Sjoh service provider subscription - ${trialDays}-day trial, then ${tier} (${rawCycle})`
+        ? `R5 card verification today, then a ${trialDays}-day free trial, then ${tier} (${rawCycle})`
         : `Sjoh service provider subscription - ${tier} (${rawCycle})`,
       custom_str1: userId,
       custom_str2: tier,

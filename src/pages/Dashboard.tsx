@@ -843,7 +843,7 @@ const BillingSection = () => {
       ? `${access.trialDaysLeft} day${access.trialDaysLeft === 1 ? "" : "s"} left on trial`
       : access.isLocked
         ? "Subscribe to bring your profile back"
-        : "Start a 30-day PayFast-backed trial. R0 today, then R250/month.";
+        : "Start a 30-day PayFast-backed trial. R5 today to check your card, then R250/month.";
 
   const switchToAnnual = async () => {
     if (!liveSub?.tier || (liveSub.tier !== "basic" && liveSub.tier !== "verified_pro")) return;

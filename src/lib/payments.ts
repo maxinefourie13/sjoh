@@ -23,7 +23,7 @@ async function startPayFastCheckout(
   toast({
     title: "Taking you to PayFast",
     description: options.trialDays
-      ? "Add your card securely. You will not be charged today."
+      ? "Add your card securely. We'll charge R5 to check it works — that's all today."
       : "Sorting the payment gateway…",
   });
 

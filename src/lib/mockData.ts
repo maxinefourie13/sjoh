@@ -277,7 +277,7 @@ export const SJOH_TIERS: SjohTier[] = [
     popular: true,
     founderPrice: 150,
     features: [
-      "30-day PayFast-backed trial — R0 today",
+      "30-day PayFast-backed trial — R5 card check today",
       "Listed in the Sjoh directory",
       "Receive & apply to customer job requests",
       "Send unlimited branded PDF quotations",
