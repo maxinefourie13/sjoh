@@ -45,9 +45,8 @@ const AcceptableUse = () => {
           <h2 className="font-display text-xl font-bold">Provider responsibility</h2>
           <p>
             Service providers are responsible for complying with South African law, industry rules, municipal
-            requirements, safety standards and tax obligations that apply to their work. Sjoh ID Check is a platform trust
-            check and does not replace professional licensing, criminal record checks, trade certification or customer due
-            diligence.
+            requirements, safety standards and tax obligations that apply to their work. Sjoh does not currently perform
+            identity, credit or criminal-record checks, and customers remain responsible for their own due diligence.
           </p>
 
           <h2 className="font-display text-xl font-bold">Enforcement</h2>

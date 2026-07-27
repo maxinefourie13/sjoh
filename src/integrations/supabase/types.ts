@@ -12,8 +12,60 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
+      billing_lifecycle_notifications: {
+        Row: {
+          anchor_date: string
+          id: string
+          kind: string
+          metadata: Json
+          sent_at: string
+          user_id: string
+        }
+        Insert: {
+          anchor_date: string
+          id?: string
+          kind: string
+          metadata?: Json
+          sent_at?: string
+          user_id: string
+        }
+        Update: {
+          anchor_date?: string
+          id?: string
+          kind?: string
+          metadata?: Json
+          sent_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       business_follows: {
         Row: {
           business_id: string
@@ -34,13 +86,6 @@ export type Database = {
           id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "business_follows_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
-            referencedRelation: "business_verified_status"
-            referencedColumns: ["business_id"]
-          },
           {
             foreignKeyName: "business_follows_business_id_fkey"
             columns: ["business_id"]
@@ -99,13 +144,6 @@ export type Database = {
             foreignKeyName: "business_google_reviews_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
-            referencedRelation: "business_verified_status"
-            referencedColumns: ["business_id"]
-          },
-          {
-            foreignKeyName: "business_google_reviews_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
@@ -148,13 +186,6 @@ export type Database = {
             foreignKeyName: "business_images_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
-            referencedRelation: "business_verified_status"
-            referencedColumns: ["business_id"]
-          },
-          {
-            foreignKeyName: "business_images_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
@@ -190,9 +221,6 @@ export type Database = {
           image_url: string | null
           is_suspended: boolean
           is_verified: boolean
-          kyc_reference: string | null
-          kyc_verified: boolean
-          kyc_verified_at: string | null
           last_active_at: string
           listing_status: string
           logo_url: string | null
@@ -237,9 +265,6 @@ export type Database = {
           image_url?: string | null
           is_suspended?: boolean
           is_verified?: boolean
-          kyc_reference?: string | null
-          kyc_verified?: boolean
-          kyc_verified_at?: string | null
           last_active_at?: string
           listing_status?: string
           logo_url?: string | null
@@ -284,9 +309,6 @@ export type Database = {
           image_url?: string | null
           is_suspended?: boolean
           is_verified?: boolean
-          kyc_reference?: string | null
-          kyc_verified?: boolean
-          kyc_verified_at?: string | null
           last_active_at?: string
           listing_status?: string
           logo_url?: string | null
@@ -329,6 +351,30 @@ export type Database = {
           created_at?: string
           id?: string
           viewer_id?: string
+        }
+        Relationships: []
+      }
+      coupon_codes: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          tier: Database["public"]["Enums"]["sjoh_tier"]
+          trial_days: number
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          tier?: Database["public"]["Enums"]["sjoh_tier"]
+          trial_days?: number
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          tier?: Database["public"]["Enums"]["sjoh_tier"]
+          trial_days?: number
         }
         Relationships: []
       }
@@ -443,8 +489,6 @@ export type Database = {
           details: string | null
           evidence_urls: Json
           id: string
-          kyc_data_provided_at: string | null
-          kyc_provided_to: string | null
           opportunity_id: string | null
           pro_suspended_at: string | null
           pro_user_id: string | null
@@ -468,8 +512,6 @@ export type Database = {
           details?: string | null
           evidence_urls?: Json
           id?: string
-          kyc_data_provided_at?: string | null
-          kyc_provided_to?: string | null
           opportunity_id?: string | null
           pro_suspended_at?: string | null
           pro_user_id?: string | null
@@ -493,8 +535,6 @@ export type Database = {
           details?: string | null
           evidence_urls?: Json
           id?: string
-          kyc_data_provided_at?: string | null
-          kyc_provided_to?: string | null
           opportunity_id?: string | null
           pro_suspended_at?: string | null
           pro_user_id?: string | null
@@ -625,132 +665,271 @@ export type Database = {
         }
         Relationships: []
       }
-      id_verification_submissions: {
+      hermes_campaigns: {
         Row: {
-          business_id: string
+          config: Json
           created_at: string
-          document_path: string
-          extracted_id_number: string | null
-          extracted_name: string | null
-          failure_reason: string | null
-          full_name: string
+          created_by: string | null
+          goal: string | null
           id: string
-          id_number: string
-          match_score: number | null
-          processed_at: string | null
-          provider: string
-          status: Database["public"]["Enums"]["id_check_status"]
+          name: string
+          status: string
           updated_at: string
-          user_id: string
         }
         Insert: {
-          business_id: string
+          config?: Json
           created_at?: string
-          document_path: string
-          extracted_id_number?: string | null
-          extracted_name?: string | null
-          failure_reason?: string | null
-          full_name: string
+          created_by?: string | null
+          goal?: string | null
           id?: string
-          id_number: string
-          match_score?: number | null
-          processed_at?: string | null
-          provider?: string
-          status?: Database["public"]["Enums"]["id_check_status"]
+          name: string
+          status?: string
           updated_at?: string
-          user_id: string
         }
         Update: {
-          business_id?: string
+          config?: Json
           created_at?: string
-          document_path?: string
-          extracted_id_number?: string | null
-          extracted_name?: string | null
-          failure_reason?: string | null
-          full_name?: string
+          created_by?: string | null
+          goal?: string | null
           id?: string
-          id_number?: string
-          match_score?: number | null
-          processed_at?: string | null
-          provider?: string
-          status?: Database["public"]["Enums"]["id_check_status"]
+          name?: string
+          status?: string
           updated_at?: string
-          user_id?: string
+        }
+        Relationships: []
+      }
+      hermes_findings: {
+        Row: {
+          allowed_next_step: string | null
+          business_name: string | null
+          campaign_id: string | null
+          category: string | null
+          city_area: string | null
+          confidence_score: number | null
+          contact_type: string | null
+          country: string
+          created_at: string
+          data: Json
+          email_marketing_allowed_now: string
+          finding_type: string
+          id: string
+          notes: string | null
+          popia_consent_status: string
+          province: string | null
+          source_checked_date: string
+          source_name: string | null
+          source_url: string | null
+          status: string
+          task_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          allowed_next_step?: string | null
+          business_name?: string | null
+          campaign_id?: string | null
+          category?: string | null
+          city_area?: string | null
+          confidence_score?: number | null
+          contact_type?: string | null
+          country?: string
+          created_at?: string
+          data?: Json
+          email_marketing_allowed_now?: string
+          finding_type: string
+          id?: string
+          notes?: string | null
+          popia_consent_status?: string
+          province?: string | null
+          source_checked_date?: string
+          source_name?: string | null
+          source_url?: string | null
+          status?: string
+          task_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          allowed_next_step?: string | null
+          business_name?: string | null
+          campaign_id?: string | null
+          category?: string | null
+          city_area?: string | null
+          confidence_score?: number | null
+          contact_type?: string | null
+          country?: string
+          created_at?: string
+          data?: Json
+          email_marketing_allowed_now?: string
+          finding_type?: string
+          id?: string
+          notes?: string | null
+          popia_consent_status?: string
+          province?: string | null
+          source_checked_date?: string
+          source_name?: string | null
+          source_url?: string | null
+          status?: string
+          task_id?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "id_verification_submissions_business_id_fkey"
-            columns: ["business_id"]
+            foreignKeyName: "hermes_findings_campaign_id_fkey"
+            columns: ["campaign_id"]
             isOneToOne: false
-            referencedRelation: "business_verified_status"
-            referencedColumns: ["business_id"]
-          },
-          {
-            foreignKeyName: "id_verification_submissions_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
-            referencedRelation: "businesses"
+            referencedRelation: "hermes_campaigns"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "id_verification_submissions_business_id_fkey"
-            columns: ["business_id"]
+            foreignKeyName: "hermes_findings_task_id_fkey"
+            columns: ["task_id"]
             isOneToOne: false
-            referencedRelation: "businesses_public"
+            referencedRelation: "hermes_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hermes_tasks: {
+        Row: {
+          attempts: number
+          campaign_id: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          error_message: string | null
+          id: string
+          locked_at: string | null
+          locked_by: string | null
+          max_attempts: number
+          next_run_at: string
+          payload: Json
+          priority: number
+          result: Json | null
+          status: string
+          task_type: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          campaign_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          error_message?: string | null
+          id?: string
+          locked_at?: string | null
+          locked_by?: string | null
+          max_attempts?: number
+          next_run_at?: string
+          payload?: Json
+          priority?: number
+          result?: Json | null
+          status?: string
+          task_type: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          campaign_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          error_message?: string | null
+          id?: string
+          locked_at?: string | null
+          locked_by?: string | null
+          max_attempts?: number
+          next_run_at?: string
+          payload?: Json
+          priority?: number
+          result?: Json | null
+          status?: string
+          task_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hermes_tasks_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "hermes_campaigns"
             referencedColumns: ["id"]
           },
         ]
       }
       invoices: {
         Row: {
+          access_token: string | null
+          access_token_expires_at: string | null
           business_id: string
           created_at: string
           customer_email: string | null
           customer_name: string
           customer_phone: string | null
           deal_memo_id: string | null
+          doc_type: string
+          email_error: string | null
+          email_message_id: string | null
           id: string
           invoice_number: string
           issued_at: string
           line_items: Json
           notes: string | null
+          pdf_path: string | null
           pro_user_id: string
+          sent_at: string | null
+          status: string
           subtotal_zar: number
           total_zar: number
           vat_included: boolean
           vat_zar: number
         }
         Insert: {
+          access_token?: string | null
+          access_token_expires_at?: string | null
           business_id: string
           created_at?: string
           customer_email?: string | null
           customer_name: string
           customer_phone?: string | null
           deal_memo_id?: string | null
+          doc_type?: string
+          email_error?: string | null
+          email_message_id?: string | null
           id?: string
           invoice_number: string
           issued_at?: string
           line_items?: Json
           notes?: string | null
+          pdf_path?: string | null
           pro_user_id: string
+          sent_at?: string | null
+          status?: string
           subtotal_zar?: number
           total_zar?: number
           vat_included?: boolean
           vat_zar?: number
         }
         Update: {
+          access_token?: string | null
+          access_token_expires_at?: string | null
           business_id?: string
           created_at?: string
           customer_email?: string | null
           customer_name?: string
           customer_phone?: string | null
           deal_memo_id?: string | null
+          doc_type?: string
+          email_error?: string | null
+          email_message_id?: string | null
           id?: string
           invoice_number?: string
           issued_at?: string
           line_items?: Json
           notes?: string | null
+          pdf_path?: string | null
           pro_user_id?: string
+          sent_at?: string | null
+          status?: string
           subtotal_zar?: number
           total_zar?: number
           vat_included?: boolean
@@ -796,13 +975,6 @@ export type Database = {
           status?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "no_show_reports_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
-            referencedRelation: "business_verified_status"
-            referencedColumns: ["business_id"]
-          },
           {
             foreignKeyName: "no_show_reports_business_id_fkey"
             columns: ["business_id"]
@@ -1082,13 +1254,6 @@ export type Database = {
             foreignKeyName: "promotions_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
-            referencedRelation: "business_verified_status"
-            referencedColumns: ["business_id"]
-          },
-          {
-            foreignKeyName: "promotions_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
@@ -1143,13 +1308,6 @@ export type Database = {
             foreignKeyName: "proposals_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
-            referencedRelation: "business_verified_status"
-            referencedColumns: ["business_id"]
-          },
-          {
-            foreignKeyName: "proposals_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
@@ -1158,6 +1316,13 @@ export type Database = {
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "proposals_deal_memo_id_fkey"
+            columns: ["deal_memo_id"]
+            isOneToOne: false
+            referencedRelation: "deal_memos"
             referencedColumns: ["id"]
           },
           {
@@ -1183,7 +1348,6 @@ export type Database = {
           founding_proposals_period_start: string
           founding_proposals_used_this_month: number
           id: string
-          is_id_verified: boolean
           next_renewal_at: string | null
           onesignal_player_id: string | null
           payfast_subscription_token: string | null
@@ -1196,8 +1360,6 @@ export type Database = {
           updated_at: string
           urgent_alerts_optin: boolean
           user_id: string
-          verification_expires_at: string | null
-          verification_status: Database["public"]["Enums"]["verification_status"]
           whatsapp_alerts_optin: boolean
           whatsapp_number: string | null
         }
@@ -1207,7 +1369,6 @@ export type Database = {
           founding_proposals_period_start?: string
           founding_proposals_used_this_month?: number
           id?: string
-          is_id_verified?: boolean
           next_renewal_at?: string | null
           onesignal_player_id?: string | null
           payfast_subscription_token?: string | null
@@ -1220,8 +1381,6 @@ export type Database = {
           updated_at?: string
           urgent_alerts_optin?: boolean
           user_id: string
-          verification_expires_at?: string | null
-          verification_status?: Database["public"]["Enums"]["verification_status"]
           whatsapp_alerts_optin?: boolean
           whatsapp_number?: string | null
         }
@@ -1231,7 +1390,6 @@ export type Database = {
           founding_proposals_period_start?: string
           founding_proposals_used_this_month?: number
           id?: string
-          is_id_verified?: boolean
           next_renewal_at?: string | null
           onesignal_player_id?: string | null
           payfast_subscription_token?: string | null
@@ -1244,8 +1402,6 @@ export type Database = {
           updated_at?: string
           urgent_alerts_optin?: boolean
           user_id?: string
-          verification_expires_at?: string | null
-          verification_status?: Database["public"]["Enums"]["verification_status"]
           whatsapp_alerts_optin?: boolean
           whatsapp_number?: string | null
         }
@@ -1335,6 +1491,7 @@ export type Database = {
           reviewer_company: string | null
           reviewer_id: string | null
           reviewer_name: string
+          source: string
         }
         Insert: {
           body: string
@@ -1348,6 +1505,7 @@ export type Database = {
           reviewer_company?: string | null
           reviewer_id?: string | null
           reviewer_name: string
+          source?: string
         }
         Update: {
           body?: string
@@ -1361,15 +1519,9 @@ export type Database = {
           reviewer_company?: string | null
           reviewer_id?: string | null
           reviewer_name?: string
+          source?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "reviews_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
-            referencedRelation: "business_verified_status"
-            referencedColumns: ["business_id"]
-          },
           {
             foreignKeyName: "reviews_business_id_fkey"
             columns: ["business_id"]
@@ -1422,13 +1574,6 @@ export type Database = {
             foreignKeyName: "services_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
-            referencedRelation: "business_verified_status"
-            referencedColumns: ["business_id"]
-          },
-          {
-            foreignKeyName: "services_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
@@ -1465,6 +1610,36 @@ export type Database = {
         }
         Relationships: []
       }
+      trial_code_redemptions: {
+        Row: {
+          code: string
+          id: string
+          redeemed_at: string
+          tier: Database["public"]["Enums"]["sjoh_tier"]
+          trial_days: number
+          trial_ends_at: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          id?: string
+          redeemed_at?: string
+          tier?: Database["public"]["Enums"]["sjoh_tier"]
+          trial_days?: number
+          trial_ends_at: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          id?: string
+          redeemed_at?: string
+          tier?: Database["public"]["Enums"]["sjoh_tier"]
+          trial_days?: number
+          trial_ends_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_reports: {
         Row: {
           business_id: string
@@ -1494,13 +1669,6 @@ export type Database = {
           status?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "user_reports_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
-            referencedRelation: "business_verified_status"
-            referencedColumns: ["business_id"]
-          },
           {
             foreignKeyName: "user_reports_business_id_fkey"
             columns: ["business_id"]
@@ -1540,13 +1708,6 @@ export type Database = {
       }
     }
     Views: {
-      business_verified_status: {
-        Row: {
-          business_id: string | null
-          is_verified_pro: boolean | null
-        }
-        Relationships: []
-      }
       businesses_public: {
         Row: {
           address: string | null
@@ -1763,6 +1924,8 @@ export type Database = {
         Args: { _email: string; _role: string }
         Returns: string
       }
+      admin_platform_stats: { Args: never; Returns: Json }
+      admin_platform_stats_service: { Args: never; Returns: Json }
       admin_set_founding_spot: {
         Args: { _claimed: boolean; _signup_id: string }
         Returns: boolean
@@ -1785,9 +1948,9 @@ export type Database = {
         | {
             Args: {
               _billing_cycle?: Database["public"]["Enums"]["billing_cycle"]
-              _customer_code: string
               _next_renewal: string
-              _subscription_code: string
+              _payfast_subscription_token: string
+              _payfast_token: string
               _tier: Database["public"]["Enums"]["sjoh_tier"]
               _user_id: string
             }
@@ -1833,12 +1996,41 @@ export type Database = {
         Returns: undefined
       }
       claim_founding_spot: { Args: { _signup_id: string }; Returns: boolean }
+      claim_hermes_task: {
+        Args: { _worker_id: string }
+        Returns: {
+          attempts: number
+          campaign_id: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          error_message: string | null
+          id: string
+          locked_at: string | null
+          locked_by: string | null
+          max_attempts: number
+          next_run_at: string
+          payload: Json
+          priority: number
+          result: Json | null
+          status: string
+          task_type: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "hermes_tasks"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       claim_referral_code: { Args: { _code: string }; Returns: string }
       complete_deal_memo: { Args: { _id: string }; Returns: undefined }
       count_active_pros: {
         Args: { _category_slug: string; _city?: string; _province: string }
         Returns: number
       }
+      current_user_roles: { Args: never; Returns: string[] }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -1847,7 +2039,6 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
-      expire_stale_verifications: { Args: never; Returns: undefined }
       find_fallback_pros_for_opportunity: {
         Args: { _opportunity_id: string }
         Returns: {
@@ -1861,7 +2052,6 @@ export type Database = {
         }[]
       }
       generate_referral_code: { Args: never; Returns: string }
-      get_dispute_kyc_package: { Args: { _dispute_id: string }; Returns: Json }
       get_founding_spot_counts: {
         Args: never
         Returns: {
@@ -1948,7 +2138,7 @@ export type Database = {
       has_verified_pro_access: { Args: { _user_id: string }; Returns: boolean }
       is_founding_member: { Args: { _user_id: string }; Returns: boolean }
       lapse_subscription: {
-        Args: { _subscription_code: string }
+        Args: { _subscription_token: string }
         Returns: undefined
       }
       lock_lapsed_trials: { Args: never; Returns: number }
@@ -1986,10 +2176,6 @@ export type Database = {
           isSetofReturn: false
         }
       }
-      mark_dispute_kyc_provided: {
-        Args: { _dispute_id: string; _notes?: string; _provided_to: string }
-        Returns: undefined
-      }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -2012,6 +2198,14 @@ export type Database = {
       recompute_trust_score: {
         Args: { _business_id: string }
         Returns: undefined
+      }
+      redeem_trial_code: {
+        Args: { _code: string }
+        Returns: {
+          code: string
+          tier: Database["public"]["Enums"]["sjoh_tier"]
+          trial_ends_at: string
+        }[]
       }
       report_business: {
         Args: { _business_id: string; _details?: string; _reason: string }
@@ -2037,6 +2231,13 @@ export type Database = {
           phone: string
         }[]
       }
+      review_link_status: {
+        Args: { _business_slug: string }
+        Returns: {
+          active: boolean
+          business_name: string
+        }[]
+      }
       run_lifecycle_sweep: { Args: never; Returns: Json }
       set_business_pre_launch: {
         Args: { _business_id: string; _pre_launch: boolean }
@@ -2057,6 +2258,16 @@ export type Database = {
       set_whatsapp_alerts: {
         Args: { _enabled: boolean; _number: string }
         Returns: undefined
+      }
+      submit_invited_review: {
+        Args: {
+          _body: string
+          _business_slug: string
+          _rating: number
+          _reviewer_company?: string
+          _reviewer_name: string
+        }
+        Returns: string
       }
       submit_proposal: {
         Args: {
@@ -2088,7 +2299,6 @@ export type Database = {
           to_dormant: number
         }[]
       }
-      user_has_kyc_business: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "business_owner" | "client"
@@ -2113,12 +2323,6 @@ export type Database = {
         | "data_provided"
         | "resolved"
         | "rejected"
-      id_check_status:
-        | "pending"
-        | "processing"
-        | "verified"
-        | "failed"
-        | "needs_review"
       opportunity_status: "open" | "closed" | "awarded"
       payment_event_kind:
         | "subscription_charge"
@@ -2131,7 +2335,13 @@ export type Database = {
         | "subscription_cancelled"
       price_type: "fixed" | "from" | "quote"
       pro_referral_status: "pending" | "redeemed" | "expired"
-      proposal_status: "pending" | "shortlisted" | "won" | "lost" | "withdrawn" | "accepted"
+      proposal_status:
+        | "pending"
+        | "shortlisted"
+        | "won"
+        | "lost"
+        | "withdrawn"
+        | "accepted"
       quote_revision_status: "pending" | "accepted" | "rejected" | "cancelled"
       sjoh_tier:
         | "none"
@@ -2140,13 +2350,6 @@ export type Database = {
         | "verified_pro_trial"
         | "verified_pro"
         | "locked"
-      verification_status:
-        | "not_required"
-        | "required"
-        | "pending"
-        | "verified"
-        | "failed"
-        | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2272,6 +2475,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       app_role: ["admin", "business_owner", "client"],
@@ -2298,13 +2504,6 @@ export const Constants = {
         "resolved",
         "rejected",
       ],
-      id_check_status: [
-        "pending",
-        "processing",
-        "verified",
-        "failed",
-        "needs_review",
-      ],
       opportunity_status: ["open", "closed", "awarded"],
       payment_event_kind: [
         "subscription_charge",
@@ -2318,7 +2517,14 @@ export const Constants = {
       ],
       price_type: ["fixed", "from", "quote"],
       pro_referral_status: ["pending", "redeemed", "expired"],
-      proposal_status: ["pending", "shortlisted", "won", "lost", "withdrawn", "accepted"],
+      proposal_status: [
+        "pending",
+        "shortlisted",
+        "won",
+        "lost",
+        "withdrawn",
+        "accepted",
+      ],
       quote_revision_status: ["pending", "accepted", "rejected", "cancelled"],
       sjoh_tier: [
         "none",
@@ -2327,14 +2533,6 @@ export const Constants = {
         "verified_pro_trial",
         "verified_pro",
         "locked",
-      ],
-      verification_status: [
-        "not_required",
-        "required",
-        "pending",
-        "verified",
-        "failed",
-        "expired",
       ],
     },
   },

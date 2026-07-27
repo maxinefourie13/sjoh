@@ -59,16 +59,14 @@ Deno.serve(async (req) => {
     const isUrgent = explicitUrgent || !!opp.is_urgent;
 
     // Find matching businesses (same category + city, exclude the poster's own businesses).
-    // For Eish! Urgent jobs, only target ID-verified businesses (Ready for Work pros only —
-    // tier is filtered downstream against provider_balances).
-    let matchQuery = admin
+    // Urgent notifications are restricted to active Verified Pro plans downstream.
+    const matchQuery = admin
       .from("businesses")
-      .select("id, name, owner_id, kyc_verified")
+      .select("id, name, owner_id")
       .eq("category_slug", opp.category_slug)
       .ilike("city", opp.city)
       .neq("owner_id", opp.client_id)
       .limit(MAX_RECIPIENTS);
-    if (isUrgent) matchQuery = matchQuery.eq("kyc_verified", true);
 
     const { data: matches } = await matchQuery;
 
@@ -81,8 +79,7 @@ Deno.serve(async (req) => {
     const ownerIds = [...new Set(matches.map((b: any) => b.owner_id))];
 
     // Pull notification preferences + tier in one go.
-    // For urgent jobs we also require an active Ready for Work (verified_pro) tier —
-    // KYC was already enforced at the business-row level above.
+    // Urgent jobs require an active Verified Pro tier.
     const { data: balances } = await admin
       .from("provider_balances")
       .select("user_id, email_alerts_optin, push_alerts_optin, onesignal_player_id, tier, tier_expires_at, trial_ends_at")

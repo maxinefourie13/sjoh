@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { Shield, RefreshCw, Building2, Briefcase, FileText, Star, CreditCard, ShieldCheck } from "lucide-react";
+import { Shield, RefreshCw, Building2, Briefcase, FileText, Star, CreditCard } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { SeoHead } from "@/components/SeoHead";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,6 @@ interface Stats {
   businesses_today: number;
   businesses_7d: number;
   businesses_active: number;
-  pros_verified: number;
   subs_paid: number;
   subs_trialing: number;
   founding_pros_claimed: number;
@@ -90,8 +89,8 @@ const AdminOverview = () => {
             {/* Totals */}
             <h2 className="font-display text-sm font-bold uppercase tracking-widest text-ink-2 mb-3">All time</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-              <Stat icon={Building2} label="Businesses" value={stats.businesses_total} sub={`${stats.businesses_active} active · ${stats.businesses_7d} this week`} />
-              <Stat icon={ShieldCheck} label="ID-verified pros" value={stats.pros_verified} />
+              <Stat icon={Building2} label="Businesses" value={stats.businesses_total} sub={`${stats.businesses_7d} added this week`} />
+              <Stat icon={Building2} label="Active listings" value={stats.businesses_active} />
               <Stat icon={CreditCard} label="Paid subscriptions" value={stats.subs_paid} sub={`${stats.subs_trialing} on trial`} />
               <Stat icon={Shield} label="Founding spots" value={`${stats.founding_pros_claimed} / ${FOUNDING_CAP}`} sub={`${Math.max(0, FOUNDING_CAP - stats.founding_pros_claimed)} left`} />
             </div>

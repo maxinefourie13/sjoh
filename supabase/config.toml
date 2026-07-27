@@ -66,9 +66,6 @@ verify_jwt = true
 [functions.sitemap-xml]
 verify_jwt = false
 
-[functions.verify-sa-id]
-verify_jwt = true
-
 [functions.process-email-queue]
 verify_jwt = true
 

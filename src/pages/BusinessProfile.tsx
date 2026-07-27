@@ -204,7 +204,6 @@ const BusinessProfile = () => {
                     </p>
                     <div className="mt-3">
                       <VerificationBadges
-                        idVerified={BUSINESS_VERIFICATION[business.id]?.idVerified ?? business.isVerified}
                         certifiedPro={BUSINESS_VERIFICATION[business.id]?.certifiedPro ?? false}
                         certifications={BUSINESS_VERIFICATION[business.id]?.certifications ?? []}
                       />

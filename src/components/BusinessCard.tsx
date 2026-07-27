@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { VerifiedBadge } from "@/components/VerifiedBadge";
 import type { Business } from "@/lib/mockData";
 import { EXAMPLE_BUSINESS_ID } from "@/lib/exampleBusiness";
 import { cn } from "@/lib/utils";
@@ -112,16 +111,9 @@ export const BusinessCard = ({ business, className }: BusinessCardProps) => {
       </div>
 
       <div className="pt-10 px-5 pb-5">
-        <div className="flex items-start gap-2">
-          <h3 className="font-display text-lg font-semibold leading-snug flex-1 group-hover:text-primary transition-colors">
-            {business.name}
-          </h3>
-          {business.isVerified && (
-            <span className="shrink-0 mt-1">
-              <VerifiedBadge size="sm" withLabel />
-            </span>
-          )}
-        </div>
+        <h3 className="font-display text-lg font-semibold leading-snug group-hover:text-primary transition-colors">
+          {business.name}
+        </h3>
         <p className="mt-1 text-xs text-muted-foreground">
           {business.category} <span className="opacity-50">·</span> {business.city}
         </p>

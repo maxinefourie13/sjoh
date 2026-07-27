@@ -15,7 +15,7 @@ export interface ProviderAccess {
   nextRenewalAt: string | null;
   /** Pro is on a paid plan or active trial → listed publicly. */
   hasListingAccess: boolean;
-  /** Pro can apply for jobs (Verified Pro paid or trial, AND business is verified). */
+  /** Pro can apply for jobs with an active Verified Pro paid plan or trial. */
   hasVerifiedProAccess: boolean;
   /** True while the trial is still ticking. */
   isOnTrial: boolean;
@@ -26,8 +26,6 @@ export interface ProviderAccess {
   /** Days until archived after a payment lapse/cancellation, when known. */
   graceDaysLeft: number | null;
   archiveAt: string | null;
-  /** True if this user owns at least one ID-verified business — required for Eish! Urgent jobs. */
-  hasKycBusiness: boolean;
   /** Founding-member perk fields */
   isFoundingMember: boolean;
   /** True if founding member AND hasn't used their 1 free proposal this calendar month. */
@@ -50,7 +48,6 @@ const DEFAULT: ProviderAccess = {
   trialDaysLeft: 0,
   graceDaysLeft: null,
   archiveAt: null,
-  hasKycBusiness: false,
   isFoundingMember: false,
   foundingProposalAvailable: false,
   foundingProposalsResetAt: null,
@@ -81,7 +78,6 @@ const DEV_OVERRIDE_ACCESS: ProviderAccess = {
   trialDaysLeft: 0,
   graceDaysLeft: null,
   archiveAt: null,
-  hasKycBusiness: true,
   isFoundingMember: false,
   foundingProposalAvailable: false,
   foundingProposalsResetAt: null,
@@ -98,29 +94,22 @@ export function useProviderAccess(): ProviderAccess {
     }
     if (!user) { setState({ ...DEFAULT, loading: false }); return; }
     (async () => {
-      const [{ data: bal }, { data: foundingFlag }, kycRes] = await Promise.all([
+      const [{ data: bal }, { data: foundingFlag }] = await Promise.all([
         supabase
           .from("provider_balances")
           .select("tier, trial_ends_at, tier_expires_at, next_renewal_at, founding_proposals_used_this_month, founding_proposals_period_start")
           .eq("user_id", user.id)
           .maybeSingle(),
         supabase.rpc("is_founding_member", { _user_id: user.id }),
-        supabase
-          .from("businesses")
-          .select("id", { count: "exact", head: true })
-          .eq("owner_id", user.id)
-          .eq("kyc_verified", true),
       ]);
 
       const isFoundingMember = !!foundingFlag;
-      const hasKycBusiness = (kycRes.count ?? 0) > 0;
 
       if (!bal) {
         setState({
           ...DEFAULT,
           loading: false,
           isFoundingMember,
-          hasKycBusiness,
           foundingProposalAvailable: isFoundingMember,
           foundingProposalsResetAt: isFoundingMember ? nextMonthStart() : null,
         });
@@ -181,7 +170,6 @@ export function useProviderAccess(): ProviderAccess {
         trialDaysLeft,
         graceDaysLeft,
         archiveAt: archiveAtDate?.toISOString() ?? null,
-        hasKycBusiness,
         isFoundingMember,
         foundingProposalAvailable,
         foundingProposalsResetAt: isFoundingMember ? nextMonthStart() : null,

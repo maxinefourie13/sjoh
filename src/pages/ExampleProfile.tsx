@@ -6,12 +6,10 @@ import {
   MapPin,
   Clock,
   Globe,
-  ShieldCheck,
   Star,
 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
-import { VerifiedBadge } from "@/components/VerifiedBadge";
 
 /**
  * Public preview of what a client sees when they land on a real Sjoh business
@@ -51,12 +49,9 @@ const ExampleProfile = () => {
             </div>
             <div className="mt-4 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
               <div className="min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="font-display text-3xl md:text-4xl tracking-tight">
-                    Preview Listing
-                  </h1>
-                  <VerifiedBadge size="sm" withLabel />
-                </div>
+                <h1 className="font-display text-3xl md:text-4xl tracking-tight">
+                  Preview Listing
+                </h1>
                 <p className="mt-1.5 text-sm text-muted-foreground">
                   Your category · Your city, Your province
                 </p>

@@ -283,7 +283,6 @@ export const SJOH_TIERS: SjohTier[] = [
       "Listed in the Sjoh directory",
       "Receive & apply to customer job requests",
       "Send unlimited branded PDF quotations",
-      "Coral Checkmark — Sjoh ID Check badge",
       "Invoice generator with your logo",
       "WhatsApp lead notifications",
       "Top placement in local search results",
@@ -295,4 +294,4 @@ export const SJOH_TIERS: SjohTier[] = [
   },
 ];
 
-export const BUSINESS_VERIFICATION: Record<string, { idVerified: boolean; certifiedPro: boolean; certifications: string[]; strikes: number }> = {};
+export const BUSINESS_VERIFICATION: Record<string, { certifiedPro: boolean; certifications: string[]; strikes: number }> = {};

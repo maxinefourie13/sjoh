@@ -60,11 +60,9 @@ const Terms = () => {
             safeguarding your account credentials and for all activities undertaken under your account.
           </p>
           <p>
-            Sjoh may ask Service Providers to complete Sjoh ID Check before they can respond to certain job opportunities.
-            Sjoh ID Check is an internal platform trust and safety check that compares submitted account details against
-            uploaded identity documentation. It is not a government-certified identity verification service, credit check,
-            criminal record check or professional qualification verification. Customers remain responsible for satisfying
-            themselves that a Service Provider is suitable, qualified and legally permitted to perform the requested work.
+            Sjoh does not currently perform identity, credit or criminal-record checks on Service Providers. Customers
+            remain responsible for satisfying themselves that a Service Provider is suitable, qualified and legally
+            permitted to perform the requested work.
           </p>
 
           <h2 className="font-display text-xl font-bold">5. Service Provider Obligations</h2>

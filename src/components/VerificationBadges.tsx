@@ -2,7 +2,6 @@ import { BadgeCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Props {
-  idVerified?: boolean;
   certifiedPro?: boolean;
   certifications?: string[];
   size?: "sm" | "md";
@@ -20,7 +19,6 @@ export const VerificationBadges = ({
 
   return (
     <div className={cn("flex flex-wrap items-center gap-1.5", className)}>
-      {/* ID verification removed — the ID badge no longer renders. */}
       {certifiedPro && (
         <span
           title="Certified Pro — trade certificate uploaded and approved"

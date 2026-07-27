@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { ShieldAlert, Search, Download, Ban, FileCheck2, Loader2, Plus, ExternalLink } from "lucide-react";
+import { ShieldAlert, Search, Ban, Loader2, Plus, ExternalLink } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,8 +44,6 @@ interface Dispute {
   summary: string;
   details: string | null;
   pro_suspended_at: string | null;
-  kyc_data_provided_at: string | null;
-  kyc_provided_to: string | null;
   resolution_notes: string | null;
   created_at: string;
 }
@@ -62,7 +60,7 @@ const STATUS_META: Record<DisputeStatus, { label: string; className: string }> =
   open: { label: "Open", className: "bg-amber-500/15 text-amber-700 border-amber-500/30" },
   investigating: { label: "Investigating", className: "bg-blue-500/15 text-blue-700 border-blue-500/30" },
   pro_suspended: { label: "Pro Suspended", className: "bg-orange-500/15 text-orange-700 border-orange-500/30" },
-  data_provided: { label: "KYC Provided", className: "bg-purple-500/15 text-purple-700 border-purple-500/30" },
+  data_provided: { label: "Information Provided", className: "bg-purple-500/15 text-purple-700 border-purple-500/30" },
   resolved: { label: "Resolved", className: "bg-emerald-500/15 text-emerald-700 border-emerald-500/30" },
   rejected: { label: "Rejected", className: "bg-muted text-muted-foreground border-border" },
 };
@@ -150,45 +148,6 @@ const Disputes = () => {
     }
   };
 
-  const handleMarkProvided = async (d: Dispute) => {
-    const providedTo = prompt("Which authority received the KYC data? (e.g. SAPS Sandton, Hawks, civil court)");
-    if (!providedTo) return;
-    const notes = prompt("Reference / case number (optional):") || undefined;
-    setBusyId(d.id);
-    const { error } = await (supabase as any).rpc("mark_dispute_kyc_provided", {
-      _dispute_id: d.id,
-      _provided_to: providedTo,
-      _notes: notes,
-    });
-    setBusyId(null);
-    if (error) {
-      toast({ title: "Couldn't mark", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Logged", description: "KYC handover recorded for compliance." });
-      refresh();
-      if (selected?.id === d.id) loadActions(d.id);
-    }
-  };
-
-  const handleExportKyc = async (d: Dispute) => {
-    setBusyId(d.id);
-    const { data, error } = await (supabase as any).rpc("get_dispute_kyc_package", { _dispute_id: d.id });
-    setBusyId(null);
-    if (error) {
-      toast({ title: "Export failed", description: error.message, variant: "destructive" });
-      return;
-    }
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `kyc-package-${d.reference}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast({ title: "KYC package exported", description: "Export logged in audit trail." });
-    if (selected?.id === d.id) loadActions(d.id);
-  };
-
   const handleStatusChange = async (d: Dispute, status: DisputeStatus) => {
     setBusyId(d.id);
     const patch: Record<string, unknown> = { status };
@@ -225,8 +184,7 @@ const Disputes = () => {
   const stats = useMemo(() => {
     const open = disputes.filter((d) => ["open", "investigating"].includes(d.status)).length;
     const suspended = disputes.filter((d) => d.status === "pro_suspended").length;
-    const provided = disputes.filter((d) => !!d.kyc_data_provided_at).length;
-    return { total: disputes.length, open, suspended, provided };
+    return { total: disputes.length, open, suspended };
   }, [disputes]);
 
   if (rolesLoading) {
@@ -252,7 +210,7 @@ const Disputes = () => {
             </div>
             <h1 className="text-3xl font-display font-extrabold tracking-tight">Dispute Log</h1>
             <p className="text-muted-foreground mt-1 max-w-2xl">
-              Every complaint, every action, every KYC handover — recorded for regulators. Suspend fast, document everything.
+              Every complaint and every action is recorded for review. Suspend quickly and document the outcome.
             </p>
           </div>
           <Button onClick={() => setCreateOpen(true)} className="gap-2">
@@ -260,11 +218,10 @@ const Disputes = () => {
           </Button>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
           <StatCard label="Total" value={stats.total} />
           <StatCard label="Open / Investigating" value={stats.open} tone="amber" />
           <StatCard label="Pros Suspended" value={stats.suspended} tone="orange" />
-          <StatCard label="KYC Provided" value={stats.provided} tone="purple" />
         </div>
 
         <div className="flex items-center gap-3 mb-4 flex-wrap">
@@ -349,28 +306,6 @@ const Disputes = () => {
                               <Ban className="h-4 w-4" />
                             </Button>
                           )}
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-8"
-                            disabled={busyId === d.id}
-                            onClick={() => handleExportKyc(d)}
-                            title="Export KYC package"
-                          >
-                            <Download className="h-4 w-4" />
-                          </Button>
-                          {!d.kyc_data_provided_at && (
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-8 text-purple-700 hover:text-purple-800 hover:bg-purple-500/10"
-                              disabled={busyId === d.id}
-                              onClick={() => handleMarkProvided(d)}
-                              title="Mark KYC provided to authority"
-                            >
-                              <FileCheck2 className="h-4 w-4" />
-                            </Button>
-                          )}
                         </div>
                       </td>
                     </tr>
@@ -410,7 +345,6 @@ const Disputes = () => {
                     value={[
                       `Filed: ${new Date(selected.created_at).toLocaleString("en-ZA")}`,
                       selected.pro_suspended_at && `Pro suspended: ${new Date(selected.pro_suspended_at).toLocaleString("en-ZA")}`,
-                      selected.kyc_data_provided_at && `KYC provided to ${selected.kyc_provided_to}: ${new Date(selected.kyc_data_provided_at).toLocaleString("en-ZA")}`,
                     ].filter(Boolean).join("\n")}
                   />
                 </div>
@@ -429,17 +363,9 @@ const Disputes = () => {
                       ))}
                     </SelectContent>
                   </Select>
-                  <Button size="sm" variant="outline" onClick={() => handleExportKyc(selected)} className="gap-2">
-                    <Download className="h-4 w-4" /> Export KYC
-                  </Button>
                   {!selected.pro_suspended_at && selected.business_id && (
                     <Button size="sm" variant="outline" className="gap-2" onClick={() => handleSuspend(selected)}>
                       <Ban className="h-4 w-4" /> Suspend pro
-                    </Button>
-                  )}
-                  {!selected.kyc_data_provided_at && (
-                    <Button size="sm" variant="outline" className="gap-2" onClick={() => handleMarkProvided(selected)}>
-                      <FileCheck2 className="h-4 w-4" /> Mark KYC provided
                     </Button>
                   )}
                   {selected.business_id && (

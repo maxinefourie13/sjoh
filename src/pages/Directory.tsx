@@ -28,7 +28,6 @@ const DirectoryPage = () => {
     initialCat ? [initialCat] : initialGroup ? groupSubSlugs(initialGroup) : [],
   );
   const [provs, setProvs] = useState<string[]>(initialProv ? [initialProv] : []);
-  const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [promoOnly, setPromoOnly] = useState(false);
   const [topRated, setTopRated] = useState(false);
   const [sort, setSort] = useState<"featured" | "rating" | "newest">("featured");
@@ -56,7 +55,6 @@ const DirectoryPage = () => {
       if (keyword && !b.name.toLowerCase().includes(keyword.toLowerCase()) && !b.category.toLowerCase().includes(keyword.toLowerCase())) return false;
       if (cats.length && !cats.includes(b.categorySlug)) return false;
       if (provs.length && !provs.includes(b.province)) return false;
-      if (verifiedOnly && !b.isVerified) return false;
       if (promoOnly && !b.hasPromo) return false;
       if (topRated && b.rating < 4.5) return false;
       return true;
@@ -69,7 +67,7 @@ const DirectoryPage = () => {
         return order[a.plan] - order[b.plan];
       });
     return list;
-  }, [businesses, keyword, cats, provs, verifiedOnly, promoOnly, topRated, sort]);
+  }, [businesses, keyword, cats, provs, promoOnly, topRated, sort]);
 
   return (
     <SiteLayout>
@@ -205,12 +203,6 @@ const DirectoryPage = () => {
             <div>
               <h3 className="text-xs font-bold uppercase tracking-widest text-white/45 mb-3 font-sans">Status</h3>
               <ul className="space-y-2">
-                <li>
-                  <label className="flex items-center gap-2.5 text-sm text-white/80 cursor-pointer">
-                    <input type="checkbox" checked={verifiedOnly} onChange={(e) => setVerifiedOnly(e.target.checked)} className="size-4 accent-sa-gold" />
-                    <span>Verified only</span>
-                  </label>
-                </li>
                 <li>
                   <label className="flex items-center gap-2.5 text-sm text-white/80 cursor-pointer">
                     <input type="checkbox" checked={promoOnly} onChange={(e) => setPromoOnly(e.target.checked)} className="size-4 accent-sa-gold" />

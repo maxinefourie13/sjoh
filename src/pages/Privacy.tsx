@@ -36,18 +36,17 @@ const Privacy = () => {
           <h2 className="font-display text-xl font-bold">2. Categories of Personal Information We Collect</h2>
           <p>We may collect and process the following categories of personal information:</p>
           <ul className="list-disc pl-6 space-y-2">
-            <li><strong>Identification data:</strong> full name, date of birth, identity or passport number (where required for verification).</li>
             <li><strong>Contact data:</strong> postal address, email address, mobile telephone number.</li>
-            <li><strong>Account data:</strong> username, password (in encrypted form), profile photograph, biographical description, geographic location.</li>
+            <li><strong>Account data:</strong> full name, username, password (in encrypted form), profile photograph, biographical description, geographic location.</li>
             <li><strong>Transactional data:</strong> service requests, quotations, communications between Users, ratings and reviews, deal memoranda, completion records.</li>
             <li><strong>Financial data:</strong> billing details, subscription history. Card data is processed directly by our payment service provider and is not stored on our systems.</li>
-            <li><strong>Verification data:</strong> documents submitted for identity, address or qualification verification.</li>
+            <li><strong>Qualification data:</strong> trade or professional certificates voluntarily submitted for applicable profile features.</li>
             <li><strong>Technical data:</strong> IP address, device identifiers, browser type, operating system, log files, cookie data.</li>
             <li><strong>Marketing data:</strong> communication preferences and consents.</li>
           </ul>
 
           <h2 className="font-display text-xl font-bold">3. Sources of Personal Information</h2>
-          <p>We collect personal information directly from you when you register, use or interact with the Platform; from publicly available sources (such as Google&rsquo;s Places API for business listings); and from operators such as payment processors acting on our instruction. For provider trust checks, we may also process ID document images and extracted document details.</p>
+          <p>We collect personal information directly from you when you register, use or interact with the Platform; from publicly available sources (such as Google&rsquo;s Places API for business listings); and from operators such as payment processors acting on our instruction.</p>
 
           <h2 className="font-display text-xl font-bold">4. Lawful Basis and Purposes of Processing</h2>
           <p>We process personal information on one or more of the following lawful bases recognised under POPIA:</p>
@@ -57,7 +56,7 @@ const Privacy = () => {
             <li><strong>The legitimate interests</strong> of Sjoh or a third party, including fraud prevention, platform security, service improvement and direct marketing of similar services to existing customers.</li>
             <li><strong>Consent</strong> of the data subject, where required (for example, for direct marketing to non-customers, or processing of special personal information).</li>
           </ul>
-          <p>The specific purposes for which we process personal information include: account creation and management; matching Customers with Service Providers; facilitating communications between Users; processing payments; identity, address and qualification verification; preventing and detecting fraud, abuse and unlawful activity; complying with legal and regulatory obligations; conducting analytics; and providing customer support.</p>
+          <p>The specific purposes for which we process personal information include: account creation and management; matching Customers with Service Providers; facilitating communications between Users; processing payments; supporting optional professional-qualification features; preventing and detecting fraud, abuse and unlawful activity; complying with legal and regulatory obligations; conducting analytics; and providing customer support.</p>
 
           <h2 className="font-display text-xl font-bold">5. Disclosure to Third Parties</h2>
           <p>We may disclose personal information to the following categories of recipients:</p>
