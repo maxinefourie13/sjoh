@@ -27,6 +27,7 @@ export function mapBusinessRow(row: any, idx = 0): Business {
     plan: (row.plan ?? "free") as Business["plan"],
     gradient: grads[idx % grads.length],
     image: row.image_url ?? undefined,
+    logo: row.logo_url ?? undefined,
     responseRate: row.response_rate ?? 0,
     hours: row.hours ?? "",
     services: [],

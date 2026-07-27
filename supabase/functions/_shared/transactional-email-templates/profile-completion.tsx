@@ -18,7 +18,7 @@ const ProfileCompletionEmail = ({
 }: Props) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Add a photo to {businessName} — profiles with photos get contacted more</Preview>
+    <Preview>Add your logo and banner to {businessName}</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={accentStrip}>
@@ -37,15 +37,15 @@ const ProfileCompletionEmail = ({
         <Heading style={h1}>You're on Sjoh — now let customers see you.</Heading>
 
         <Text style={lead}>
-          {businessName} is listed, but it's still using a placeholder picture.
-          Adding a real logo or a photo of your work is the single biggest thing
-          you can do to get contacted — profiles with photos get noticed far more
-          than ones without.
+          {businessName} is listed, but its brand images are not finished yet.
+          Add your real business logo and a wide banner showing your work, team
+          or premises so customers immediately know whose profile they found.
         </Text>
 
         <Section style={card}>
           <Text style={cardLabel}>Two minutes, from your phone</Text>
-          <Text style={cardItem}>📸 &nbsp;Add a logo or a cover photo</Text>
+          <Text style={cardItem}>🏷️ &nbsp;Add your real business logo</Text>
+          <Text style={cardItem}>📸 &nbsp;Add a wide profile banner</Text>
           <Text style={cardItem}>🛠️ &nbsp;Drop in a few shots of past jobs</Text>
           <Text style={cardItem}>✍️ &nbsp;Check your description reads well</Text>
         </Section>
@@ -62,8 +62,8 @@ const ProfileCompletionEmail = ({
         </Text>
 
         <Text style={text}>
-          Don't have a logo yet? You can hire a designer right here on Sjoh — and
-          you can always add photos later as you go.
+          Don't have a logo yet? You can hire a designer right here on Sjoh.
+          Add the best banner you have now and replace it whenever you're ready.
         </Text>
 
         <Text style={signoff}>
@@ -84,7 +84,7 @@ const ProfileCompletionEmail = ({
 export const template = {
   component: ProfileCompletionEmail,
   subject: (data: Record<string, any>) =>
-    `Add a photo to ${data?.businessName ?? 'your Sjoh profile'} — it's the #1 thing customers look for`,
+    `Add your logo and banner to ${data?.businessName ?? 'your Sjoh profile'}`,
   displayName: 'Profile completion nudge',
   previewData: {
     businessName: 'Jozi Spark Electrical',

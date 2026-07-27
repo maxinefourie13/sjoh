@@ -26,9 +26,11 @@ import { ReferAProCard } from "@/components/dashboard/ReferAProCard";
 import { FoundingReviewLinkCard } from "@/components/dashboard/FoundingReviewLinkCard";
 import { SecondaryCategoriesCard } from "@/components/dashboard/SecondaryCategoriesCard";
 import { BusinessGalleryCard } from "@/components/dashboard/BusinessGalleryCard";
+import { BusinessBrandImagesCard } from "@/components/BusinessBrandImagesCard";
 import { PrivacySection } from "@/components/dashboard/PrivacySection";
 import { useProviderAccess } from "@/hooks/useProviderAccess";
 import { cn } from "@/lib/utils";
+import { isPlaceholderAvatar } from "@/lib/placeholderAvatar";
 
 type SectionKey = "overview" | "documents" | "quotes" | "notifications" | "profile" | "promotions" | "opportunities" | "followers" | "billing" | "privacy";
 const SECTIONS: { key: SectionKey; label: string; icon: typeof LayoutGrid }[] = [
@@ -153,8 +155,12 @@ const Dashboard = () => {
           <aside>
             <div className="sticky top-36 rounded-[2rem] border border-white/70 bg-white/62 p-4 shadow-[0_24px_70px_-45px_rgba(0,0,0,0.45)] backdrop-blur-xl">
               <div className="flex items-center gap-3 px-2 py-2">
-                <div className="size-12 rounded-2xl flex items-center justify-center font-display font-black text-sa-dark bg-sa-gold border-[5px] border-[#e9ecef] shadow-lg">
-                  {sidebarInitial}
+                <div className="size-12 overflow-hidden rounded-2xl flex items-center justify-center font-display font-black text-sa-dark bg-sa-gold border-[5px] border-[#e9ecef] shadow-lg">
+                  {business?.logo_url ? (
+                    <img src={business.logo_url} alt="" className="size-full bg-white object-contain" />
+                  ) : (
+                    sidebarInitial
+                  )}
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-black truncate">{sidebarName}</p>
@@ -394,6 +400,7 @@ const ProfileSection = () => {
   const hasContact = Boolean(form.phone.trim() || form.email.trim());
   const hasDescription = form.description.trim().length >= 40;
   const profileLocked = !access.loading && !access.hasListingAccess;
+  const hasRealCover = Boolean(business?.image_url && !isPlaceholderAvatar(business.image_url));
 
   useEffect(() => {
     if (!user) return;
@@ -501,10 +508,11 @@ const ProfileSection = () => {
         </div>
       )}
       <div className={cn("space-y-5", profileLocked && "pointer-events-none select-none opacity-45 grayscale-[0.35]")}>
-        <div className="grid md:grid-cols-4 gap-3">
+        <div className="grid sm:grid-cols-2 xl:grid-cols-5 gap-3">
           {[
             { label: "Business basics", body: "Name, location and contact details.", done: Boolean(form.name.trim() && hasContact) },
             { label: "Clear intro", body: "Tell customers what you do and where you work.", done: hasDescription },
+            { label: "Brand images", body: "Use your own logo and a wide profile banner.", done: Boolean(business.logo_url && hasRealCover) },
             { label: "Work photos", body: "Add finished jobs, team shots or before/after photos below.", done: galleryCount > 0 },
             { label: "Trust proof", body: "Connect reviews and finish verification next.", done: Boolean(business.google_place_id) },
           ].map((item) => (
@@ -525,6 +533,12 @@ const ProfileSection = () => {
             </div>
           ))}
         </div>
+        <BusinessBrandImagesCard
+          businessId={business.id}
+          logoUrl={business.logo_url}
+          coverUrl={hasRealCover ? business.image_url : null}
+          onChange={() => refresh?.()}
+        />
         <div className="bg-card border border-border rounded-xl p-6 space-y-5">
           <div>
             <h2 className="font-display text-xl font-black tracking-tight">Business details</h2>

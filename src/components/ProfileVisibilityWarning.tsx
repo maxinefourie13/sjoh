@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { AlertTriangle, Sparkles, X } from "lucide-react";
+import { AlertTriangle, ImagePlus, Sparkles, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -15,11 +15,14 @@ const POLISH_REMIND_AFTER_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
  *    `businesses_public` view filter excludes records with no photo or a
  *    short/empty bio.
  * 2. SOFT polish nudge — profile is visible but missing nice-to-haves
- *    (logo/cover or gallery photos). Dismissible and re-appears after 7 days.
+ *    (gallery photos). Dismissible and re-appears after 7 days.
+ * 3. BRAND warning — a persistent reminder until both a real logo and cover
+ *    image have replaced the generated signup stand-in.
  */
 export const ProfileVisibilityWarning = () => {
   const { user } = useAuth();
   const [hardIssues, setHardIssues] = useState<{ noPhoto: boolean; shortBio: boolean } | null>(null);
+  const [brandIssues, setBrandIssues] = useState<{ missingLogo: boolean; missingCover: boolean } | null>(null);
   const [showPolish, setShowPolish] = useState(false);
 
   useEffect(() => {
@@ -28,7 +31,7 @@ export const ProfileVisibilityWarning = () => {
     (async () => {
       const { data } = await supabase
         .from("businesses")
-        .select("id, image_url, description")
+        .select("id, image_url, logo_url, description")
         .eq("owner_id", user.id)
         .maybeSingle();
       if (cancelled || !data) return;
@@ -43,15 +46,24 @@ export const ProfileVisibilityWarning = () => {
       }
       setHardIssues(null);
 
-      // Profile is visible — check polish-level gaps (gallery count, and
-      // whether they're still on the generated initials avatar from signup).
+      // Brand images are intentionally optional during signup, but the reminder
+      // stays on every dashboard visit until both real images are present.
+      const missingLogo = !data.logo_url || data.logo_url.trim() === "";
+      const missingCover = isPlaceholderAvatar(data.image_url);
+      if (missingLogo || missingCover) {
+        setBrandIssues({ missingLogo, missingCover });
+        return;
+      }
+      setBrandIssues(null);
+
+      // The two core brand images are done — check the optional gallery next.
       const { count } = await supabase
         .from("business_images")
         .select("id", { count: "exact", head: true })
         .eq("business_id", data.id);
 
       const fewGalleryPhotos = (count ?? 0) < 3;
-      if (!fewGalleryPhotos && !isPlaceholderAvatar(data.image_url)) return;
+      if (!fewGalleryPhotos) return;
 
       // Respect the user's "remind me later" timer.
       try {
@@ -86,6 +98,33 @@ export const ProfileVisibilityWarning = () => {
           </p>
           <Button asChild size="sm" className="mt-3">
             <Link to="/dashboard?section=profile">Complete your profile</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (brandIssues) {
+    return (
+      <div className="rounded-2xl border border-sa-gold/50 bg-sa-gold/10 p-4 md:p-5 flex items-start gap-3">
+        <ImagePlus className="size-5 text-sa-dark shrink-0 mt-0.5" strokeWidth={2.5} />
+        <div className="flex-1">
+          <p className="font-display font-extrabold text-base">
+            Add your own logo and profile banner.
+          </p>
+          <p className="text-sm text-ink-2 mt-1 leading-relaxed">
+            Your profile is using a temporary image. Customers should see your real brand and your work.
+          </p>
+          <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs font-bold">
+            <li className={brandIssues.missingLogo ? "text-amber-800" : "text-sa-green"}>
+              {brandIssues.missingLogo ? "○ Logo still needed" : "✓ Logo added"}
+            </li>
+            <li className={brandIssues.missingCover ? "text-amber-800" : "text-sa-green"}>
+              {brandIssues.missingCover ? "○ Banner still needed" : "✓ Banner added"}
+            </li>
+          </ul>
+          <Button asChild size="sm" className="mt-3">
+            <Link to="/dashboard?section=profile">Add images now</Link>
           </Button>
         </div>
       </div>

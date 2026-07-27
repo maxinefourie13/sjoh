@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Check, ArrowRight, ArrowLeft, CheckCircle2, Loader2, CreditCard, Sparkles } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
+import { BusinessBrandImagesCard } from "@/components/BusinessBrandImagesCard";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
@@ -17,12 +18,11 @@ import { BIO_TRAITS, composeBio } from "@/lib/listingDefaults";
  * Signup is deliberately one question per screen.
  *
  * Pros were abandoning a single seven-field form, most often because they had
- * no logo ready. Photo upload is gone from signup entirely (a generated
- * initials avatar stands in until they upload one from the dashboard), the bio
- * is tap-to-build rather than a blank textarea, and no screen asks for more
- * than two things at once.
+ * no logo ready. Brand images are offered as a fully optional step, a generated
+ * initials avatar stands in if they skip, the bio is tap-to-build rather than a
+ * blank textarea, and no screen asks for more than two things at once.
  */
-const STEPS = ["Trade", "Area", "Name", "About", "Go live"] as const;
+const STEPS = ["Trade", "Area", "Name", "About", "Photos", "Go live"] as const;
 
 const PLANS = [
   {
@@ -72,6 +72,8 @@ type Draft = {
   description: string;
   traits: string[];
   useEmailInstead: boolean;
+  logoUrl: string;
+  coverUrl: string;
 };
 
 type StoredDraft = Draft & { savedAt: number };
@@ -114,6 +116,8 @@ const ListBusiness = () => {
   const [description, setDescription] = useState(draft.description ?? "");
   const [traits, setTraits] = useState<string[]>(draft.traits ?? []);
   const [useEmailInstead, setUseEmailInstead] = useState(draft.useEmailInstead ?? false);
+  const [logoUrl, setLogoUrl] = useState(draft.logoUrl ?? "");
+  const [coverUrl, setCoverUrl] = useState(draft.coverUrl ?? "");
 
   const nameInputRef = useRef<HTMLInputElement>(null);
   const cityInputRef = useRef<HTMLInputElement>(null);
@@ -140,7 +144,8 @@ const ListBusiness = () => {
     if (step === 1) return !!province;
     if (step === 2) return name.trim().length > 1 && (phone.trim().length > 5 || email.trim().length > 5);
     if (step === 3) return true; // bio is always optional — we compose one if skipped
-    if (step === 4) return whatsappConsent && !submitting;
+    if (step === 4) return !submitting; // brand images are optional
+    if (step === 5) return whatsappConsent && !submitting;
     return true;
   })();
 
@@ -160,10 +165,25 @@ const ListBusiness = () => {
     try {
       localStorage.setItem(
         DRAFT_KEY,
-        JSON.stringify({ savedAt: Date.now(), step, groupSlug, categorySlug, name, province, city, phone, email, description, traits, useEmailInstead }),
+        JSON.stringify({
+          savedAt: Date.now(),
+          step,
+          groupSlug,
+          categorySlug,
+          name,
+          province,
+          city,
+          phone,
+          email,
+          description,
+          traits,
+          useEmailInstead,
+          logoUrl,
+          coverUrl,
+        }),
       );
     } catch { /* private browsing — the flow still works, just without recovery */ }
-  }, [step, groupSlug, categorySlug, name, province, city, phone, email, description, traits, useEmailInstead]);
+  }, [step, groupSlug, categorySlug, name, province, city, phone, email, description, traits, useEmailInstead, logoUrl, coverUrl]);
 
   // Once their plan or trial is actually active, the draft has served its
   // purpose — drop it so a returning paid pro doesn't land back in signup.
@@ -218,6 +238,16 @@ const ListBusiness = () => {
       const baseSlug = slugify(name);
       const slug = `${baseSlug}-${Math.random().toString(36).slice(2, 7)}`;
 
+      const { data: existingListing, error: existingErr } = await supabase
+        .from("businesses")
+        .select("id, image_url, logo_url")
+        .eq("owner_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (existingErr) throw existingErr;
+
       const listingPayload = {
         name: name.trim(),
         category_slug: selectedCategory.slug,
@@ -231,22 +261,14 @@ const ListBusiness = () => {
         // directory view enforces, so the listing is visible immediately.
         description: previewBio,
         tags: traits,
-        // Stand-in until they upload a real logo. Without this the listing
-        // would be filtered out of the directory for having no image.
-        image_url: placeholderAvatar(name.trim()),
+        // A real cover takes priority. Existing images are preserved when a
+        // returning pro skips this optional step; new profiles get a visible
+        // initials stand-in until they upload their banner.
+        image_url: coverUrl || existingListing?.image_url || placeholderAvatar(name.trim()),
+        logo_url: logoUrl || existingListing?.logo_url || null,
         listing_status: "active",
         pre_launch: false,
       };
-
-      const { data: existingListing, error: existingErr } = await supabase
-        .from("businesses")
-        .select("id")
-        .eq("owner_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (existingErr) throw existingErr;
 
       const { error } = existingListing
         ? await supabase.from("businesses").update(listingPayload).eq("id", existingListing.id)
@@ -280,7 +302,7 @@ const ListBusiness = () => {
   };
 
   const handlePrimaryClick = () => {
-    if (step === 4) void handleStartTrial();
+    if (step === 5) void handleStartTrial();
     else next();
   };
 
@@ -552,8 +574,54 @@ const ListBusiness = () => {
             </div>
           )}
 
-          {/* -------------------------------------------------------- 4 · Go live */}
+          {/* --------------------------------------------------------- 4 · Photos */}
           {step === 4 && (
+            <div className="space-y-5">
+              <div>
+                <h2 className="font-display text-2xl font-semibold">Make the profile look like yours</h2>
+                <p className="text-sm text-ink-2 mt-1">
+                  Add your real logo and a wide banner image. You can skip this for now, but we’ll keep reminding you until both are added.
+                </p>
+              </div>
+
+              {!user && (
+                <div className="rounded-xl border border-amber-300/60 bg-amber-50 p-4 text-sm text-amber-900">
+                  <p className="font-bold">Ready to upload?</p>
+                  <p className="mt-1">Create or sign in to your account first. Your setup answers are already saved.</p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="mt-3"
+                    onClick={() => navigate(`/login?next=${encodeURIComponent("/list")}`)}
+                  >
+                    Sign in to add images
+                  </Button>
+                </div>
+              )}
+
+              <BusinessBrandImagesCard
+                variant="onboarding"
+                logoUrl={logoUrl || null}
+                coverUrl={coverUrl || null}
+                onRequireAuth={() => {
+                  toast({ title: "One quick account", description: "Your answers are saved — sign in, then add your images." });
+                  navigate(`/login?next=${encodeURIComponent("/list")}`);
+                }}
+                onChange={(images) => {
+                  setLogoUrl(images.logoUrl ?? "");
+                  setCoverUrl(images.coverUrl ?? "");
+                }}
+              />
+
+              <p className="text-center text-xs text-ink-2">
+                JPG, PNG, WebP or HEIC. We compress large files automatically.
+              </p>
+            </div>
+          )}
+
+          {/* -------------------------------------------------------- 5 · Go live */}
+          {step === 5 && (
             <div className="space-y-5">
               <div>
                 <h2 className="font-display text-2xl font-semibold">Last step — go live</h2>
@@ -564,7 +632,7 @@ const ListBusiness = () => {
 
               <div className="rounded-xl border-2 border-sa-green/30 bg-sa-green/5 p-4">
                 <div className="flex items-center gap-3">
-                  <img src={placeholderAvatar(name.trim())} alt="" className="size-14 rounded-xl shrink-0" />
+                  <img src={logoUrl || placeholderAvatar(name.trim())} alt="" className="size-14 rounded-xl object-contain shrink-0" />
                   <div className="min-w-0">
                     <p className="font-display font-bold truncate">{name.trim() || "—"}</p>
                     <p className="text-xs text-ink-2 truncate">
@@ -650,7 +718,7 @@ const ListBusiness = () => {
                 a few job photos whenever you have a minute — profiles with photos get contacted more.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-                <Button onClick={() => navigate("/dashboard?section=profile")}>Add my photos</Button>
+              <Button onClick={() => navigate("/dashboard?section=profile")}>Add my logo & banner</Button>
                 <Button variant="outline" onClick={() => navigate("/leads")}>Browse Opportunities</Button>
               </div>
             </div>
@@ -666,12 +734,14 @@ const ListBusiness = () => {
                   <Button variant="ghost" onClick={next}>Skip</Button>
                 )}
                 <Button onClick={handlePrimaryClick} disabled={!canContinue}>
-                  {step === 4 ? (
+                  {step === 5 ? (
                     submitting ? (
                       <><Loader2 className="size-4 animate-spin" /> Opening PayFast…</>
                     ) : (
                       <>Go live <ArrowRight className="size-4" /></>
                     )
+                  ) : step === 4 && (!logoUrl || !coverUrl) ? (
+                    <>Skip for now <ArrowRight className="size-4" /></>
                   ) : (
                     <>Continue <ArrowRight className="size-4" /></>
                   )}

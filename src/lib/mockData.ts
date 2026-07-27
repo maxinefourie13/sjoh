@@ -192,8 +192,10 @@ export interface Business {
   followers: number;
   plan: "free" | "standard" | "featured";
   gradient: string;
-  /** Optional cover/profile image URL (imported asset). Falls back to gradient when omitted. */
+  /** Optional wide profile banner URL. Falls back to a gradient when omitted. */
   image?: string;
+  /** Optional square business logo. Falls back to the banner/initial treatment. */
+  logo?: string;
   responseRate: number;
   hours: string;
   services: Service[];

@@ -173,8 +173,8 @@ const BusinessProfile = () => {
                   <div className="relative -mb-1 size-24 sm:size-28 shrink-0">
                     <div className="absolute inset-0 rounded-[2rem] bg-[#e9ecef]" aria-hidden />
                     <div className="absolute left-2 top-2 size-20 sm:size-24 overflow-hidden rounded-[1.45rem] bg-white border-[7px] border-[#e9ecef] shadow-[0_20px_45px_-24px_rgba(0,0,0,0.7)] flex items-center justify-center font-display font-black text-3xl sm:text-4xl text-sa-dark transition-transform duration-500 hover:scale-105">
-                      {business.image ? (
-                        <img src={business.image} alt={`${business.name} logo`} className="size-full object-cover" />
+                      {business.logo || business.image ? (
+                        <img src={business.logo || business.image} alt={`${business.name} logo`} className="size-full object-contain" />
                       ) : (
                         business.name.charAt(0)
                       )}

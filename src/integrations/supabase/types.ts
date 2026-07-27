@@ -1562,6 +1562,7 @@ export type Database = {
           id: string | null
           image_url: string | null
           is_verified: boolean | null
+          logo_url: string | null
           name: string | null
           owner_id: string | null
           plan: Database["public"]["Enums"]["business_plan"] | null
@@ -1589,6 +1590,7 @@ export type Database = {
           id?: string | null
           image_url?: string | null
           is_verified?: boolean | null
+          logo_url?: string | null
           name?: string | null
           owner_id?: string | null
           plan?: Database["public"]["Enums"]["business_plan"] | null
@@ -1616,6 +1618,7 @@ export type Database = {
           id?: string | null
           image_url?: string | null
           is_verified?: boolean | null
+          logo_url?: string | null
           name?: string | null
           owner_id?: string | null
           plan?: Database["public"]["Enums"]["business_plan"] | null

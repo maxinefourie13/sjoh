@@ -199,8 +199,8 @@ Deno.serve(async (req) => {
       if (sent) archivedReminders++;
     }
 
-    // Profile-completion nudge: a pro who listed 3+ days ago but is still on
-    // the generated placeholder picture (never uploaded a real logo/cover).
+    // Profile-completion nudge: a pro who listed 3+ days ago but still lacks
+    // either a real square logo or a wide profile cover.
     // Bounded to the last 14 days so a first run doesn't blast the whole
     // historical backlog; the UNIQUE(user_id, kind, anchor_date) row makes it
     // once-per-pro (anchor = signup date).
@@ -210,17 +210,17 @@ Deno.serve(async (req) => {
 
     const { data: recentRows } = await admin
       .from('businesses')
-      .select('owner_id, name, image_url, created_at')
+      .select('owner_id, name, image_url, logo_url, created_at')
       .eq('listing_status', 'active')
       .lte('created_at', threeDaysAgo.toISOString())
       .gt('created_at', fourteenDaysAgo.toISOString());
 
-    // "No real photo" = null or still the generated placeholder (a data: URI).
-    // A real upload is an https storage URL. Filtered in JS to avoid a fragile
-    // PostgREST like-pattern over a value full of :/+ characters.
-    const incompleteRows = (recentRows ?? []).filter((row: { image_url?: string | null }) => {
-      const url = (row.image_url ?? '').trim();
-      return url === '' || !url.startsWith('http');
+    // Real uploads use public https storage URLs. Filtered in JS to avoid a
+    // fragile PostgREST like-pattern over generated data URIs.
+    const incompleteRows = (recentRows ?? []).filter((row: { image_url?: string | null; logo_url?: string | null }) => {
+      const coverUrl = (row.image_url ?? '').trim();
+      const logoUrl = (row.logo_url ?? '').trim();
+      return !coverUrl.startsWith('http') || !logoUrl.startsWith('http');
     });
 
     for (const row of incompleteRows) {
