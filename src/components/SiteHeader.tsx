@@ -20,8 +20,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const BASE_NAV = [
-  { to: "/directory", label: "Browse" },
-  { to: "/requests", label: "Post a Job" },
+  { to: "/directory", label: "Find a business" },
+  { to: "/requests", label: "Ask for help" },
   { to: "/pricing", label: "Pricing" },
 ];
 const PRO_NAV_ITEM = { to: "/leads", label: "Opportunities" };

@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Search, Star, ArrowRight, CheckCircle2, UsersRound } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { SeoHead } from "@/components/SeoHead";
@@ -12,7 +12,6 @@ import { EarlyAccessNotice } from "@/components/EarlyAccessNotice";
 import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { useBusinesses, useOpportunities } from "@/hooks/useDirectory";
 import { getCategoryGroupIcon } from "@/lib/categoryIcons";
-import { useReveal } from "@/hooks/useReveal";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import heroGroup1 from "@/assets/optimized/hero-group-1.webp";
@@ -38,21 +37,21 @@ const HERO_PHRASES = [
 ];
 
 const MARQUEE_ITEMS = [
-  "Get found",
-  "Available pros",
+  "Find help",
+  "Get prices",
+  "Choose with confidence",
+  "Local businesses",
   "All 9 provinces",
-  "240+ categories",
   "Real South Africans",
   "No middleman",
-  "Lekker service",
 ];
 
 const HOW_STEPS = [
   {
     n: "01",
     Icon: Search,
-    title: "Post the job",
-    body: "Describe what you need in 60 seconds.",
+    title: "Tell us what you need",
+    body: "Describe the job in a few words.",
     bg: "linear-gradient(150deg, #f7bb3a 0%, #e79b05 100%)",
     glow: "rgba(247, 187, 58, 0.34)",
     color: "#fff",
@@ -61,8 +60,8 @@ const HOW_STEPS = [
   {
     n: "02",
     Icon: UsersRound,
-    title: "Get real quotes",
-    body: "Available local businesses send quotes to your dashboard.",
+    title: "See local businesses",
+    body: "Businesses that can help send you a price.",
     bg: "linear-gradient(150deg, #ef3340 0%, #d9202d 100%)",
     glow: "rgba(239, 51, 64, 0.34)",
     color: "#fff",
@@ -71,8 +70,8 @@ const HOW_STEPS = [
   {
     n: "03",
     Icon: Star,
-    title: "Check the reviews",
-    body: "Browse profiles, work history, and the Sjoh Trust Index.",
+    title: "Check their work",
+    body: "Look at photos, reviews, and where they work.",
     bg: "linear-gradient(150deg, #4f79f6 0%, #355edc 100%)",
     glow: "rgba(79, 121, 246, 0.36)",
     color: "#fff",
@@ -81,12 +80,27 @@ const HOW_STEPS = [
   {
     n: "04",
     Icon: CheckCircle2,
-    title: "Get it sorted",
-    body: "Contact them directly, compare proof, and choose who feels right.",
+    title: "Choose who to call",
+    body: "Pick the business that feels right for you.",
     bg: "linear-gradient(150deg, #149a59 0%, #0f7e47 100%)",
     glow: "rgba(20, 154, 89, 0.34)",
     color: "#fff",
     rot: "1.5deg",
+  },
+];
+
+const FAQ_ITEMS = [
+  {
+    question: "Do I pay Sjoh to find a business?",
+    answer: "No. You contact the business directly and agree on the work and price.",
+  },
+  {
+    question: "What can I use Sjoh for?",
+    answer: "Almost any job — from plumbing and cleaning to photography, building, and design.",
+  },
+  {
+    question: "What does a business get?",
+    answer: "A simple page where customers can see its work and ask for a price.",
   },
 ];
 
@@ -105,55 +119,6 @@ const CATEGORY_TILE_STYLES = [
   "var(--sa-pink)",
   "var(--sa-navy)",
 ];
-
-type CountingStatProps = {
-  value: number;
-  suffix?: string;
-  label: string;
-  color: string;
-  active: boolean;
-};
-
-const CountingStat = ({ value, suffix = "", label, color, active }: CountingStatProps) => {
-  const [displayValue, setDisplayValue] = useState(active ? value : 0);
-  const frameRef = useRef<number>();
-
-  useEffect(() => {
-    if (!active) return;
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setDisplayValue(value);
-      return;
-    }
-
-    const duration = 1200;
-    const startedAt = performance.now();
-
-    const tick = (now: number) => {
-      const progress = Math.min((now - startedAt) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplayValue(Math.round(value * eased));
-
-      if (progress < 1) {
-        frameRef.current = requestAnimationFrame(tick);
-      }
-    };
-
-    frameRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (frameRef.current) cancelAnimationFrame(frameRef.current);
-    };
-  }, [active, value]);
-
-  return (
-    <div className="flex flex-col items-center text-center pt-4 md:pt-0">
-      <span className="font-display-bold text-5xl md:text-6xl tabular-nums" style={{ color }}>
-        {displayValue.toLocaleString()}{suffix}
-      </span>
-      <span className="text-sm font-medium text-white/55 mt-2">{label}</span>
-    </div>
-  );
-};
 
 const HomePage = () => {
   const location = useLocation();
@@ -201,17 +166,6 @@ const HomePage = () => {
     ...g,
     subCount: CATEGORIES.filter((c) => c.groupSlug === g.slug).length,
   }));
-  const { ref: statsRef, visible: statsVisible } = useReveal<HTMLElement>(0.35);
-  const stats = useMemo(
-    () => [
-      { value: 0, suffix: "%", label: "Commission on jobs", color: "var(--sa-red)" },
-      { value: 240, suffix: "+", label: "Service categories", color: "#ffffff" },
-      { value: 11, label: "Industry groups", color: "var(--sa-green)" },
-      { value: 9, label: "Provinces covered", color: "var(--sa-pink)" },
-    ],
-    [],
-  );
-
   return (
     <SiteLayout>
       <SeoHead
@@ -341,11 +295,54 @@ const HomePage = () => {
         fullBleed
         className="my-0"
         backgroundImage={earlyAccessAbstractFrame}
-        title="Sjoh is open early, while the marketplace fills up."
-        body="That’s why some areas may look quiet right now. We’re onboarding proper South African pros category by category, and founding businesses can claim early visibility while the community grows."
-        ctaLabel="Get on early"
+        title="We’re adding more local businesses."
+        body="Sjoh is open early, so some areas may look quiet today. New businesses are joining category by category, and early businesses get extra visibility."
+        ctaLabel="Show your business"
         ctaTo="/list"
       />
+
+      {/* ========== SIMPLE EXPLANATION ========== */}
+      <section className="border-b border-black/10 bg-[#f6f8fc]">
+        <div className="container py-16 md:py-20">
+          <div className="mx-auto max-w-2xl text-center">
+            <div className="mb-4 text-[11px] font-black uppercase tracking-[0.16em] text-sa-green">What is Sjoh?</div>
+            <h2 className="font-display-bold text-3xl leading-tight text-sa-dark md:text-5xl">
+              Find help. Get prices. Choose with confidence.
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-sa-dark/65 md:text-lg">
+              Sjoh connects people who need work done with local businesses who can do it.
+            </p>
+          </div>
+
+          <div className="mx-auto mt-10 grid max-w-5xl gap-5 md:grid-cols-2">
+            <div className="rounded-[1.5rem] border-2 border-sa-peri/35 bg-white p-6 shadow-card md:p-8">
+              <div className="mb-5 inline-flex rounded-full bg-sa-peri/10 px-3 py-1 text-[11px] font-black uppercase tracking-widest text-sa-peri">If you need help</div>
+              <h3 className="font-display-bold text-2xl text-sa-dark md:text-3xl">Find someone for the job.</h3>
+              <ol className="mt-6 grid gap-3 text-sm font-medium text-sa-dark/72">
+                <li className="flex gap-3"><span className="grid size-7 shrink-0 place-items-center rounded-full bg-sa-peri text-xs font-black text-white">1</span>Tell us what you need.</li>
+                <li className="flex gap-3"><span className="grid size-7 shrink-0 place-items-center rounded-full bg-sa-peri text-xs font-black text-white">2</span>See local businesses and their prices.</li>
+                <li className="flex gap-3"><span className="grid size-7 shrink-0 place-items-center rounded-full bg-sa-peri text-xs font-black text-white">3</span>Check their work, then choose who to call.</li>
+              </ol>
+              <Button asChild className="mt-7 rounded-full bg-sa-peri text-white hover:bg-sa-peri/90">
+                <Link to="/requests/new">I need help <ArrowRight className="size-4" /></Link>
+              </Button>
+            </div>
+
+            <div className="rounded-[1.5rem] border-2 border-sa-green/35 bg-white p-6 shadow-card md:p-8">
+              <div className="mb-5 inline-flex rounded-full bg-sa-green/10 px-3 py-1 text-[11px] font-black uppercase tracking-widest text-sa-green">If you run a business</div>
+              <h3 className="font-display-bold text-2xl text-sa-dark md:text-3xl">Help new customers find you.</h3>
+              <ol className="mt-6 grid gap-3 text-sm font-medium text-sa-dark/72">
+                <li className="flex gap-3"><span className="grid size-7 shrink-0 place-items-center rounded-full bg-sa-green text-xs font-black text-white">1</span>Make your Sjoh page.</li>
+                <li className="flex gap-3"><span className="grid size-7 shrink-0 place-items-center rounded-full bg-sa-green text-xs font-black text-white">2</span>Add your work, services, and areas.</li>
+                <li className="flex gap-3"><span className="grid size-7 shrink-0 place-items-center rounded-full bg-sa-green text-xs font-black text-white">3</span>Get found and receive new requests.</li>
+              </ol>
+              <Button asChild className="mt-7 rounded-full bg-sa-green text-white hover:bg-sa-green/90">
+                <Link to="/list">I run a business <ArrowRight className="size-4" /></Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ========== MARQUEE STRIP ========== */}
       <div
@@ -406,11 +403,11 @@ const HomePage = () => {
                 <div className="mb-4 inline-flex items-center rounded-full border border-white/22 bg-black/55 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-white/95 backdrop-blur-sm drop-shadow-[0_2px_14px_rgba(0,0,0,0.95)]">
                   <span className="mr-2 text-sa-gold">●</span>Real help, close by
                 </div>
-                <h2 className="mb-4 font-display-bold text-5xl leading-[0.98] text-white drop-shadow-[0_6px_34px_rgba(0,0,0,0.95)] md:text-7xl">
-                  Find the skill.<br />Check the reviews.<br />Get it <span className="animate-brand-flicker">sorted.</span>
-                </h2>
-                <p className="mt-4 inline-block max-w-xl rounded-xl border border-white/18 bg-black/58 px-4 py-3 text-lg font-medium leading-relaxed text-white/95 backdrop-blur-sm drop-shadow-[0_3px_18px_rgba(0,0,0,0.95)]">
-                  Search the directory, post a request, or list your business where people are already looking for exactly what you do.
+                  <h2 className="mb-4 font-display-bold text-5xl leading-[0.98] text-white drop-shadow-[0_6px_34px_rgba(0,0,0,0.95)] md:text-7xl">
+                  Find help nearby.<br />Choose with <span className="animate-brand-flicker">confidence.</span>
+                  </h2>
+                  <p className="mt-4 inline-block max-w-xl rounded-xl border border-white/18 bg-black/58 px-4 py-3 text-lg font-medium leading-relaxed text-white/95 backdrop-blur-sm drop-shadow-[0_3px_18px_rgba(0,0,0,0.95)]">
+                  Tell us what you need, compare local businesses, and contact the one that feels right.
                 </p>
               </div>
             </div>
@@ -424,9 +421,9 @@ const HomePage = () => {
           >
               <div className="grid gap-3 md:grid-cols-3">
                 {[
-                  { title: "Post a request", body: "Share the job once and let interested pros come back to you.", cta: "Start here", to: "/requests/new" },
-                  { title: "Browse available pros", body: "Compare profiles, reviews, work areas, and services across SA.", cta: "Open directory", to: "/directory" },
-                  { title: "List your business", body: "Look legitimate online without building a website or running ads.", cta: "List your business", to: "/list" },
+                  { title: "Ask for help", body: "Tell local businesses what job you need done.", cta: "Start here", to: "/requests/new" },
+                  { title: "Find a business", body: "Compare work photos, reviews, services, and areas.", cta: "Open directory", to: "/directory" },
+                  { title: "Show your business", body: "Make a simple page so new customers can find you.", cta: "List your business", to: "/list" },
                 ].map((card) => (
                   <Link
                     key={card.title}
@@ -458,13 +455,13 @@ const HomePage = () => {
         <div className="container">
           <div className="mb-10 max-w-2xl">
             <div className="mb-4 w-fit rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-widest text-white backdrop-blur-md">
-              How Sjoh works
+              How to find help
             </div>
             <h2 className="font-display-bold text-4xl leading-[1.03] text-white md:text-6xl">
-              Search once.<br />Choose properly.
+              Tell us what you need.<br />Choose properly.
             </h2>
             <p className="mt-4 text-base leading-relaxed text-white/76">
-              Browse the directory, compare the trust signals, and move from “who do I call?” to “this is the right person.”
+              See local businesses, compare their work and reviews, and move from “who do I call?” to “this is the right person.”
             </p>
           </div>
           <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
@@ -502,23 +499,38 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* ========== STATS BAR ========== */}
-      <section
-        ref={statsRef}
-        className="border-y border-white/10 bg-[#050505]"
-      >
-        <div className="container py-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 divide-y md:divide-y-0 md:divide-x divide-white/10">
-            {stats.map((s) => (
-              <CountingStat
-                key={s.label}
-                value={s.value}
-                suffix={s.suffix}
-                label={s.label}
-                color={s.color}
-                active={statsVisible}
-              />
-            ))}
+      {/* ========== WHAT YOU CAN CHECK + FAQ ========== */}
+      <section className="border-y border-white/10 bg-[#050505]">
+        <div className="container py-16 md:py-20">
+          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+            <div>
+              <div className="mb-4 w-fit rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-widest text-white backdrop-blur-md">
+                Know before you choose
+              </div>
+              <h2 className="font-display-bold text-4xl leading-[1.03] text-white md:text-5xl">
+                See the things that matter.
+              </h2>
+              <p className="mt-4 max-w-md text-base leading-relaxed text-white/70">
+                Every business page shows the basics, so you can make a better choice before you call.
+              </p>
+              <div className="mt-7 grid grid-cols-2 gap-3 text-sm font-semibold text-white/80">
+                {["Their services", "Their work photos", "Their reviews", "Their service area"].map((item, index) => (
+                  <div key={item} className="rounded-xl border border-white/12 bg-white/[0.06] px-3 py-3">
+                    <span className="mr-2 text-sa-gold">0{index + 1}</span>{item}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="grid gap-3 md:grid-cols-3">
+              {FAQ_ITEMS.map((item) => (
+                <details key={item.question} className="group rounded-2xl border border-white/12 bg-white/[0.06] p-5 text-white">
+                  <summary className="cursor-pointer list-none pr-5 font-display text-lg font-bold leading-tight marker:hidden group-open:text-sa-gold">
+                    {item.question}
+                  </summary>
+                  <p className="mt-4 text-sm leading-relaxed text-white/65">{item.answer}</p>
+                </details>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -535,9 +547,9 @@ const HomePage = () => {
           <div className="flex items-end justify-between mb-10">
             <div className="max-w-xl">
               <h2 className="font-display-bold text-3xl md:text-5xl leading-[1.03] text-sa-dark">
-                Browse by category
+                Find the right kind of help
               </h2>
-              <p className="mt-3 text-sa-dark/65">From electricians to event planners — everything you need.</p>
+              <p className="mt-3 text-sa-dark/65">Search by service, from plumbers and cleaners to photographers and designers.</p>
             </div>
             <Link to="/directory" className="text-sm font-semibold hover:underline hidden md:inline-block text-sa-dark">
               Browse all
@@ -590,13 +602,13 @@ const HomePage = () => {
             <div className="mb-10 flex items-end justify-between gap-6">
               <div className="max-w-3xl">
                 <div className="text-[11px] font-bold tracking-[0.1em] uppercase mb-3 text-sa-gold">
-                  ● Newly listed
+                  ● New businesses on Sjoh
                 </div>
                 <h2 className="font-display-bold text-4xl md:text-6xl leading-[1.02] text-white">
-                  Fresh local pros on Sjoh.
+                  Meet businesses that just joined.
                 </h2>
                 <p className="mt-3 max-w-xl text-white/58">
-                  The newest businesses to join Sjoh. Every new pro lands here first — the 25 most recent, with the newest always up top.
+                  See local businesses that recently made a page on Sjoh.
                 </p>
               </div>
             </div>
@@ -691,12 +703,12 @@ const HomePage = () => {
             <div className="mb-9 flex items-end justify-between">
               <div className="max-w-xl">
                 <div className="mb-3 text-[11px] font-bold uppercase tracking-[0.1em] text-sa-dark/70">
-                  ● Live job flow
+                  ● Jobs people need help with
                 </div>
                 <h2 className="font-display-bold text-3xl md:text-5xl leading-[1.03] text-sa-dark">
-                  Latest customer requests
+                  Jobs people need help with
                 </h2>
-                <p className="mt-3 text-sa-dark/62">Fresh requests from real customers on Sjoh.</p>
+                <p className="mt-3 text-sa-dark/62">Customers have shared these jobs and are looking for local businesses.</p>
               </div>
               <Link to="/requests" className="text-sm font-semibold hover:underline hidden md:inline-block text-sa-dark">
                 View all requests
@@ -740,23 +752,23 @@ const HomePage = () => {
         />
         <div className="relative z-[1]">
           <div className="text-[11px] font-bold tracking-[0.1em] uppercase mb-5" style={{ color: "rgba(255,255,255,0.5)" }}>
-            ● For service providers
+            ● For businesses
           </div>
           <h2 className="font-display-bold text-white text-5xl md:text-6xl leading-[1.02] mb-5">
-            Do the work.<br />We help customers<br />
+            Do the work.<br />Let customers<br />
             <span className="px-3 py-1 rounded-lg" style={{ background: "var(--sa-red)", color: "#fff" }}>
               find you.
             </span>
           </h2>
           <p className="text-white/75 text-base leading-relaxed max-w-md mb-8">
-            Sjoh gives proper service businesses a professional online reputation: profile, work photos, reviews, quotes, and invoices, without website building, social media admin, or Google Ads confusion.
+            Sjoh gives your business one simple page for your services, work photos, reviews, prices, and customer requests — without building a website or running ads.
           </p>
           <div className="flex gap-3 flex-wrap">
             <Button size="lg" asChild className="font-bold rounded-full" style={{ background: "var(--sa-green)", color: "#fff" }}>
-              <Link to="/list">List your business <ArrowRight className="size-4" /></Link>
+              <Link to="/list">Create your business page <ArrowRight className="size-4" /></Link>
             </Button>
             <Button size="lg" variant="outline" asChild className="font-bold rounded-full bg-white/10 border-white/30 text-white hover:bg-white/20">
-              <Link to="/pricing">See pro pricing</Link>
+              <Link to="/pricing">See business pricing</Link>
             </Button>
           </div>
         </div>
@@ -764,7 +776,7 @@ const HomePage = () => {
           {[
             {
               num: "1",
-              lbl: "Professional profile",
+              lbl: "Simple business page",
               bg: "var(--sa-gold)",
               gradient: "linear-gradient(90deg, var(--sa-gold) 0%, #d8a24f 100%)",
               color: "#fff",
@@ -772,7 +784,7 @@ const HomePage = () => {
             },
             {
               num: "240+",
-              lbl: "Service categories",
+              lbl: "Ways customers can find you",
               bg: "var(--sa-navy)",
               gradient: "linear-gradient(90deg, var(--sa-navy) 0%, #0f2f7e 100%)",
               color: "#fff",
@@ -780,7 +792,7 @@ const HomePage = () => {
             },
             {
               num: "0%",
-              lbl: "Founding commission bonus",
+              lbl: "Commission on jobs",
               bg: "var(--sa-pink)",
               gradient: "linear-gradient(90deg, var(--sa-pink) 0%, #c93482 100%)",
               color: "#fff",
