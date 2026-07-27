@@ -120,7 +120,7 @@ const PostOpportunity = () => {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
-      navigate(`/login?next=${encodeURIComponent("/requests/new")}`);
+      navigate(`/register?next=${encodeURIComponent("/requests/new")}`);
       return;
     }
     if (!agreeTerms) {

@@ -105,7 +105,7 @@ const Pricing = () => {
 
   const handleStart = () => {
     if (!user) {
-      navigate(`/login?next=${encodeURIComponent("/pricing")}`);
+      navigate(`/register?next=${encodeURIComponent("/pricing")}`);
       return;
     }
 

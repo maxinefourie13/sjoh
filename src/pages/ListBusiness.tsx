@@ -59,6 +59,7 @@ const getTrialChargeDate = () => {
  */
 const DRAFT_KEY = "sjoh_listing_draft";
 const DRAFT_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+const REGISTER_LIST_URL = `/register?next=${encodeURIComponent("/list")}`;
 
 type Draft = {
   step: number;
@@ -222,13 +223,13 @@ const ListBusiness = () => {
 
   const saveListing = async () => {
     if (!user) {
-      // The draft is already in sessionStorage, so they come straight back to
-      // this step with every answer intact.
+      // The draft is already persisted, so account creation can happen now
+      // without losing any answers or making a new user guess a password.
       toast({
-        title: "One quick account",
-        description: "Your answers are saved — you'll come right back here.",
+        title: "Create your account first",
+        description: "Your answers are saved — we'll bring you straight back here.",
       });
-      navigate(`/login?next=${encodeURIComponent("/list")}`);
+      navigate(REGISTER_LIST_URL);
       return false;
     }
     if (!whatsappConsent || !selectedCategory || !basicsValid) return false;
@@ -586,16 +587,16 @@ const ListBusiness = () => {
 
               {!user && (
                 <div className="rounded-xl border border-amber-300/60 bg-amber-50 p-4 text-sm text-amber-900">
-                  <p className="font-bold">Ready to upload?</p>
-                  <p className="mt-1">Create or sign in to your account first. Your setup answers are already saved.</p>
+                  <p className="font-bold">Create your account to upload</p>
+                  <p className="mt-1">Your setup answers are saved. Create a password first, then add your logo and banner.</p>
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
                     className="mt-3"
-                    onClick={() => navigate(`/login?next=${encodeURIComponent("/list")}`)}
+                    onClick={() => navigate(REGISTER_LIST_URL)}
                   >
-                    Sign in to add images
+                    Create account to add images
                   </Button>
                 </div>
               )}
@@ -605,8 +606,8 @@ const ListBusiness = () => {
                 logoUrl={logoUrl || null}
                 coverUrl={coverUrl || null}
                 onRequireAuth={() => {
-                  toast({ title: "One quick account", description: "Your answers are saved — sign in, then add your images." });
-                  navigate(`/login?next=${encodeURIComponent("/list")}`);
+                  toast({ title: "Create your account first", description: "Your answers are saved — then you can add your images." });
+                  navigate(REGISTER_LIST_URL);
                 }}
                 onChange={(images) => {
                   setLogoUrl(images.logoUrl ?? "");
@@ -686,7 +687,7 @@ const ListBusiness = () => {
 
               {!user && (
                 <div className="rounded-xl border border-amber-300/60 bg-amber-50 p-4 text-sm text-amber-900">
-                  You'll be asked to sign in or create an account before PayFast opens — that's how we tie the listing and trial to you.
+                  Create your account before PayFast opens. We’ll ask you to set a password first, then bring you back here to finish your listing and trial.
                 </div>
               )}
 
