@@ -16,7 +16,7 @@ type EarlyAccessNoticeProps = {
 
 export const EarlyAccessNotice = ({
   title = "You’re early. Very early.",
-  body = "Sjoh is still onboarding South African pros, so some areas may look a little quiet while the marketplace fills up.",
+  body = "Sjoh is still adding local businesses, so some areas may look a little quiet while new businesses join.",
   ctaLabel = "Founding pros: list your business",
   ctaTo = "/list",
   className,
@@ -50,7 +50,7 @@ export const EarlyAccessNotice = ({
         <div className="container relative py-14 md:py-20">
           <div className="max-w-4xl">
             <p className="mb-4 text-xs font-black uppercase tracking-[0.18em] text-white/88">
-              Early access marketplace
+              We’re adding local businesses
             </p>
             <h2 className="font-display-bold text-4xl leading-[0.98] text-white sm:text-5xl md:text-6xl">
               {title}
@@ -120,7 +120,7 @@ export const EarlyAccessNotice = ({
             <Sparkles className="size-6" strokeWidth={2.5} />
           </span>
           <div>
-            <p className="inline-flex items-center rounded-full border border-white/18 bg-black/38 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-white/88 backdrop-blur-sm">Early access marketplace</p>
+            <p className="inline-flex items-center rounded-full border border-white/18 bg-black/38 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-white/88 backdrop-blur-sm">We’re adding local businesses</p>
             <p className="mt-2 font-display-bold text-2xl leading-[1.02] text-white md:text-[3rem] md:leading-[0.97]">{title}</p>
             <p className="mt-3 max-w-3xl text-sm font-medium leading-relaxed text-white/90 md:text-[1.12rem]">{body}</p>
           </div>
@@ -129,10 +129,10 @@ export const EarlyAccessNotice = ({
           <div className="rounded-2xl border border-white/24 bg-black/48 px-4 py-3 backdrop-blur-md shadow-[0_12px_30px_-18px_rgba(0,0,0,0.95)]">
             <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white/60">
               <UsersRound className="size-4 text-sa-gold" strokeWidth={2.5} />
-              Founding window
+              Early business bonus
             </div>
             <p className="mt-1 font-display text-2xl font-black text-white">First 500</p>
-            <p className="text-xs font-semibold text-white/58">pros get early perks</p>
+            <p className="text-xs font-semibold text-white/58">extra visibility for early businesses</p>
           </div>
           <Link
             to={ctaTo}
