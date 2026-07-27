@@ -11,7 +11,7 @@ select.sjoh-select {
   background-color: hsl(var(--card));
   color: hsl(var(--foreground));
   box-shadow: var(--shadow-soft);
-  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+  transition: border-color 165ms ease, box-shadow 165ms ease, background-color 165ms ease;
 }
 
 select.sjoh-select:hover { border-color: var(--sa-peri); }
