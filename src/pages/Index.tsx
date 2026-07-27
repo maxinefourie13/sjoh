@@ -306,7 +306,7 @@ const HomePage = () => {
                 <select
                   value={province}
                   onChange={(e) => setProvince(e.target.value)}
-                  className="w-full pl-4 pr-10 py-3.5 bg-transparent outline-none text-base font-medium appearance-none cursor-pointer text-foreground"
+                  className="sjoh-select w-full pl-4 pr-10 py-3.5 text-base font-medium appearance-none"
                 >
                   <option value="">All Provinces</option>
                   {PROVINCES.map((p) => (

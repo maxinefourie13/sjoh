@@ -238,7 +238,7 @@ const DirectoryPage = () => {
                 <select
                   value={sort}
                   onChange={(e) => setSort(e.target.value as "featured" | "rating" | "newest")}
-                  className="text-sm font-medium border border-border rounded-md px-3 py-2 bg-background cursor-pointer"
+                  className="sjoh-select text-sm font-medium px-3 py-2"
                 >
                   <option value="featured">Sort: Featured first</option>
                   <option value="rating">Sort: Highest rated</option>

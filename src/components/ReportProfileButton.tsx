@@ -81,7 +81,7 @@ export const ReportProfileButton = ({ businessId, businessName }: Props) => {
             <select
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm"
+              className="sjoh-select w-full px-3 py-2 text-sm"
             >
               {REASONS.map((r) => (
                 <option key={r.value} value={r.value}>{r.label}</option>

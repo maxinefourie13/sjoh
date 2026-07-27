@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Shared native select treatment. */
+select.sjoh-select {
+  min-height: 2.75rem;
+  cursor: pointer;
+  border: 2px solid hsl(var(--border));
+  border-radius: 0.75rem;
+  background-color: hsl(var(--card));
+  color: hsl(var(--foreground));
+  box-shadow: var(--shadow-soft);
+  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+select.sjoh-select:hover { border-color: var(--sa-peri); }
+
+select.sjoh-select:focus {
+  outline: none;
+  border-color: var(--sa-peri);
+  box-shadow: 0 0 0 3px rgba(107, 124, 232, 0.18);
+}
+
+select.sjoh-select:disabled { cursor: not-allowed; opacity: 0.6; }
+
+select.sjoh-select option { background: var(--sa-bg); color: var(--sa-dark); }
+
 /*
   Sjoh design system — bold modern sans, SA flag multi-accent
   All colors MUST be HSL.

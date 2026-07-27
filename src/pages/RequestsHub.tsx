@@ -381,7 +381,7 @@ const QuoteOnJobsPanel = () => {
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="text-sm font-medium border border-border rounded-md px-3 py-2 bg-background text-foreground cursor-pointer min-w-[180px]"
+          className="sjoh-select text-sm font-medium px-3 py-2 min-w-[180px]"
         >
           <option value="">All categories</option>
           {CATEGORIES.map((c) => (
@@ -393,7 +393,7 @@ const QuoteOnJobsPanel = () => {
         <select
           value={province}
           onChange={(e) => setProvince(e.target.value)}
-          className="text-sm font-medium border border-border rounded-md px-3 py-2 bg-background text-foreground cursor-pointer min-w-[180px]"
+          className="sjoh-select text-sm font-medium px-3 py-2 min-w-[180px]"
         >
           <option value="">All provinces</option>
           {PROVINCES.map((p) => (

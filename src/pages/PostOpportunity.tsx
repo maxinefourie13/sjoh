@@ -295,7 +295,7 @@ const PostOpportunity = () => {
             <Field label="Category group" required>
               <select
                 required
-                className="input cursor-pointer"
+                className="sjoh-select input"
                 value={groupSlug}
                 onChange={(e) => {
                   setGroupSlug(e.target.value);
@@ -309,7 +309,7 @@ const PostOpportunity = () => {
             <Field label="Service" required>
               <select
                 required
-                className="input cursor-pointer"
+                className="sjoh-select input"
                 value={categorySlug}
                 onChange={(e) => { setCategorySlug(e.target.value); setCustomCategory(""); }}
                 disabled={!groupSlug}
@@ -333,7 +333,7 @@ const PostOpportunity = () => {
               <select
                 required
                 name="province"
-                className="input cursor-pointer"
+                className="sjoh-select input"
                 value={province}
                 onChange={(e) => setProvince(e.target.value)}
               >
@@ -351,7 +351,7 @@ const PostOpportunity = () => {
               <input name="deadline" type="date" className="input" />
             </Field>
             <Field label="Contact preference">
-              <select name="contact_preference" defaultValue="whatsapp" className="input cursor-pointer">
+              <select name="contact_preference" defaultValue="whatsapp" className="sjoh-select input">
                 <option value="whatsapp">WhatsApp</option>
                 <option value="phone">Phone call</option>
                 <option value="email">Email</option>

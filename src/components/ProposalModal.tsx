@@ -262,7 +262,7 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
                   <select
                     value={timeline}
                     onChange={(e) => setTimeline(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-sm outline-none focus:border-primary"
+                    className="sjoh-select w-full px-3 py-2.5 text-sm"
                   >
                     <option>Today</option>
                     <option>This week</option>
@@ -278,7 +278,7 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
                   <select
                     value={contactPref}
                     onChange={(e) => setContactPref(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-sm outline-none focus:border-primary"
+                    className="sjoh-select w-full px-3 py-2.5 text-sm"
                   >
                     <option>WhatsApp</option>
                     <option>Phone call</option>
