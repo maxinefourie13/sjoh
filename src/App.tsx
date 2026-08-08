@@ -33,6 +33,9 @@ const RedirectRequestById = () => {
 };
 import ListBusiness from "./pages/ListBusiness.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
+import SchoolHome from "./pages/school/SchoolHome.tsx";
+import ChildDetail from "./pages/school/ChildDetail.tsx";
+import SchoolAdmin from "./pages/school/SchoolAdmin.tsx";
 import CategoryLocationPage from "./pages/CategoryLocationPage.tsx";
 import { Login, Register, ForgotPassword, ResetPassword } from "./pages/Auth.tsx";
 import AuthConfirm from "./pages/AuthConfirm.tsx";
@@ -96,6 +99,10 @@ const App = () => {
                   round-trip via sessionStorage. */}
               <Route path="/list" element={<ListBusiness />} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              {/* Piece of Mind — Care & Progress Portal */}
+              <Route path="/school" element={<ProtectedRoute><SchoolHome /></ProtectedRoute>} />
+              <Route path="/school/child/:childId" element={<ProtectedRoute><ChildDetail /></ProtectedRoute>} />
+              <Route path="/school/admin" element={<ProtectedRoute><SchoolAdmin /></ProtectedRoute>} />
               <Route path="/admin/founding-members" element={<ProtectedRoute><FoundingMembersAdmin /></ProtectedRoute>} />
               <Route path="/admin" element={<ProtectedRoute><AdminOverview /></ProtectedRoute>} />
               <Route path="/admin/preview" element={<ProtectedRoute><AdminPreview /></ProtectedRoute>} />
