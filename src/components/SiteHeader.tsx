@@ -2,7 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
 import { Button } from "@/components/ui/button";
 import { FlameButton } from "@/components/ui/flame-button";
-import { Menu, X, LayoutDashboard, LogOut, Shield } from "lucide-react";
+import { Menu, X, LayoutDashboard, LogOut, Shield, GraduationCap } from "lucide-react";
+import { useIsSchoolMember } from "@/features/school/api";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRoles } from "@/hooks/useUserRoles";
@@ -39,6 +40,7 @@ export const SiteHeader = () => {
   const [open, setOpen] = useState(false);
   const { session, user, signOut } = useAuth();
   const { isAdmin, roles } = useUserRoles();
+  const { isMember: isSchoolMember } = useIsSchoolMember();
   const { business } = useMyBusiness();
   const navigate = useNavigate();
   useBumpLastActive();
@@ -108,6 +110,11 @@ export const SiteHeader = () => {
                   <DropdownMenuItem asChild>
                     <Link to="/dashboard"><LayoutDashboard className="size-4 mr-2" />Dashboard</Link>
                   </DropdownMenuItem>
+                  {isSchoolMember && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/school"><GraduationCap className="size-4 mr-2" />Care Portal</Link>
+                    </DropdownMenuItem>
+                  )}
                   {isAdmin && (
                     <>
                       <DropdownMenuItem asChild>
@@ -169,6 +176,11 @@ export const SiteHeader = () => {
                   <Button variant="outline" className="flex-1" asChild>
                     <Link to="/dashboard" onClick={() => setOpen(false)}>Dashboard</Link>
                   </Button>
+                  {isSchoolMember && (
+                    <Button variant="outline" className="flex-1" asChild>
+                      <Link to="/school" onClick={() => setOpen(false)}>Care Portal</Link>
+                    </Button>
+                  )}
                   <Button className="flex-1" onClick={() => { setOpen(false); handleSignOut(); }}>
                     Log out
                   </Button>
