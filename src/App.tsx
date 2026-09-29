@@ -1,6 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
+import SitePaused from "./pages/SitePaused.tsx";
+import { SITE_PAUSED, isOpenWhilePaused } from "@/lib/sitePause";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, Navigate, useParams } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate, useParams, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { initOneSignal, isPushConfigured } from "@/lib/push";
 import EmailUnsubscribe from "./pages/EmailUnsubscribe.tsx";
@@ -54,6 +56,13 @@ import Returns from "./pages/Returns.tsx";
 
 const queryClient = new QueryClient();
 
+// While SITE_PAUSED is on, every public route shows the holding page.
+const PauseGate = ({ children }: { children: ReactNode }) => {
+  const { pathname } = useLocation();
+  if (SITE_PAUSED && !isOpenWhilePaused(pathname)) return <SitePaused />;
+  return <>{children}</>;
+};
+
 const App = () => {
   useEffect(() => {
     if (isPushConfigured()) initOneSignal();
@@ -66,6 +75,7 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <PauseGate>
             <EarlyAccessGate>
             <WelcomeIntentModal />
             <Routes>
@@ -126,6 +136,7 @@ const App = () => {
             </Routes>
             </EarlyAccessGate>
             <CookieConsent />
+            </PauseGate>
           </BrowserRouter>
         </AuthProvider>
       </TooltipProvider>
